@@ -11,9 +11,14 @@
  */
 package biolockj.util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import org.apache.commons.lang.math.NumberUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import biolockj.*;
 import biolockj.exception.*;
 import biolockj.module.*;
@@ -328,6 +333,56 @@ public class DockerUtil {
 			dockerVolumes += " -v " + getDbDirPath( (DatabaseModule) module ) + ":" + DOCKER_DB_DIR + ":ro";
 
 		return dockerVolumes;
+	}
+	
+	private static TreeMap<String, String> volumeMap;	
+	
+	private static void makeVolMap() throws IOException, InterruptedException {
+		final Process p = Runtime.getRuntime().exec( getDockerInforCmd() );
+		StringBuilder sb = new StringBuilder();
+		final BufferedReader br = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
+		String s = null;
+		while( ( s = br.readLine() ) != null )
+			sb.append( s );
+		p.waitFor();
+		p.destroy();
+		String json = sb.toString();
+		
+		JSONObject obj = new JSONObject(json);
+		JSONArray arr = obj.getJSONArray("Mounts");
+		volumeMap = new TreeMap<>();
+		for (int i = 0; i < arr.length(); i++) {
+			JSONObject mount = arr.getJSONObject( i ) ;
+			volumeMap.put( mount.get( "Source" ).toString(), mount.get( "Destination" ).toString());
+		}
+		Log.info( DockerUtil.class, volumeMap.toString() );
+	}
+	
+	public static String containerizePath(String path) throws IOException, InterruptedException {
+		TreeMap<String, String> vmap = getVolumeMap();
+		String innerPath = path;
+		for (String s : vmap.keySet()) {
+			if ( path.startsWith( s ) ) {
+				innerPath = innerPath.replaceFirst( s, vmap.get( s ) );
+				break;
+			}
+		}
+		return innerPath;
+	}
+	
+	public static String getDockerInforCmd(){
+		return "curl --unix-socket /var/run/docker.sock http:/v1.38/containers/" + getHostName() + "/json";
+	}
+	
+	public static String getHostName() {
+		return Config.replaceEnvVar( "${HOSTNAME}" );
+	}
+	
+	public static TreeMap<String, String> getVolumeMap() throws IOException, InterruptedException{
+		if ( volumeMap == null ) {
+			makeVolMap();
+		}
+		return volumeMap;
 	}
 
 	// private static String getVolumePath( final String path ) {

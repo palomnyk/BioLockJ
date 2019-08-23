@@ -30,7 +30,7 @@ RUN mkdir -p "${BLJ}" && mkdir "${BLJ_SUP}" && mkdir -p "${BLJ_PROJ}" && \
 
 #3.) Install Ubuntu Software 
 RUN apt-get update && \
-	apt-get install -y build-essential apt-utils bsdtar gawk nano tzdata wget
+	apt-get install -y build-essential apt-utils bsdtar gawk nano tzdata wget curl
 
 #4.) Set the timezone to EST
 RUN ln -fs /usr/share/zoneinfo/US/Eastern /etc/localtime && \
