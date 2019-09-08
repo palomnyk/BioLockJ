@@ -58,7 +58,9 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
 
       //get all input elements for adding values too
       const selects = Array.from(document.getElementsByTagName('select'));
+      const textareas = Array.from(document.getElementsByTagName('textareas'));
       const inputs = Array.from(document.getElementsByTagName('input'));
+      const taInputs = inputs.concat(textareas);
       const texts = inputs.filter(inp => inp.type === 'text');
       const radios = inputs.filter(inp => inp.type === 'radio');
       const checkboxs = inputs.filter(inp => inp.type === 'checkbox');
@@ -99,7 +101,7 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
               Array.apply(null, select.options).find(option => option.value === valueOfKey);
               if (opt.value != undefined){ opt.setAttribute('selected', true); };//select opt if not undefined
               }
-            else if (targetInput.type == 'text' || targetInput.type == 'number'){
+            else {
               targetInput.value = valueOfKey;
               }
             }//end else
