@@ -58,13 +58,8 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
 
       //get all input elements for adding values too
       const selects = Array.from(document.getElementsByTagName('select'));
-      const textareas = Array.from(document.getElementsByTagName('textareas'));
       const inputs = Array.from(document.getElementsByTagName('input'));
-      const taInputs = inputs.concat(textareas);
-      const texts = inputs.filter(inp => inp.type === 'text');
-      const radios = inputs.filter(inp => inp.type === 'radio');
       const checkboxs = inputs.filter(inp => inp.type === 'checkbox');
-      const numbers = inputs.filter(inp => inp.type === 'number');
 
       //first step, loop through modules and show them
       for (mod of this.modules){
@@ -731,8 +726,9 @@ const configTexts = configFormInputs.filter(inp => inp.type === 'text');
 const configSelects = Array.from(document.getElementById('configForm').getElementsByTagName('SELECT'));
 const configChecks = configFormInputs.filter(inp => inp.type === 'checkbox');
 const configNumbers = configFormInputs.filter(inp => inp.type === 'number');
+const textareas = Array.from(document.getElementById('configForm').getElementsByTagName('textarea'));
 
-for (let inp of configTexts){
+for (let inp of configTexts.concat(textareas)){
 inp.addEventListener('change', currentConfig.saveConfigParamsForm, false);
 }
 
