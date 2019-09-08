@@ -49,7 +49,7 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
     console.log('in currentConfig.sendConfigDataToForms()');
     try {
       if (this.paramKeys.length != this.paramValues.length){
-        alert('Your paramKeys should be the same length as your paramValues.  Find the error');
+        alert('Your paramKeys should be the same length as your paramValues.  Contact the BioLockJ team if you have this error');
         return false;
       }
       //reorder module list elements to match the config
