@@ -1,0 +1,203 @@
+#!/bin/bash
+###############################################################################
+##  Script launches BioLockJ via Docker + creates $DOCKER_CLONE_SCRIPT       ##
+##  Bash env must include pipeline base directory: ${BLJ_PROJ}               ##
+##                                                                           ##
+##  Required Parameters (If gui arg passed, no other args required)          ##
+##  Config file path:          <file_path>                                   ##
+##  OR                                                                       ##
+##  Restart dir                                                              ##
+##                                                                           ##
+##  Optional Parameters:                                                     ##
+##  Aws flag:                  aws                                           ##
+##  Use local BLJ flag:        blj                                           ##
+##  Use local BLJ_SUP flag:    blj_sup                                       ##
+##  Run GUI flag:              gui                                           ##
+##  New email password:        pass    <new_password>                        ##
+##  Restart flag:              restart <dir_path>                            ##
+###############################################################################
+
+main(){
+	printf "\n ---------> Execute CMD [  launch_docker $(echo ${@})  ]\n"
+	
+	take_standard_biolockj_args "$@"
+	
+	assign_main_arg
+	
+	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && echo "args used: ${argsFromUser[@]}" && echo "configFile = $configFile" && echo "restartDir = $restartDir"
+	
+	scan_script_and_env_args
+	! ifArgUsed $GUI_ARG && ! in_docker_env && verify_inputs
+	
+	GUI_PORT=8080
+	CMD="docker run --rm -e \"BLJ_OPTIONS=$(blj_options)\" $(get_volumes) $(args_for_gui) $(get_docker_img) $(cmd_for_gui)"
+	printf "\n---------> Execute CMD [  ${CMD}  ] \n\n"
+	build_clone_script "${CMD}"
+	
+	if ifArgUsed $GUI_ARG ; then
+		continue_after_command $CMD & #TODO either take this out here, or take out the related if in the clone script funtion
+		startBrowser # if the gui has its own docker container, this CMD would be defined there
+	else
+		exit_after_command $CMD
+	fi
+}
+
+. ${BLJ_SCRIPT}/docker_functions
+. ${BLJ_SCRIPT}/blj_user_arg_lib
+
+# Read script args and bash env vars
+# Param 1 - Array of launch_docker script args
+scan_script_and_env_args() {
+	if ifArgUsed $BLJ_SUP_ARG ; then
+		blj_sup=$(get_arg_value $BLJ_SUP_ARG)
+		[ $blj_sup == "true" ] && blj_sup=${BLJ_SUP}
+		echo "mapping directory \"$blj_sup\" into container..."
+	fi
+	ifArgUsed $PASSWORD_ARG && newPass=$(get_arg_value $PASSWORD_ARG)
+	ifArgUsed $EXT_MODS_ARG && extMods=$(get_arg_value $EXT_MODS_ARG)
+	ifArgUsed $GUI_ARG && echo "Starting BioLockJ GUI..."
+	config=$configFile
+	if ! ifArgUsed $GUI_ARG && [ ${#config} -gt 0 ] && [ -f $config ] ; then
+		inputDir="$(get_property $config input.dirPaths)"
+		metaPath="$(get_property $config metadata.filePath)" && [ ${#metaPath} -gt 0 ] && metaPath="$(dirname $metaPath)"
+		primerPath="$(get_property $config trimPrimers.filePath)" && [ ${#primerPath} -gt 0 ] && primerPath="$(dirname $primerPath)"
+	fi
+}
+
+# Verify paths are valid, if launch_docker is not run inside a Docker container
+verify_inputs() {
+	ifDefined $inputDir && dirPath=( ${inputDir//, } )
+	! ifDefined $inputDir || [ ${#dirPath[@]} -gt 1 ] && exit_script "Error [ launch_docker ]: The -i parameter must reference a single input directory"
+	verify_dir $dirPath
+	verify_dir $BLJ_PROJ
+	ifDefined $restartDir && verify_dir $restartDir
+	ifDefined $config && verify_file $config
+	ifDefined $metaPath && verify_dir $metaPath
+	ifDefined $primerPath && verify_dir $primerPath	
+}
+
+# Verify host directory exists, if launch_docker is not deployed inside a Docker container
+# Param 1 - System path
+verify_dir() {
+ 	[ ! -d "${1}" ] && exit_script "Error [ launch_docker.verify_dir ]: Parameter \"${1}\" not found"
+}
+
+# Verify host file exists, if launch_docker is not deployed inside a Docker container
+# Param 1 - System path
+verify_file() {
+	[ ! -f "${1}" ] && exit_script "Error [ launch_docker.verify_file ]: Parameter \"${1}\" not found"
+}
+
+# Populate docker run env variable $BLJ_OPTIONS 
+# Always include vars to map Host paths: Config, $BLJ_PROJ, and $HOME.
+# In AWS mode, add a indicator, otherwise include the Host path for pipeline input. 
+# These paths are used by biolockj_controller to map Docker volumes for java_module containers
+blj_options() {
+	if in_docker_env && [ ${#BLJ_OPTIONS} -gt 0 ]; then # in docker container 
+		options="${BLJ_OPTIONS}"
+	else # on host machine
+		# -i is required if not launching the WebApp GUI 
+		options="-u ${HOME} -b $(blj_proj) -h $(hostname) -i ${inputDir}"
+		ifArgUsed $BLJ_ARG && options="${options} -blj ${BLJ}"
+		ifArgUsed $BLJ_SUP_ARG && options="${options} -blj_sup ${blj_sup}"
+		ifArgUsed $GUI_ARG && echo "${options}" && return
+	fi	
+	ifDefined $restartDir && options="${options} -r ${BLJ_PROJ}/${restartDir#$(blj_proj)/}"
+	ifArgUsed $PASSWORD_ARG && options="${options} -p $newPass"
+	ifDefined $metaPath && options="${options} -m $metaPath"
+	ifDefined $primerPath && options="${options} -t $primerPath"
+	ifArgUsed $AWS_ARG && options="${options} -aws"
+	echo "${options} -c ${config}" # TODO - handle reset case in docker
+}
+
+# Get mapped  Docker volumes
+get_volumes() {
+	vols="-v ${DOCK_SOCK}:${DOCK_SOCK} -v ${HOME}:${BLJ_HOST_HOME}:delegated"
+	ifArgUsed $BLJ_ARG && vols="${vols} -v ${BLJ}:/app/biolockj:ro"
+	ifArgUsed $BLJ_SUP_ARG && vols="${vols} -v ${blj_sup}:/app/blj_support:ro"
+	ifArgUsed $EXT_MODS_ARG && vols="${vols} -v ${extMods}:/app/external_modules:ro"
+	if ifArgUsed $AWS_ARG ; then
+		vols="${vols} -v ${EFS}:${EFS}:delegated"
+	else
+		vols="${vols} -v $(blj_proj):${EFS_PROJ}:delegated"
+		if ifArgUsed $GUI_ARG; then 
+			vols="${vols} -v ${BLJ}/resources/config/gui:${BLJ_CONFIG}:delegated"
+			[ -f "$(which aws)" ] && [ -d "$(dirname $(which aws))" ] && vols="${vols} -v $(dirname $(which aws)):${APP_BIN}"
+		else 
+			vols="${vols} -v $inputDir:${BLJ_INPUT}:ro -v $(dirname $config):${BLJ_CONFIG}:ro"
+			ifDefined $metaPath && vols="${vols} -v $metaPath:${EFS}/metadata:ro"
+			ifDefined $primerPath && vols="${vols} -v $primerPath:${BLJ_PRIMER}:ro" 
+		fi
+	fi
+	echo "${vols}"
+}
+
+args_for_gui(){
+	ifArgUsed $GUI_ARG && echo "-p ${GUI_PORT}:3000 --expose ${GUI_PORT} -w /app/biolockj/web_app"
+}
+
+get_docker_img() {
+	echo "$(dock_id)/biolockj_controller"
+}
+
+cmd_for_gui(){
+	ifArgUsed $GUI_ARG && echo "npm start"
+}
+
+# If this script called by biolockj_controller Docker container in GUI mode, 
+# set BLJ_PROJ based on the $BLJ_OPTIONS env var, 
+# otherwise return $BLJ_PROJ if called from a host machine.  If dir ends with "/" trim it off
+blj_proj() {
+	if in_docker_env ; then
+	#if [ -f "/.dockerenv" ] && $(var_exists BLJ_OPTIONS); then
+		#TODO - if you run the gui, and launch a docker pipeline, how will you get the BLJ_PROJ value to map in
+		# TODO - make blj_proj an arg that takes a directory, $BLJ_PROJ variable is the default
+		bljProj=$(named_arg "${BLJ_OPTIONS}" -b) 
+	else
+		bljProj="${BLJ_PROJ}"
+	fi
+	if [ "${bljProj: -1}" == "/" ]; then
+		len=$((${#bljProj}-1))
+		bljProj="${bljProj:0:len}"
+	fi
+	! ifDefined $bljProj && exit_script "Error [ launch_docker.blj_proj ]: Required env variable BLJ_PROJ undefined"
+	echo "${bljProj}"
+}
+
+# Build a script that can be used to launch a clone of the
+# Param 1 - Full Docker run command
+build_clone_script() {
+	args="$@"
+	if [ "${args: -1}" == "&" ]; then
+		len=$((${#args}-1))
+		args="${args:0:len}"
+	fi
+
+	img=$(get_docker_img)
+	cmd=${args/$img/-ti $img /bin/bash} 
+	ifArgUsed $GUI_ARG && cmd=${cmd/npm start}
+	$(in_docker_env) && DOCKER_CLONE_SCRIPT="${BLJ_HOST_HOME}/$(basename $DOCKER_CLONE_SCRIPT)"
+	
+	echo "#!/bin/bash"                       > "${DOCKER_CLONE_SCRIPT}"
+	echo "# This script launches a clone of the last biolockj_controller (same env vars + volumes)" >> "${DOCKER_CLONE_SCRIPT}"
+	echo "${cmd}"                           >> "${DOCKER_CLONE_SCRIPT}"
+	chmod 777 "${DOCKER_CLONE_SCRIPT}"
+	echo "launch_docker created \"${DOCKER_CLONE_SCRIPT}\" -->  This script will launch a clone of the current biolockj_controller (same env vars + volumes)"
+	echo "alias \"dclone\" can be used to run \"${DOCKER_CLONE_SCRIPT}\""
+}
+
+# Start the local browswer
+startBrowser() {
+	sleep 2 # See also: https://stackoverflow.com/questions/3124556/clean-way-to-launch-the-web-browser-from-shell-script#3124750
+	if which xdg-open > /dev/null; then
+		xdg-open http://localhost:${GUI_PORT}
+	elif which gnome-open > /dev/null; then
+		gnome-open http://localhost:${GUI_PORT}
+	elif which python > /dev/null; then
+		python -mwebbrowser http://localhost:${GUI_PORT}
+	else
+		echo "Web browser not found on localhost!"
+	fi
+}
+
+main $@
