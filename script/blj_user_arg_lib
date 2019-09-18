@@ -192,19 +192,6 @@ get_arg_value(){
 	index=$( index_of $1 ${longArgName[@]} ) && echo ${parameters[$index]} || return 1
 }
 
-# return the index of $1 in the array (remaining args)--IFF it is in the array
-index_of(){
-	local array=( "$@" )
-	for arrayIndex in $(seq 1 ${#array[@]}); do
-		if [ "${array[$arrayIndex]}" == "$1" ]; then
-			echo $(( $arrayIndex - 1 ))
-			return 0
-		fi
-	done
-	echo "-1"
-	return 1
-}
-
 
 ### These functions are used to give info to the user
 

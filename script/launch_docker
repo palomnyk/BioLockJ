@@ -68,23 +68,24 @@ scan_script_and_env_args() {
 	ifArgUsed $EXT_MODS_ARG && extMods=$(get_arg_value $EXT_MODS_ARG)
 	ifArgUsed $GUI_ARG && echo "Starting BioLockJ GUI..."
 	config=$configFile
-	if ! ifArgUsed $GUI_ARG && [ ${#config} -gt 0 ] && [ -f $config ] ; then
-		inputDir="$(get_property $config input.dirPaths)"
-		metaPath="$(get_property $config metadata.filePath)" && [ ${#metaPath} -gt 0 ] && metaPath="$(dirname $metaPath)"
-		primerPath="$(get_property $config trimPrimers.filePath)" && [ ${#primerPath} -gt 0 ] && primerPath="$(dirname $primerPath)"
-	fi
+#	if ! ifArgUsed $GUI_ARG && [ ${#config} -gt 0 ] && [ -f $config ] ; then
+#		inputDir="$(get_property $config input.dirPaths)"
+#		metaPath="$(get_property $config metadata.filePath)" && [ ${#metaPath} -gt 0 ] && metaPath="$(dirname $metaPath)"
+#		primerPath="$(get_property $config trimPrimers.filePath)" && [ ${#primerPath} -gt 0 ] && primerPath="$(dirname $primerPath)"
+#	fi
 }
 
 # Verify paths are valid, if launch_docker is not run inside a Docker container
 verify_inputs() {
-	ifDefined $inputDir && dirPath=( ${inputDir//, } )
-	! ifDefined $inputDir || [ ${#dirPath[@]} -gt 1 ] && exit_script "Error [ launch_docker ]: The -i parameter must reference a single input directory"
-	verify_dir $dirPath
+# Paths provided by config file are verified as they are collected.
+#	ifDefined $inputDir && dirPath=( ${inputDir//, } )
+#	! ifDefined $inputDir || [ ${#dirPath[@]} -gt 1 ] && exit_script "Error [ launch_docker ]: The -i parameter must reference a single input directory"
+#	verify_dir $dirPath
 	verify_dir $BLJ_PROJ
 	ifDefined $restartDir && verify_dir $restartDir
 	ifDefined $config && verify_file $config
-	ifDefined $metaPath && verify_dir $metaPath
-	ifDefined $primerPath && verify_dir $primerPath	
+#	ifDefined $metaPath && verify_dir $metaPath
+#	ifDefined $primerPath && verify_dir $primerPath	
 }
 
 # Verify host directory exists, if launch_docker is not deployed inside a Docker container
@@ -115,36 +116,48 @@ blj_options() {
 		options="${BLJ_OPTIONS}"
 	else # on host machine
 		# -i is required if not launching the WebApp GUI 
-		options="-u ${HOME} -b ${BLJ_PROJ} -h $(hostname) -i ${inputDir}"
+		options="-u ${HOME} -b ${BLJ_PROJ} -h $(hostname)"
+		options="${options} -i ${inputDir}" # TODO - java shouldn't need this
 		ifArgUsed $BLJ_ARG && options="${options} -blj ${BLJ}"
-		ifArgUsed $BLJ_SUP_ARG && options="${options} -blj_sup ${blj_sup}"
+		#ifArgUsed $BLJ_SUP_ARG && options="${options} -blj_sup ${blj_sup}"
 		ifArgUsed $GUI_ARG && echo "${options}" && return
 	fi	
 	ifDefined $restartDir && options="${options} -r $restartDir"
 	ifArgUsed $PASSWORD_ARG && options="${options} -p $newPass"
-	ifDefined $metaPath && options="${options} -m $metaPath"
-	ifDefined $primerPath && options="${options} -t $primerPath"
+	#ifDefined $metaPath && options="${options} -m $metaPath" # TODO - java shouldn't need this
+	#ifDefined $primerPath && options="${options} -t $primerPath" # TODO - java shouldn't need this
 	ifArgUsed $AWS_ARG && options="${options} -aws"
 	echo "${options} -c ${config}" # TODO - handle reset case in docker
 }
 
 # Get mapped  Docker volumes
+# TODO - this method assumes that $config path is given in terms of the host machine
+# TODO use mount instead of volumes
 get_volumes() {
-	vols="-v ${DOCK_SOCK}:${DOCK_SOCK} -v ${HOME}:${BLJ_HOST_HOME}:delegated"
+	vols="-v ${DOCK_SOCK}:${DOCK_SOCK}"
+	vols="${vols} -v ${HOME}:${BLJ_HOST_HOME}:delegated" #TODO - DO NOT map home directory
 	ifArgUsed $BLJ_ARG && vols="${vols} -v ${BLJ}:/app/biolockj:ro"
-	ifArgUsed $BLJ_SUP_ARG && vols="${vols} -v ${blj_sup}:/app/blj_support:ro"
 	ifArgUsed $EXT_MODS_ARG && vols="${vols} -v ${extMods}:/app/external_modules:ro"
+	ifDefined $config && vols="${vols} -v $(dirname $config):${BLJ_CONFIG}:ro"
 	if ifArgUsed $AWS_ARG ; then
-		vols="${vols} -v ${EFS}:${EFS}:delegated"
+		#TODO - replace this; docker mounts will done the same way on aws or local machine
+		vols="${vols} -v ${EFS}:${EFS}:delegated" 
 	else
 		vols="${vols} -v ${BLJ_PROJ}:${EFS_PROJ}:delegated"
 		if ifArgUsed $GUI_ARG; then 
+			# TODO - use aws cli in container, don't map in user's
 			vols="${vols} -v ${BLJ}/resources/config/gui:${BLJ_CONFIG}:delegated"
 			[ -f "$(which aws)" ] && [ -d "$(dirname $(which aws))" ] && vols="${vols} -v $(dirname $(which aws)):${APP_BIN}"
 		else 
-			vols="${vols} -v $inputDir:${BLJ_INPUT}:ro -v $(dirname $config):${BLJ_CONFIG}:ro"
-			ifDefined $metaPath && vols="${vols} -v $metaPath:${EFS}/metadata:ro"
-			ifDefined $primerPath && vols="${vols} -v $primerPath:${BLJ_PRIMER}:ro" 
+			local i=1
+			configuredDirs=$(${BLJ}/script/read_config.sh $configFile "mount")
+			for dir in ${configuredDirs[@]}; do
+				vols="${vols} -v ${dir}:${EFS}/vol_${i}:ro" 
+				i=$(( i + 1 ))
+			done
+#			vols="${vols} -v $inputDir:${BLJ_INPUT}:ro -v $(dirname $config):${BLJ_CONFIG}:ro"
+#			ifDefined $metaPath && vols="${vols} -v $metaPath:${EFS}/metadata:ro"
+#			ifDefined $primerPath && vols="${vols} -v $primerPath:${BLJ_PRIMER}:ro" 
 		fi
 	fi
 	echo "${vols}"

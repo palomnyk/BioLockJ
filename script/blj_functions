@@ -20,6 +20,19 @@ containsElement() {
   return 1
 }
 
+# return the index of $1 in the array (remaining args)--IFF it is in the array
+index_of(){
+	local array=( "$@" )
+	for arrayIndex in $(seq 1 ${#array[@]}); do
+		if [ "${array[$arrayIndex]}" == "$1" ]; then
+			echo $(( $arrayIndex - 1 ))
+			return 0
+		fi
+	done
+	echo "-1"
+	return 1
+}
+
 # Logic control; if the variable given is empty then evaluates like false,
 # if the variable has a positive size then evaluates like true
 ifDefined(){
@@ -31,6 +44,25 @@ ifDefined(){
 # Param 1 - Any variable
 is_empty() {
 	[ $(echo "$1" | grep -c [a-zA-Z0-9]) -eq 0 ]
+}
+
+# boolean - does $1 begin with the substring $2,
+# if either arg is blank, evaluate to false
+# param 1 - string to question
+# param 2 - prefix
+string_starts_with(){
+	local length=${#2}
+	local start=${1:0:$length}
+	[ ${#2} -gt 0 ] && [ ${#1} -gt 0 ] && [ $start == $2 ]
+}
+
+# boolean - does $1 contain the substring $2,
+# if either arg is blank, evaluate to false
+# param 1 - string to question
+# param 2 - substring
+string_contains(){
+	local reduced=${1//$2/}
+	[ ${#2} -gt 0 ] && [ ${#1} -gt 0 ] && [ ! $reduced == $1 ]
 }
 
 # Convert a path variable to store the absolute path
@@ -60,6 +92,13 @@ modify_path() {
 in_docker_env() {
 	[ -f "/.dockerenv" ]
 }
+
+#get_self_container_id(){
+#	[ ! in_docker_env ] && return 1
+#	local ln=$(grep "name=" /proc/self/cgroup)
+#	local id=${ln##*docker/}
+#	echo $id
+#}
 
 # Append formatted time-stamp as prefix and print log output line "${1}"
 # Param 1 - Log statement  
@@ -206,6 +245,41 @@ exit_with_message(){
 	echo "$(biolockj --help)" 
 	[ -f "/.dockerenv" ] && sleep 5
 	exit 1
+}
+
+### verify files and directories
+
+verifyDir(){
+	if in_docker_env ; then
+		local isValid=$(verifyHostDir $1 2> /dev/null) 
+		[ $isValid == "yes" ]
+	else
+		[ -d $1 ]
+	fi
+}
+
+verifyFile(){
+	if in_docker_env ; then
+		local isValid=$(verifyHostFile $1 2> /dev/null) 
+		[ $isValid == "yes" ]
+	else
+		[ -f $1 ]
+	fi
+}
+
+# Call with source $BLJ/script/blj_functions; verifyHostDir ${path}
+verifyHostDir(){
+ 	cmd="-d tmpTest/$(basename $1)"
+ 	docker run --rm --mount type=bind,source=$(dirname $1),target=/tmpTest ubuntu [ ${cmd} ] \
+ 		&& echo "yes" || echo "no"
+ 	
+ }
+ 
+# Call with: source ${BLJ}/script docker_functions; verifyHostFile ${path}
+verifyHostFile(){
+ 	cmd="-f tmpTest/$(basename $1)"
+ 	docker run --rm --mount type=bind,source=$(dirname $1),target=/tmpTest ubuntu [ ${cmd} ] \
+ 		&& echo "yes" || echo "no"
 }
 
 
