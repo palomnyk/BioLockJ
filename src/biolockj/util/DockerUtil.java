@@ -45,9 +45,10 @@ public class DockerUtil {
 	 * @throws ConfigFormatException If {@value #SAVE_CONTAINER_ON_EXIT} property value is not set as a boolean
 	 * {@value biolockj.Constants#TRUE} or {@value biolockj.Constants#FALSE}
 	 * @throws ConfigPathException If mounted Docker volumes are not found on host or container file-system
+	 * @throws DockerVolCreationException 
 	 */
 	public static List<String> buildSpawnDockerContainerFunction( final BioModule module )
-		throws ConfigViolationException, ConfigNotFoundException, ConfigFormatException, ConfigPathException {
+		throws ConfigViolationException, ConfigNotFoundException, ConfigFormatException, ConfigPathException, DockerVolCreationException {
 		final List<String> lines = new ArrayList<>();
 		final String cmd = Config.getExe( module, Constants.EXE_DOCKER ) + " run " + rmFlag( module ) +
 			getDockerEnvVars() + " " + getDockerVolumes( module ) + getDockerImage( module );
@@ -99,9 +100,10 @@ public class DockerUtil {
 	 * @return Container database directory
 	 * @throws ConfigPathException if DB property not found
 	 * @throws ConfigNotFoundException if path is defined but is not an existing directory
+	 * @throws DockerVolCreationException 
 	 */
 	public static File getDockerDB( final DatabaseModule module, final String dbPath )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		if( hasCustomDockerDB( module ) ) {
 			if( dbPath == null ) return new File( DOCKER_DB_DIR );
 			if( inAwsEnv() ) return new File( dbPath );
@@ -223,6 +225,7 @@ public class DockerUtil {
 	}
 
 	/**
+	 * TODO: see if this should be updated for new docker volume system.
 	 * Function used to determine if an alternate database has been defined (other than /mnt/db).
 	 * 
 	 * @param module BioModule
@@ -257,10 +260,10 @@ public class DockerUtil {
 				if( db != null ) Log.info( DockerUtil.class, module.getClass().getSimpleName() + " db ==> " + db.getAbsolutePath() );
 				if( db != null ) return !db.getAbsolutePath().startsWith( DOCKER_DEFAULT_DB_DIR );
 			}
-		} catch( ConfigPathException | ConfigNotFoundException ex ) {
+		} catch( ConfigPathException | ConfigNotFoundException | DockerVolCreationException ex ) {
 			Log.error( DockerUtil.class,
 				"Error occurred checking database path of module: " + module.getClass().getName(), ex );
-		}
+		} 
 		return false;
 	}
 
@@ -283,7 +286,7 @@ public class DockerUtil {
 	}
 
 	private static String getDbDirPath( final DatabaseModule module )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		if( module.getDB() == null ) return null;
 		if( module instanceof RdpClassifier ) return module.getDB().getParentFile().getAbsolutePath();
 		return module.getDB().getAbsolutePath();
@@ -303,34 +306,53 @@ public class DockerUtil {
 	}
 
 	private static String getDockerVolumes( final BioModule module )
-		throws ConfigPathException, ConfigNotFoundException {
+	// TODO - metadata, primers, input... there are no special directories. 
+	// All files specified in the config file are handled the same way.
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		Log.debug( DockerUtil.class, "Assign Docker volumes for module: " + module.getClass().getSimpleName() );
 
-		String dockerVolumes = "-v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET + " -v " +
-			RuntimeParamUtil.getDockerHostHomeDir() + ":" + AWS_EC2_HOME + ":delegated";
+		String dockerVolumes = "-v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET;
+		dockerVolumes += " -v " + RuntimeParamUtil.get_BLJ_PROJ( false ) + ":" + DOCKER_PIPELINE_DIR + ":delegated";
+		for ( String key : volumeMap.keySet() ) {
+			if ( key.equals( DOCKER_SOCKET ) ) continue;
+			if ( key.equals( RuntimeParamUtil.BLJ_PROJ_DIR ) ) continue;
+			dockerVolumes += " -v " + key + ":" + volumeMap.get( key ) + ":ro";
+		}
+		
+		Log.debug( DockerUtil.class, "Passed along volumes: " + dockerVolumes );
 
-		if( inAwsEnv() )
-			return dockerVolumes + " -v " + DOCKER_BLJ_MOUNT_DIR + ":" + DOCKER_BLJ_MOUNT_DIR + ":delegated";
+		
+//		String dockerVolumes = "-v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET + " -v " +
+//			RuntimeParamUtil.getDockerHostHomeDir() + ":" + AWS_EC2_HOME + ":delegated";
+//
+//		if( inAwsEnv() )
+//			return dockerVolumes + " -v " + DOCKER_BLJ_MOUNT_DIR + ":" + DOCKER_BLJ_MOUNT_DIR + ":delegated";
 
-		dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostInputDir() + ":" + DOCKER_INPUT_DIR + ":ro";
-		dockerVolumes +=
-			" -v " + RuntimeParamUtil.getDockerHostPipelineDir() + ":" + DOCKER_PIPELINE_DIR + ":delegated";
-		dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostConfigDir() + ":" + DOCKER_CONFIG_DIR + ":ro";
+		// TODO - this dir is not special
+		//dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostInputDir() + ":" + DOCKER_INPUT_DIR + ":ro";
+//		
+//		dockerVolumes +=
+//			" -v " + RuntimeParamUtil.getDockerHostPipelineDir() + ":" + DOCKER_PIPELINE_DIR + ":delegated";
+//		dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostConfigDir() + ":" + DOCKER_CONFIG_DIR + ":ro";
 
-		if( RuntimeParamUtil.getDockerHostMetaDir() != null )
-			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostMetaDir() + ":" + DOCKER_META_DIR + ":ro";
+//		if( RuntimeParamUtil.getDockerHostMetaDir() != null )
+//			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostMetaDir() + ":" + DOCKER_META_DIR + ":ro";
 
-		if( RuntimeParamUtil.getDockerHostPrimerDir() != null )
-			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostPrimerDir() + ":" + DOCKER_PRIMER_DIR + ":ro";
+		// TODO - this dir is not special
+//		if( RuntimeParamUtil.getDockerHostPrimerDir() != null )
+//			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostPrimerDir() + ":" + DOCKER_PRIMER_DIR + ":ro";
 
-		if( RuntimeParamUtil.getDockerHostBLJ() != null ) dockerVolumes +=
-			" -v " + RuntimeParamUtil.getDockerHostBLJ().getAbsolutePath() + ":" + CONTAINER_BLJ_DIR + ":ro";
+		// if --blj was used for launch_docker, then it mapped the blj volume, and now thats part of the set.
+//		if( RuntimeParamUtil.getDockerHostBLJ() != null ) dockerVolumes +=
+//			" -v " + RuntimeParamUtil.getDockerHostBLJ().getAbsolutePath() + ":" + CONTAINER_BLJ_DIR + ":ro";
 
-		if( RuntimeParamUtil.getDockerHostBLJ_SUP() != null ) dockerVolumes +=
-			" -v " + RuntimeParamUtil.getDockerHostBLJ_SUP().getAbsolutePath() + ":" + CONTAINER_BLJ_SUP_DIR + ":ro";
+		// TODO - no more blj_sup
+//		if( RuntimeParamUtil.getDockerHostBLJ_SUP() != null ) dockerVolumes +=
+//			" -v " + RuntimeParamUtil.getDockerHostBLJ_SUP().getAbsolutePath() + ":" + CONTAINER_BLJ_SUP_DIR + ":ro";
 
-		if( hasCustomDockerDB( module ) )
-			dockerVolumes += " -v " + getDbDirPath( (DatabaseModule) module ) + ":" + DOCKER_DB_DIR + ":ro";
+		// TODO - this dir is not special
+//		if( hasCustomDockerDB( module ) )
+//			dockerVolumes += " -v " + getDbDirPath( (DatabaseModule) module ) + ":" + DOCKER_DB_DIR + ":ro";
 
 		return dockerVolumes;
 	}
@@ -358,7 +380,7 @@ public class DockerUtil {
 		Log.info( DockerUtil.class, volumeMap.toString() );
 	}
 	
-	public static String containerizePath(String path) throws IOException, InterruptedException {
+	public static String containerizePath(String path) throws DockerVolCreationException  {
 		TreeMap<String, String> vmap = getVolumeMap();
 		String innerPath = path;
 		for (String s : vmap.keySet()) {
@@ -370,6 +392,19 @@ public class DockerUtil {
 		return innerPath;
 	}
 	
+	public static String deContainerizePath(String innerPath) throws DockerVolCreationException {
+		TreeMap<String, String> vmap;
+		vmap = getVolumeMap();
+		String hostPath = innerPath;
+		for (String s : vmap.keySet()) {
+			if ( innerPath.startsWith( vmap.get( s ) ) ) {
+				hostPath = hostPath.replaceFirst( vmap.get( s ), s );
+				break;
+			}
+		}
+		return hostPath;
+	}
+	
 	public static String getDockerInforCmd(){
 		return "curl --unix-socket /var/run/docker.sock http:/v1.38/containers/" + getHostName() + "/json";
 	}
@@ -378,10 +413,22 @@ public class DockerUtil {
 		return Config.replaceEnvVar( "${HOSTNAME}" );
 	}
 	
-	public static TreeMap<String, String> getVolumeMap() throws IOException, InterruptedException{
+	public static TreeMap<String, String> getVolumeMap() throws DockerVolCreationException {
 		if ( volumeMap == null ) {
-			makeVolMap();
+			try {
+				makeVolMap();
+			} catch( IOException | InterruptedException e ) {
+				throw new DockerVolCreationException(e);
+			}
 		}
+		return volumeMap;
+	}
+
+	/**
+	 * Method for diagnosing exceptions; only used by DockerVolumeException
+	 * @return
+	 */
+	public static TreeMap<String, String> backdoorGetVolumeMap() {
 		return volumeMap;
 	}
 

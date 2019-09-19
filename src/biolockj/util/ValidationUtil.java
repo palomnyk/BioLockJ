@@ -13,12 +13,10 @@ package biolockj.util;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import biolockj.*;
 import biolockj.exception.*;
@@ -126,7 +124,7 @@ public class ValidationUtil {
 			this.md5 = md5sum;
 		}
 
-		protected String getAtt( final String col ) {
+		protected String getAtt( final String col ) throws DockerVolCreationException {
 			switch( col ) {
 				case NAME:
 					return fileNameToKey( getName() );
@@ -293,8 +291,9 @@ public class ValidationUtil {
 	 * 
 	 * @param fileName
 	 * @return
+	 * @throws DockerVolCreationException 
 	 */
-	private static String fileNameToKey( final String fileName ) {
+	private static String fileNameToKey( final String fileName ) throws DockerVolCreationException {
 		final String pipePrifix = RuntimeParamUtil.getProjectName();
 		String key = fileName.replaceAll( pipePrifix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
 		if( key.equals( fileName ) )

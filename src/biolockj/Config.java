@@ -132,12 +132,13 @@ public class Config {
 	 * @param property Property name
 	 * @return File directory or null
 	 * @throws ConfigPathException if path is defined but is not an existing file
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getExistingDir( final BioModule module, final String property ) throws ConfigPathException {
+	public static File getExistingDir( final BioModule module, final String property ) throws ConfigPathException, DockerVolCreationException {
 		final File f = getExistingFileObject( getString( module, property ) );
 		if( f != null && !f.isDirectory() ) throw new ConfigPathException( property, ConfigPathException.DIRECTORY );
 
-		if( props != null && f != null ) Config.setConfigProperty( property, f.getAbsolutePath() );
+		if( props != null && f != null ) Config.setFilePathProperty( property, f.getAbsolutePath() );
 
 		return f;
 	}
@@ -149,8 +150,9 @@ public class Config {
 	 * @param property Property name
 	 * @return File (not directory) or null
 	 * @throws ConfigPathException if path is defined but is not an existing file
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getExistingFile( final BioModule module, final String property ) throws ConfigPathException {
+	public static File getExistingFile( final BioModule module, final String property ) throws ConfigPathException, DockerVolCreationException {
 		File f = getExistingFileObject( getString( module, property ) );
 		if( f != null && !f.isFile() ) if( f.isDirectory() && f.list( HiddenFileFilter.VISIBLE ).length == 1 ) {
 			Log.warn( Config.class,
@@ -158,7 +160,7 @@ public class Config {
 			f = new File( f.list( HiddenFileFilter.VISIBLE )[ 0 ] );
 		} else throw new ConfigPathException( property, ConfigPathException.FILE );
 
-		if( props != null && f != null ) Config.setConfigProperty( property, f.getAbsolutePath() );
+		if( props != null && f != null ) Config.setFilePathProperty( property, f.getAbsolutePath() );
 
 		return f;
 	}
@@ -479,9 +481,10 @@ public class Config {
 	 * @return File directory
 	 * @throws ConfigPathException if path is defined but is not an existing file
 	 * @throws ConfigNotFoundException if property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static File requireExistingDir( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final File f = getExistingDir( module, property );
 		if( f == null ) throw new ConfigNotFoundException( property );
 
@@ -496,9 +499,10 @@ public class Config {
 	 * @return List of File directories
 	 * @throws ConfigPathException if directory paths are undefined or do not exist
 	 * @throws ConfigNotFoundException if a required property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static List<File> requireExistingDirs( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final List<File> returnDirs = new ArrayList<>();
 		for( final String d: requireSet( module, property ) ) {
 			final File dir = getExistingFileObject( d );
@@ -520,9 +524,10 @@ public class Config {
 	 * @return File with filename defined by property
 	 * @throws ConfigPathException if path is defined but is not an existing file
 	 * @throws ConfigNotFoundException if property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static File requireExistingFile( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final File f = getExistingFile( module, property );
 		if( f == null ) throw new ConfigNotFoundException( property );
 		return f;
@@ -650,6 +655,11 @@ public class Config {
 		}
 	}
 
+	public static void setFilePathProperty(final String name, String val) throws DockerVolCreationException {
+		if ( DockerUtil.inDockerEnv() ) val = DockerUtil.deContainerizePath( val );
+		setConfigProperty(name, val);
+	}
+	
 	/**
 	 * Sets a property value in the props cache
 	 *
@@ -672,9 +682,10 @@ public class Config {
 	 * Set the root pipeline directory path
 	 * 
 	 * @param dir Pipeline directory path
+	 * @throws DockerVolCreationException 
 	 */
-	public static void setPipelineDir( final File dir ) {
-		setConfigProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
+	public static void setPipelineDir( final File dir ) throws DockerVolCreationException {
+		setFilePathProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
 		pipelineDir = dir;
 		System.out.println( Constants.PIPELINE_LOCATION_KEY + pipelineDir.getAbsolutePath());
 	}
@@ -685,9 +696,13 @@ public class Config {
 	 * @param filePath File path
 	 * @return File or null
 	 * @throws ConfigPathException if path is defined but is not found on the file system
+	 * @throws DockerVolCreationException 
 	 */
-	protected static File getExistingFileObject( final String filePath ) throws ConfigPathException {
+	protected static File getExistingFileObject( String filePath ) throws ConfigPathException, DockerVolCreationException {
 		if( filePath != null ) {
+			if ( DockerUtil.inDockerEnv() ) {
+				filePath = DockerUtil.containerizePath( filePath );
+			} 
 			final File f = new File( filePath );
 			if( f.exists() ) return f;
 			throw new ConfigPathException( f );
@@ -759,8 +774,8 @@ public class Config {
 		try {
 			if( bashVarMap.get( bashVar ) != null ) return bashVarMap.get( bashVar );
 			String bashVal = props == null ? null: props.getProperty( stripBashMarkUp( bashVar ) );
-			if( DockerUtil.inDockerEnv() && stripBashMarkUp( bashVar ).equals( "HOME" ) )
-				bashVal = RuntimeParamUtil.getDockerHostHomeDir();
+			if( stripBashMarkUp( bashVar ).equals( "HOME" ) )
+				bashVal = RuntimeParamUtil.getHomeDir().getAbsolutePath();
 			else if( bashVal == null || bashVal.trim().isEmpty() ) if( bashVar.equals( BLJ_BASH_VAR ) ) {
 				final File blj = BioLockJUtil.getBljDir();
 				if( blj != null && blj.isDirectory() ) bashVal = blj.getAbsolutePath();

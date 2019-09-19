@@ -117,7 +117,6 @@ blj_options() {
 	else # on host machine
 		# -i is required if not launching the WebApp GUI 
 		options="-u ${HOME} -b ${BLJ_PROJ} -h $(hostname)"
-		options="${options} -i ${inputDir}" # TODO - java shouldn't need this
 		ifArgUsed $BLJ_ARG && options="${options} -blj ${BLJ}"
 		#ifArgUsed $BLJ_SUP_ARG && options="${options} -blj_sup ${blj_sup}"
 		ifArgUsed $GUI_ARG && echo "${options}" && return

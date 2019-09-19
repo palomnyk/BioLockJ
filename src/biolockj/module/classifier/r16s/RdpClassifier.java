@@ -79,7 +79,7 @@ public class RdpClassifier extends ClassifierModuleImpl {
 	}
 
 	@Override
-	public File getDB() throws ConfigPathException, ConfigNotFoundException {
+	public File getDB() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		if( Config.getString( this, RDP_DB ) != null ) {
 			if( DockerUtil.inDockerEnv() ) return new File( Config.getString( this, RDP_DB ) );
 			return Config.requireExistingFile( this, RDP_DB );
@@ -111,7 +111,7 @@ public class RdpClassifier extends ClassifierModuleImpl {
 		return lines;
 	}
 
-	private String getDbParam() throws ConfigPathException, ConfigNotFoundException {
+	private String getDbParam() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		if( getDB() == null ) return "";
 		return DB_PARAM + " " +
 			( DockerUtil.inDockerEnv() ?

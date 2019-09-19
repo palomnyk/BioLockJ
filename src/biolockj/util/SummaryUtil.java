@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import biolockj.*;
+import biolockj.exception.DockerVolCreationException;
 import biolockj.module.BioModule;
 import biolockj.module.ScriptModule;
 
@@ -706,12 +707,11 @@ public class SummaryUtil {
 		return label + ":  ";
 	}
 
-	private static String getRuntimeEnv() {
+	private static String getRuntimeEnv() throws DockerVolCreationException {
 		if( runtimeEnv != null ) return runtimeEnv;
 		String parentHost = null;
 		String host = null;
-		String user = DockerUtil.inDockerEnv() ? RuntimeParamUtil.getDockerHostHomeDir():
-			RuntimeParamUtil.getHomeDir().getAbsolutePath();
+		String user = RuntimeParamUtil.getHomeDir(false).getAbsolutePath();
 		user = user.substring( user.lastIndexOf( File.separator ) + 1 );
 		try {
 			host = Processor.submitQuery( "hostname", "Query Host" );

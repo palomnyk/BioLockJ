@@ -303,15 +303,9 @@ public class BioLockJUtil {
 	 * @return List of system directory file paths
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system "N" value
+	 * @throws DockerVolCreationException 
 	 */
-	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) {
-			final File dir = DockerUtil.getDockerVolumeDir( Constants.INPUT_DIRS, DockerUtil.DOCKER_INPUT_DIR );
-			Log.debug( BioLockJUtil.class, "Docker input dir --> " + dir.getAbsolutePath() );
-			final List<File> dirs = new ArrayList<>();
-			dirs.add( dir );
-			return dirs;
-		}
+	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		return Config.requireExistingDirs( null, Constants.INPUT_DIRS );
 	}
 
@@ -411,9 +405,10 @@ public class BioLockJUtil {
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system
 	 * @throws ConfigViolationException if input directories contain duplicate file names
+	 * @throws DockerVolCreationException 
 	 */
 	public static void initPipelineInput()
-		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException {
+		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException, DockerVolCreationException {
 		Collection<File> files = new HashSet<>();
 		for( final File dir: getInputDirs() ) {
 			Log.info( BioLockJUtil.class, "Found pipeline input dir " + dir.getAbsolutePath() );

@@ -82,8 +82,9 @@ public class BashScriptBuilder {
 	 * @param module ScriptModule
 	 * @throws IOException if errors occur writing the MAIN script lines
 	 * @throws ConfigException if problems occur accessing {@link biolockj.Config} properties
+	 * @throws DockerVolCreationException 
 	 */
-	protected static void buildMainScript( final ScriptModule module ) throws ConfigException, IOException {
+	protected static void buildMainScript( final ScriptModule module ) throws ConfigException, IOException, DockerVolCreationException {
 
 		final List<String> mainScriptLines = initMainScript( module );
 		for( final File worker: workerScripts )
@@ -190,8 +191,9 @@ public class BashScriptBuilder {
 	 * @return List of lines for the main script that has the prefix
 	 * {@value biolockj.module.ScriptModule#MAIN_SCRIPT_PREFIX}
 	 * @throws ConfigException if errors occur accessing {@link biolockj.Config} properties
+	 * @throws DockerVolCreationException 
 	 */
-	protected static List<String> initMainScript( final ScriptModule module ) throws ConfigException {
+	protected static List<String> initMainScript( final ScriptModule module ) throws ConfigException, DockerVolCreationException {
 		final List<String> lines = new ArrayList<>();
 		final String mainScriptPath = getMainScriptPath( module );
 		final String header = Config.getString( module, Constants.SCRIPT_DEFAULT_HEADER );

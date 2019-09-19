@@ -52,8 +52,12 @@ public class FatalExceptionHandler {
 		if( getErrorLog() != null ) {
 			Log.info( FatalExceptionHandler.class,
 				"Local file-system error log path: " + getErrorLog().getAbsolutePath() );
-			if( DockerUtil.inDockerEnv() ) Log.info( FatalExceptionHandler.class, "Host file-system error log path: " +
-				RuntimeParamUtil.getDockerHostHomeDir() + File.separator + getErrorLog().getName() );
+			if( DockerUtil.inDockerEnv() ) try{
+				Log.info( FatalExceptionHandler.class, "Host file-system error log path: " + 
+				RuntimeParamUtil.getHomeDir(false) + File.separator + getErrorLog().getName() );
+			}catch(DockerVolCreationException docEx) {
+				// well, then, don't do that.
+			}
 			if( !getErrorLog().isFile() ) dumpLogs( getLogs() );
 		} else {
 			Log.warn( FatalExceptionHandler.class, "Unable to save logs to file-system: " );
@@ -95,10 +99,16 @@ public class FatalExceptionHandler {
 	}
 
 	private static File getErrorLogDir() {
-		File dir = RuntimeParamUtil.get_BLJ_PROJ();
-		if( dir == null || !dir.isDirectory() )
-			if( DockerUtil.inDockerEnv() ) dir = new File( DockerUtil.AWS_EC2_HOME );
-			else dir = RuntimeParamUtil.getHomeDir();
+		File dir = null;
+		try {
+			dir = RuntimeParamUtil.get_BLJ_PROJ();
+			if( dir == null || !dir.isDirectory() ) {
+				if( DockerUtil.inDockerEnv() ) dir = new File( DockerUtil.AWS_EC2_HOME );
+				else dir = RuntimeParamUtil.getHomeDir();
+			}
+		} catch( DockerVolCreationException docEx ) {
+			// well then don't do that.
+		}
 
 		if( dir == null || !dir.isDirectory() ) {
 			final String path = Config.replaceEnvVar( "${HOME}" );
@@ -114,9 +124,15 @@ public class FatalExceptionHandler {
 	}
 
 	private static String getErrorLogSuffix() {
+		File config = null;
+		try {
+			config = RuntimeParamUtil.getConfigFile();
+		}catch(DockerVolCreationException docEx) {
+			// well then don't do that.
+		}
 		if( BioLockJUtil.isDirectMode() ) return RuntimeParamUtil.getDirectModuleDir();
 		else if( Config.pipelineName() != null ) return Config.pipelineName();
-		else if( RuntimeParamUtil.getConfigFile() != null ) return RuntimeParamUtil.getConfigFile().getName();
+		else if( config != null ) return config.getName();
 		return "Unknown_Config";
 	}
 

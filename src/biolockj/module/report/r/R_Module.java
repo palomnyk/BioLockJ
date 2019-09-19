@@ -19,6 +19,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import biolockj.*;
 import biolockj.exception.ConfigPathException;
 import biolockj.exception.ConfigViolationException;
+import biolockj.exception.DockerVolCreationException;
 import biolockj.module.ScriptModuleImpl;
 import biolockj.module.report.humann2.AddMetadataToPathwayTables;
 import biolockj.module.report.taxa.AddMetadataToTaxaTables;
@@ -269,7 +270,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 		return Constants.RSCRIPT;
 	}
 
-	private void verifyColorFileFormat() throws ConfigPathException, IOException, ConfigViolationException {
+	private void verifyColorFileFormat() throws ConfigPathException, IOException, ConfigViolationException, DockerVolCreationException {
 		final File colorFile = Config.getExistingFile( this, R_COLOR_FILE );
 		if( colorFile != null ) {
 			final BufferedReader br = BioLockJUtil.getFileReader( colorFile );

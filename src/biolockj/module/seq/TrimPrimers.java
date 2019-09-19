@@ -542,8 +542,9 @@ public class TrimPrimers extends JavaModuleImpl implements SeqModule {
 	 * @return File with sequence primers
 	 * @throws ConfigPathException if primer file path is defined but does not exist on file system
 	 * @throws ConfigNotFoundException if primer property is undefined
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getSeqPrimerFile() throws ConfigNotFoundException, ConfigPathException {
+	public static File getSeqPrimerFile() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		if( DockerUtil.inDockerEnv() ) {
 			final File primers =
 				DockerUtil.getDockerVolumeFile( Constants.INPUT_TRIM_SEQ_FILE, DockerUtil.DOCKER_PRIMER_DIR );
