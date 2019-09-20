@@ -480,6 +480,12 @@ public class Constants {
 	 * Used to indicate running on a local machine (laptop, etc): {@value #PIPELINE_ENV_LOCAL}
 	 */
 	public static final String PIPELINE_ENV_LOCAL = "local";
+	
+	/**
+	 * Indicator for related programs (bash code, sheepdog_testing_suite) of the pipelines path: {@value #PIPELINE_LOCATION_KEY}
+	 * @sheepdog_testing_suite
+	 */
+	public static final String PIPELINE_LOCATION_KEY = "Pipeline root directory: ";
 
 	/**
 	 * {@link biolockj.Config} property to assign a name to a pipeline: {@value #PIPELINE_NAME} TODO: needs to be

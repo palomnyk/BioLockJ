@@ -676,6 +676,7 @@ public class Config {
 	public static void setPipelineDir( final File dir ) {
 		setConfigProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
 		pipelineDir = dir;
+		System.out.println( Constants.PIPELINE_LOCATION_KEY + pipelineDir.getAbsolutePath());
 	}
 
 	/**
