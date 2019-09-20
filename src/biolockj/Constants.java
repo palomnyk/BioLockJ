@@ -745,6 +745,11 @@ public class Constants {
 	 * BioLockJ main() runtime arg used to print version info: {@value #VERSION}
 	 */
 	public static final String VERSION = "version";
+	
+	/**
+	 * String used by sheepdog_testing_suite to assert that validation is enabled: {@value #VALIDATION_ENABLED}.
+	 */
+	public static final String VALIDATION_ENABLED = "This pipeline has validation enabled.";
 
 	/**
 	 * {@link biolockj.Config} property to define permission settings when running chmod on pipeline root dir:
