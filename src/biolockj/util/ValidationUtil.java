@@ -468,6 +468,28 @@ public class ValidationUtil {
 			throw e;
 		}
 	}
+	
+	/**
+	 * Print a message (and return boolean) to indicate that this pipeline has validation enabled.
+	 * This makes a biolockj_complete much more meaningful, because we know the pipeline met some 
+	 * expectation regarding the output it produced.
+	 * @sheepdog_testing_suite
+	 * @param printStdOut
+	 * @return
+	 */
+	public static boolean hasStrictValidation(boolean printStdOut) {
+		try {
+			if (Config.getBoolean( null, "validation.stopPipeline" )
+							&& !Config.getBoolean( null, "validation.disableValidation" )
+							&& Config.getString( null, "validation.expectationFile" ) != null ) {
+				if (printStdOut) System.out.println(Constants.VALIDATION_ENABLED);
+				return( true );
+			}
+		} catch( ConfigFormatException e ) {
+			e.printStackTrace();
+		}
+		return( false );
+	}
 
 	/**
 	 * {@link biolockj.Config} String property giving the file path that gives the expected values for file metrics.

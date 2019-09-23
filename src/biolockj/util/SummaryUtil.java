@@ -790,7 +790,7 @@ public class SummaryUtil {
 	private static final String PIPELINE_NAME = "Pipeline Name";
 	private static final String PIPELINE_OUTPUT = "Pipeline Output";
 	private static final String PIPELINE_RUNTIME = "Pipeline Runtime";
-	private static final String PIPELINE_STATUS = "Pipeline Status";
+	public static final String PIPELINE_STATUS = "Pipeline Status";
 	private static final String RETURN = Constants.RETURN;
 	private static final String RUN_TIME = "Runtime";
 	private static final String RUNTIME_ENV = "Runtime Env";

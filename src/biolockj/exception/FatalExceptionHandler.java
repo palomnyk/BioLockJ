@@ -39,6 +39,8 @@ public class FatalExceptionHandler {
 	 */
 	public static void logFatalError( final String[] args, final Exception ex ) {
 		System.out.println( "System encountered a FATAL ERROR" );
+		System.out.println( ERROR_TYPE + ex.getClass().getSimpleName() );
+		System.out.println( ERROR_MSG + ex.getMessage() );
 		if( Log.getFile() != null && Log.getFile().isFile() ) {
 			setErrorLog( Log.getFile() );
 			setFailedStatus();
@@ -163,4 +165,6 @@ public class FatalExceptionHandler {
 
 	private static File errorLog = null;
 	private static final String FATAL_ERROR_FILE_PREFIX = "BioLockJ_FATAL_ERROR_";
+	public static final String ERROR_TYPE = "ERROR TYPE: ";
+	public static final String ERROR_MSG = "ERROR MESSAGE: ";
 }

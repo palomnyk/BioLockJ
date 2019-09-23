@@ -480,6 +480,12 @@ public class Constants {
 	 * Used to indicate running on a local machine (laptop, etc): {@value #PIPELINE_ENV_LOCAL}
 	 */
 	public static final String PIPELINE_ENV_LOCAL = "local";
+	
+	/**
+	 * Indicator for related programs (bash code, sheepdog_testing_suite) of the pipelines path: {@value #PIPELINE_LOCATION_KEY}
+	 * @sheepdog_testing_suite
+	 */
+	public static final String PIPELINE_LOCATION_KEY = "Pipeline root directory: ";
 
 	/**
 	 * {@link biolockj.Config} property to assign a name to a pipeline: {@value #PIPELINE_NAME} TODO: needs to be
@@ -745,6 +751,11 @@ public class Constants {
 	 * BioLockJ main() runtime arg used to print version info: {@value #VERSION}
 	 */
 	public static final String VERSION = "version";
+	
+	/**
+	 * String used by sheepdog_testing_suite to assert that validation is enabled: {@value #VALIDATION_ENABLED}.
+	 */
+	public static final String VALIDATION_ENABLED = "This pipeline has validation enabled.";
 
 	/**
 	 * {@link biolockj.Config} property to define permission settings when running chmod on pipeline root dir:
