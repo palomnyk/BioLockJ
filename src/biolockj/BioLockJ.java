@@ -27,6 +27,8 @@ import biolockj.util.*;
  * indicator file in the pipeline root directory.<br>
  */
 public class BioLockJ {
+	
+	private BioLockJ() {}
 
 	/**
 	 * Copy file to pipeline root directory.
@@ -222,7 +224,7 @@ public class BioLockJ {
 		if( f.isFile() ) f.delete();
 	}
 
-	protected static void pipelineShutDown() {
+	private static void pipelineShutDown() {
 
 		setPipelineSecurity();
 
@@ -296,7 +298,7 @@ public class BioLockJ {
 		}
 	}
 
-	protected static void setPipelineSecurity() {
+	private static void setPipelineSecurity() {
 		try {
 			Processor.setFilePermissions( Config.pipelinePath(), Config.getString( null, Constants.PIPELINE_PRIVS ) );
 		} catch( final Exception ex ) {
