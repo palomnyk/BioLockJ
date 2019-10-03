@@ -676,13 +676,10 @@ public class BioLockJUtil {
 	private static void printHelp() {
 		System.err.println( RETURN + "BioLockJ " + getVersion() + " java help menu:" );
 		System.err.println( "The BioLockJ.jar file is not intended to be called directly," + RETURN +
-			"it should be called through the biolockj command." );
-		System.err
-			.println( RETURN + "Developers: When calling java directly, the following parameters are recognized: " );
-		System.err.println( "Stand alone arguments:" + RETURN + Constants.HELP + Constants.TAB_DELIM +
-			"print this help menu" + RETURN + Constants.VERSION + Constants.TAB_DELIM + "print version number" );
+			"it should be called through the biolockj shell command." );
+		System.err.println( RETURN + "Developers: " );
 		RuntimeParamUtil.printArgsDescriptions();
-		System.err.println( RETURN + "Users: please use the biolockj command." );
+		System.err.println( RETURN + "Users:" + RETURN + "please use the biolockj command." );
 		System.err.println( "See: \"biolockj --help\" " );
 	}
 

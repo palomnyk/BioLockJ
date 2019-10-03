@@ -115,18 +115,13 @@ blj_options() {
 	if in_docker_env && [ ${#BLJ_OPTIONS} -gt 0 ]; then # in docker container 
 		options="${BLJ_OPTIONS}"
 	else # on host machine
-		# -i is required if not launching the WebApp GUI 
-		options="-u ${HOME} -b ${BLJ_PROJ} -h $(hostname)"
-		ifArgUsed $BLJ_ARG && options="${options} -blj ${BLJ}"
-		#ifArgUsed $BLJ_SUP_ARG && options="${options} -blj_sup ${blj_sup}"
+		options="-homeDir ${HOME} -projectDir ${BLJ_PROJ} -hostname $(hostname)"
 		ifArgUsed $GUI_ARG && echo "${options}" && return
 	fi	
-	ifDefined $restartDir && options="${options} -r $restartDir"
-	ifArgUsed $PASSWORD_ARG && options="${options} -p $newPass"
-	#ifDefined $metaPath && options="${options} -m $metaPath" # TODO - java shouldn't need this
-	#ifDefined $primerPath && options="${options} -t $primerPath" # TODO - java shouldn't need this
+	ifDefined $restartDir && options="${options} -restartDir $restartDir"
+	ifArgUsed $PASSWORD_ARG && options="${options} -password $newPass"
 	ifArgUsed $AWS_ARG && options="${options} -aws"
-	echo "${options} -c ${config}" # TODO - handle reset case in docker
+	echo "${options} -config ${config}" # TODO - handle reset case in docker
 }
 
 # Get mapped  Docker volumes

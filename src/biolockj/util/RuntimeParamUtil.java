@@ -290,15 +290,19 @@ public class RuntimeParamUtil {
 	 * TODO: PROBLEMATIC APPROACH TO SHOW ARGS BY PRINTING VARIABLES IN THIS METHOD
 	 */
 	public static void printArgsDescriptions() {
-		// TODO: Fill this in with descriptions here!
 		final String sep = ", ";
-		System.err.println( "long arg names:" + Constants.RETURN + String.join( sep, LONG_ARG_NAMES ) );
-		System.err.println( "arg names:" + Constants.RETURN + String.join( sep, NAMED_ARGS ) );
-		System.err.println( "flags:" + Constants.RETURN + String.join( sep, ARG_FLAGS ) );
-		System.err.println( "arguments for directories:" + Constants.RETURN + String.join( sep, DIR_ARGS ) );
-
-		System.err.println( Constants.RETURN + "See java docs for descriptions:" );
-		System.err.println( "https://msioda.github.io/BioLockJ/docs/biolockj/util/RuntimeParamUtil.html" );
+		System.err.println( "Usage: java -jar BioLockJ.jar <args>");
+		System.err.println( "To run the program, args MUST include one of: ");
+		System.err.println( String.join( sep, REQUIRED_ARGS ));
+		System.err.println( "Arguments"); 
+		System.err.println( "Named arguments for directories:");
+		System.err.println( String.join( sep, DIR_ARGS ) );
+		System.err.println( "Other named arguments:");
+		System.err.println( String.join( sep, NAMED_ARGS ) );
+		System.err.println( "Flags:");
+		System.err.println( String.join( sep, ARG_FLAGS ) );
+		System.err.println( "Info-only arguments:");
+		System.err.println( Constants.HELP + sep + Constants.VERSION );
 	}
 
 	/**
@@ -314,7 +318,7 @@ public class RuntimeParamUtil {
 	 */
 	public static void registerRuntimeParameters( final String[] args ) throws RuntimeParamException, DockerVolCreationException {
 		printRuntimeArgs( args );
-		parseParams( simplifyArgs( args ) );
+		parseParams( args );
 		//if( DockerUtil.inDockerEnv() ) reassignDockerConfig(); //TODO: should just take the host path given after -c
 		verify_BLJ_PROJ();
 
@@ -457,28 +461,28 @@ public class RuntimeParamUtil {
 //		params.put( HOME_DIR, DockerUtil.ROOT_HOME );
 //	}
 
-	private static String[] simplifyArgs( final String[] args ) {
-		final String[] simpleArgs = new String[ args.length ];
-		int i = 0;
-		String prevArg = "";
-		boolean foundConfig = false;
-
-		for( String arg: args ) {
-			if( LONG_ARG_NAMES.contains( arg ) || NAMED_ARGS.contains( prevArg ) || DIR_ARGS.contains( prevArg ) ||
-				i == args.length - 1 && !foundConfig ) simpleArgs[ i++ ] = arg;
-			else {
-				while( arg.startsWith( "--" ) )
-					arg = arg.substring( 1 );
-				if( !arg.startsWith( "-" ) ) arg = "-" + arg;
-				arg = arg.substring( 0, 2 );
-				simpleArgs[ i++ ] = arg;
-			}
-			prevArg = arg;
-			foundConfig = arg.equals( CONFIG_FILE ) || foundConfig;
-		}
-
-		return simpleArgs;
-	}
+//	private static String[] simplifyArgs( final String[] args ) {
+//		final String[] simpleArgs = new String[ args.length ];
+//		int i = 0;
+//		String prevArg = "";
+//		boolean foundConfig = false;
+//
+//		for( String arg: args ) {
+//			if( LONG_ARG_NAMES.contains( arg ) || NAMED_ARGS.contains( prevArg ) || DIR_ARGS.contains( prevArg ) ||
+//				i == args.length - 1 && !foundConfig ) simpleArgs[ i++ ] = arg;
+//			else {
+//				while( arg.startsWith( "--" ) )
+//					arg = arg.substring( 1 );
+//				if( !arg.startsWith( "-" ) ) arg = "-" + arg;
+//				arg = arg.substring( 0, 2 );
+//				simpleArgs[ i++ ] = arg;
+//			}
+//			prevArg = arg;
+//			foundConfig = arg.equals( CONFIG_FILE ) || foundConfig;
+//		}
+//
+//		return simpleArgs;
+//	}
 
 	private static void validateParams() throws RuntimeParamException, DockerVolCreationException {
 //		if( DockerUtil.inDockerEnv() && getDockerHostHomeDir() == null )
@@ -506,27 +510,33 @@ public class RuntimeParamUtil {
 	/**
 	 * {@link biolockj.Config} AWS end parameter switch: {@value #AWS_FLAG}
 	 */
-	public static final String AWS_FLAG = "-a";
+	public static final String AWS_FLAG = "-aws";
 
 	/**
 	 * Automatically added $BLJ_PROJ by biolockj script: {@value #BLJ_PROJ_DIR}
 	 */
-	protected static final String BLJ_PROJ_DIR = "-b";
+	protected static final String BLJ_PROJ_DIR = "-projectDir";
 
 	/**
 	 * {@link biolockj.Config} file path runtime parameter switch: {@value #CONFIG_FILE}
 	 */
-	protected static final String CONFIG_FILE = "-c";
+	protected static final String CONFIG_FILE = "-config";
 
 	/**
 	 * Direct mode runtime parameter switch: {@value #DIRECT_MODE}
 	 */
-	protected static final String DIRECT_MODE = "-d";
+	protected static final String DIRECT_MODE = "-direct";
+	
+	/**
+	 * Used internally when in direct mode, 
+	 * stores the name of the pipeline after it is extracted from the {@value DIRECT_MODE} runtime parameter.
+	 */
+	private static final String DIRECT_PIPELINE_DIR = "--pipeline-dir";
 
 	/**
 	 * Automatically added $HOME by biolockj/dockblj script: {@value #HOME_DIR}
 	 */
-	protected static final String HOME_DIR = "-u";
+	protected static final String HOME_DIR = "-homeDir";
 
 //	/**
 //	 * Host BioLockJ directory used to override installed $BLJ in Docker containers: {@value #HOST_BLJ_DIR}
@@ -557,7 +567,7 @@ public class RuntimeParamUtil {
 	/**
 	 * Automatically added $(hostname) by biolockj/dockblj script: {@value #HOSTNAME}
 	 */
-	protected static final String HOSTNAME = "-h";
+	protected static final String HOSTNAME = "-hostname";
 
 //	/**
 //	 * Input directory file-path runtime parameter switch: {@value #INPUT_DIR}
@@ -572,7 +582,7 @@ public class RuntimeParamUtil {
 	/**
 	 * Change password runtime parameter switch: {@value #PASSWORD}
 	 */
-	protected static final String PASSWORD = "-p";
+	protected static final String PASSWORD = "-password";
 
 //	/**
 //	 * Primer file directory path runtime parameter switch: {@value #PRIMER_DIR}
@@ -582,21 +592,20 @@ public class RuntimeParamUtil {
 	/**
 	 * Restart pipeline runtime parameter switch: {@value #RESTART_DIR}
 	 */
-	protected static final String RESTART_DIR = "-r";
+	protected static final String RESTART_DIR = "-restartDir";
 
 	/**
 	 * Log to System.out instead of Log for debug early runtime errors with switch: {@value #SYSTEM_OUT_FLAG}
 	 */
-	protected static final String SYSTEM_OUT_FLAG = "-s";
+	protected static final String SYSTEM_OUT_FLAG = "-systemOut";
 
 	private static final List<String> ARG_FLAGS = Arrays.asList( AWS_FLAG, SYSTEM_OUT_FLAG );
 	private static final List<String> BLJ_CONTROLLER_ONLY_ARGS =
 		Arrays.asList( BLJ_PROJ_DIR, CONFIG_FILE, HOME_DIR, PASSWORD, RESTART_DIR, HOSTNAME );
 	private static final List<String> DIR_ARGS = Arrays.asList( BLJ_PROJ_DIR, HOME_DIR, RESTART_DIR );
-	private static final String DIRECT_PIPELINE_DIR = "--pipeline-dir";
 	private static final List<String> extraParams = new ArrayList<>();
-	private static final List<String> LONG_ARG_NAMES = Arrays.asList( DIRECT_PIPELINE_DIR );
 	private static final List<String> NAMED_ARGS = Arrays.asList( CONFIG_FILE, DIRECT_MODE, HOSTNAME, PASSWORD );
+	private static final List<String> REQUIRED_ARGS = Arrays.asList(CONFIG_FILE, RESTART_DIR, DIRECT_MODE);
 	private static final Map<String, String> params = new HashMap<>();
 	private static String runtimeArgs = "";
 }
