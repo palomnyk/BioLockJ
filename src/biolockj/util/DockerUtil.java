@@ -13,6 +13,7 @@ package biolockj.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -47,18 +48,41 @@ public class DockerUtil {
 	 * @throws ConfigPathException If mounted Docker volumes are not found on host or container file-system
 	 * @throws DockerVolCreationException 
 	 */
-	public static List<String> buildSpawnDockerContainerFunction( final BioModule module )
+	public static List<String> buildSpawnDockerContainerFunction( final BioModule module, final String startedFlag )
 		throws ConfigViolationException, ConfigNotFoundException, ConfigFormatException, ConfigPathException, DockerVolCreationException {
+		String tempDir = module.getTempDir().getAbsolutePath();
+		Log.info( DockerUtil.class, "tempDir String: " + tempDir);
 		final List<String> lines = new ArrayList<>();
-		final String cmd = Config.getExe( module, Constants.EXE_DOCKER ) + " run " + rmFlag( module ) +
-			getDockerEnvVars() + " " + getDockerVolumes( module ) + getDockerImage( module );
-		Log.debug( DockerUtil.class, "----> Docker CMD:" + cmd );
 		lines.add( "# Spawn Docker container" );
 		lines.add( "function " + SPAWN_DOCKER_CONTAINER + "() {" );
-		lines.add( cmd );
-		lines.add( "echo \"Docker container " + module.getClass().getSimpleName() + " execution complete\"" );
+		lines.add(  SCRIPT_ID_VAR + "=$(basename $1)");
+		lines.add(  ID_VAR + "=$(" + Config.getExe( module, Constants.EXE_DOCKER ) + " run " + DOCKER_DETACHED_FLAG + " "+ rmFlag( module ) + WRAP_LINE );
+		lines.addAll(  getDockerVolumes( module )); 
+		lines.add(  getDockerImage( module ) + WRAP_LINE );
+		lines.add( "$(/bin/bash $1 &> " + tempDir + "/${" + SCRIPT_ID_VAR + "}.log ) )" );
+		lines.add( "echo \"Launched docker image: " + getDockerImage( module ) + "\"" );
+		lines.add( "echo \"To execute module: " + module.getClass().getSimpleName() + "\"" );
+		lines.add( "echo \"Docker container id: $" + ID_VAR + "\"" );
+		lines.add( "echo \"$" + ID_VAR + "\" > " + startedFlag );
 		lines.add( "}" + Constants.RETURN );
 		return lines;
+	}
+	
+	private static List<String> getDockerVolumes( final BioModule module )
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
+		Log.debug( DockerUtil.class, "Assign Docker volumes for module: " + module.getClass().getSimpleName() );
+
+		final List<String> dockerVolumes = new ArrayList<>();
+		dockerVolumes.add( " -v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET  + WRAP_LINE);
+		dockerVolumes.add( " -v " + RuntimeParamUtil.get_BLJ_PROJ( false ) + ":" + DOCKER_PIPELINE_DIR + ":delegated" + WRAP_LINE );
+		for ( String key : volumeMap.keySet() ) {
+			if ( key.equals( DOCKER_SOCKET ) ) continue;
+			if ( volumeMap.get( key ).equals( DOCKER_PIPELINE_DIR ) ) continue;
+			dockerVolumes.add( " -v " + key + ":" + volumeMap.get( key ) + ":ro" + WRAP_LINE );
+		}
+		
+		Log.debug( DockerUtil.class, "Passed along volumes: " + dockerVolumes );
+		return dockerVolumes;
 	}
 
 	/**
@@ -139,39 +163,39 @@ public class DockerUtil {
 		return user;
 	}
 
-	/**
-	 * Get mapped Docker system File from {@link biolockj.Config} directory-property by replacing the host system path
-	 * with the mapped container path.
-	 * 
-	 * @param prop {@link biolockj.Config} directory-property
-	 * @param containerPath Local container path
-	 * @return Docker volume directory or null
-	 * @throws ConfigNotFoundException if prop not found
-	 * @throws ConfigPathException if path is defined but is not an existing directory
-	 */
-	public static File getDockerVolumeDir( final String prop, final String containerPath )
-		throws ConfigPathException, ConfigNotFoundException {
-		final String path = Config.requireString( null, prop );
-		final File dir = inAwsEnv() ? getDockerVolumePath( path, containerPath ): new File( containerPath );
-		if( !dir.isDirectory() ) throw new ConfigPathException( dir );
-		Log.info( BioLockJUtil.class, "Replace Config directory path \"" + path + "\" with Docker container path \"" +
-			dir.getAbsolutePath() + "\"" );
-		return dir;
-	}
+//	/**
+//	 * Get mapped Docker system File from {@link biolockj.Config} directory-property by replacing the host system path
+//	 * with the mapped container path.
+//	 * 
+//	 * @param prop {@link biolockj.Config} directory-property
+//	 * @param containerPath Local container path
+//	 * @return Docker volume directory or null
+//	 * @throws ConfigNotFoundException if prop not found
+//	 * @throws ConfigPathException if path is defined but is not an existing directory
+//	 */
+//	public static File getDockerVolumeDir( final String prop, final String containerPath )
+//		throws ConfigPathException, ConfigNotFoundException {
+//		final String path = Config.requireString( null, prop );
+//		final File dir = inAwsEnv() ? getDockerVolumePath( path, containerPath ): new File( containerPath );
+//		if( !dir.isDirectory() ) throw new ConfigPathException( dir );
+//		Log.info( BioLockJUtil.class, "Replace Config directory path \"" + path + "\" with Docker container path \"" +
+//			dir.getAbsolutePath() + "\"" );
+//		return dir;
+//	}
 
-	/**
-	 * Get mapped Docker system File from {@link biolockj.Config} file-property by replacing the host system path with
-	 * the mapped container path.
-	 * 
-	 * @param prop {@link biolockj.Config} file-property
-	 * @param containerPath Local container path
-	 * @return Docker volume file or null
-	 * @throws ConfigNotFoundException if prop not found
-	 */
-	public static File getDockerVolumeFile( final String prop, final String containerPath )
-		throws ConfigNotFoundException {
-		return getDockerVolumePath( Config.requireString( null, prop ), containerPath );
-	}
+//	/**
+//	 * Get mapped Docker system File from {@link biolockj.Config} file-property by replacing the host system path with
+//	 * the mapped container path.
+//	 * 
+//	 * @param prop {@link biolockj.Config} file-property
+//	 * @param containerPath Local container path
+//	 * @return Docker volume file or null
+//	 * @throws ConfigNotFoundException if prop not found
+//	 */
+//	public static File getDockerVolumeFile( final String prop, final String containerPath )
+//		throws ConfigNotFoundException {
+//		return getDockerVolumePath( Config.requireString( null, prop ), containerPath );
+//	}
 
 	/**
 	 * Get Docker file path through mapped volume
@@ -301,62 +325,6 @@ public class DockerUtil {
 			R_Module.class.getSimpleName(): module instanceof JavaModule ? JavaModule.class.getSimpleName(): className;
 	}
 
-	private static String getDockerEnvVars() {
-		return " -e \"" + COMPUTE_SCRIPT + "=$1\"";
-	}
-
-	private static String getDockerVolumes( final BioModule module )
-	// TODO - metadata, primers, input... there are no special directories. 
-	// All files specified in the config file are handled the same way.
-		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
-		Log.debug( DockerUtil.class, "Assign Docker volumes for module: " + module.getClass().getSimpleName() );
-
-		String dockerVolumes = "-v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET;
-		dockerVolumes += " -v " + RuntimeParamUtil.get_BLJ_PROJ( false ) + ":" + DOCKER_PIPELINE_DIR + ":delegated";
-		for ( String key : volumeMap.keySet() ) {
-			if ( key.equals( DOCKER_SOCKET ) ) continue;
-			if ( key.equals( RuntimeParamUtil.BLJ_PROJ_DIR ) ) continue;
-			dockerVolumes += " -v " + key + ":" + volumeMap.get( key ) + ":ro";
-		}
-		
-		Log.debug( DockerUtil.class, "Passed along volumes: " + dockerVolumes );
-
-		
-//		String dockerVolumes = "-v " + DOCKER_SOCKET + ":" + DOCKER_SOCKET + " -v " +
-//			RuntimeParamUtil.getDockerHostHomeDir() + ":" + AWS_EC2_HOME + ":delegated";
-//
-//		if( inAwsEnv() )
-//			return dockerVolumes + " -v " + DOCKER_BLJ_MOUNT_DIR + ":" + DOCKER_BLJ_MOUNT_DIR + ":delegated";
-
-		// TODO - this dir is not special
-		//dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostInputDir() + ":" + DOCKER_INPUT_DIR + ":ro";
-//		
-//		dockerVolumes +=
-//			" -v " + RuntimeParamUtil.getDockerHostPipelineDir() + ":" + DOCKER_PIPELINE_DIR + ":delegated";
-//		dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostConfigDir() + ":" + DOCKER_CONFIG_DIR + ":ro";
-
-//		if( RuntimeParamUtil.getDockerHostMetaDir() != null )
-//			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostMetaDir() + ":" + DOCKER_META_DIR + ":ro";
-
-		// TODO - this dir is not special
-//		if( RuntimeParamUtil.getDockerHostPrimerDir() != null )
-//			dockerVolumes += " -v " + RuntimeParamUtil.getDockerHostPrimerDir() + ":" + DOCKER_PRIMER_DIR + ":ro";
-
-		// if --blj was used for launch_docker, then it mapped the blj volume, and now thats part of the set.
-//		if( RuntimeParamUtil.getDockerHostBLJ() != null ) dockerVolumes +=
-//			" -v " + RuntimeParamUtil.getDockerHostBLJ().getAbsolutePath() + ":" + CONTAINER_BLJ_DIR + ":ro";
-
-		// TODO - no more blj_sup
-//		if( RuntimeParamUtil.getDockerHostBLJ_SUP() != null ) dockerVolumes +=
-//			" -v " + RuntimeParamUtil.getDockerHostBLJ_SUP().getAbsolutePath() + ":" + CONTAINER_BLJ_SUP_DIR + ":ro";
-
-		// TODO - this dir is not special
-//		if( hasCustomDockerDB( module ) )
-//			dockerVolumes += " -v " + getDbDirPath( (DatabaseModule) module ) + ":" + DOCKER_DB_DIR + ":ro";
-
-		return dockerVolumes;
-	}
-	
 	private static TreeMap<String, String> volumeMap;	
 	
 	private static void makeVolMap() throws IOException, InterruptedException {
@@ -368,19 +336,21 @@ public class DockerUtil {
 			sb.append( s );
 		p.waitFor();
 		p.destroy();
-		String json = sb.toString();
-		
+		String json = sb.toString();	
 		JSONObject obj = new JSONObject(json);
 		JSONArray arr = obj.getJSONArray("Mounts");
 		volumeMap = new TreeMap<>();
 		for (int i = 0; i < arr.length(); i++) {
 			JSONObject mount = arr.getJSONObject( i ) ;
 			volumeMap.put( mount.get( "Source" ).toString(), mount.get( "Destination" ).toString());
+			Log.info(DockerUtil.class, "Host directory: " + mount.get( "Source" ).toString());
+			Log.info(DockerUtil.class, "is mapped to container directory: " + mount.get( "Destination" ).toString());
 		}
 		Log.info( DockerUtil.class, volumeMap.toString() );
 	}
 	
 	public static String containerizePath(String path) throws DockerVolCreationException  {
+		if (path == null || path.isEmpty()) return null;
 		TreeMap<String, String> vmap = getVolumeMap();
 		String innerPath = path;
 		for (String s : vmap.keySet()) {
@@ -405,8 +375,23 @@ public class DockerUtil {
 		return hostPath;
 	}
 	
-	public static String getDockerInforCmd(){
+	public static String getDockerInforCmd() throws IOException{
 		return "curl --unix-socket /var/run/docker.sock http:/v1.38/containers/" + getHostName() + "/json";
+		//return "docker inspect " + getContainerId();
+	}
+	
+	public static String getContainerId() throws IOException {
+		String id = null;
+		File cgroup = new File("/proc/self/cgroup");
+		BufferedReader br = new BufferedReader(new FileReader( cgroup ) );
+		String line = null; 
+		while ( (line = br.readLine()) != null) {
+			if (line.contains( "name=" )) {
+				id = line.substring( line.indexOf( "docker/" ) + 7 );
+			}
+		}
+		br.close();
+		return id;
 	}
 	
 	public static String getHostName() {
@@ -474,26 +459,9 @@ public class DockerUtil {
 	public static final String DOCKER_DEFAULT_DB_DIR = "/mnt/db";
 
 	/**
-	 * All containers mount the host {@value biolockj.Constants#INPUT_DIRS} to the container "input" volume: :
-	 * /mnt/efs/input
-	 */
-	public static final String DOCKER_INPUT_DIR = DOCKER_BLJ_MOUNT_DIR + "/input";
-
-	/**
 	 * All containers mount {@value biolockj.Constants#INTERNAL_PIPELINE_DIR} to the container volume: /mnt/efs/output
 	 */
 	public static final String DOCKER_PIPELINE_DIR = DOCKER_BLJ_MOUNT_DIR + "/pipelines";
-
-	/**
-	 * Some containers mount the {@value biolockj.Constants#INPUT_TRIM_SEQ_FILE} to the containers "primer":
-	 * /mnt/efs/primer
-	 */
-	public static final String DOCKER_PRIMER_DIR = DOCKER_BLJ_MOUNT_DIR + "/primer";
-
-	/**
-	 * AWS deployed containers mount $BLJ/script to {@value #DOCKER_BLJ_MOUNT_DIR}/script dir: /mnt/efs/script
-	 */
-	public static final String DOCKER_SCRIPT_DIR = DOCKER_BLJ_MOUNT_DIR + "/script";
 
 	/**
 	 * Docker container default $USER: {@value #DOCKER_USER}
@@ -511,11 +479,6 @@ public class DockerUtil {
 	static final String CONTAINER_BLJ_DIR = "/app/biolockj";
 
 	/**
-	 * Docker container blj_support dir for dev support: {@value #CONTAINER_BLJ_SUP_DIR}
-	 */
-	static final String CONTAINER_BLJ_SUP_DIR = "/app/blj_support";
-
-	/**
 	 * All containers mount the host {@link biolockj.Config} directory to the container volume: /mnt/efs/config
 	 */
 	static final String DOCKER_CONFIG_DIR = DOCKER_BLJ_MOUNT_DIR + "/config";
@@ -525,12 +488,6 @@ public class DockerUtil {
 	 * {@value #DOCKER_IMG_VERSION}
 	 */
 	static final String DOCKER_IMG_VERSION = "docker.imgVersion";
-
-	/**
-	 * Some containers mount the {@value biolockj.util.MetaUtil#META_FILE_PATH} to the container "meta" volume:
-	 * /mnt/efs/metadata
-	 */
-	static final String DOCKER_META_DIR = DOCKER_BLJ_MOUNT_DIR + "/metadata";
 
 	/**
 	 * {@link biolockj.Config} Boolean property - enable to avoid docker run --rm flag: {@value #SAVE_CONTAINER_ON_EXIT}
@@ -551,7 +508,6 @@ public class DockerUtil {
 	protected static final String DOCKER_HUB_USER = "docker.user";
 
 	private static final String BLJ_BASH = "blj_bash";
-	private static final String COMPUTE_SCRIPT = "COMPUTE_SCRIPT";
 	private static final String DB_FREE = "_dbfree";
 	private static final String DEFAULT_DOCKER_HUB_USER = "biolockj";
 	private static final String DOCK_RM_FLAG = "--rm";
@@ -559,4 +515,8 @@ public class DockerUtil {
 	private static final String DOCKER_SOCKET = "/var/run/docker.sock";
 	private static final Set<String[]> downloadDbCmdRegister = new HashSet<>();
 	private static final String IMAGE_NAME_DELIM = "_";
+	private static final String WRAP_LINE = " \\";
+	private static final String DOCKER_DETACHED_FLAG = "--detach";
+	private static final String ID_VAR = "containerId";
+	private static final String SCRIPT_ID_VAR = "SCRIPT_ID";
 }

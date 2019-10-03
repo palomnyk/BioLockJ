@@ -203,26 +203,6 @@ public class BioLockJUtil {
 	}
 
 	/**
-	 * Return default ${BLJ_SUP} dir
-	 * 
-	 * @return blj_support dir
-	 * @throws ConfigPathException if $BLJ_SUP directory path is configured, but invalid
-	 */
-	public static File getBljSupDir() throws ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) return new File( DockerUtil.CONTAINER_BLJ_SUP_DIR );
-		File f = null;
-		try {
-			f = new File( getBljDir().getParentFile().getAbsolutePath() + File.separator + BLJ_SUPPORT );
-			if( f.isDirectory() ) return f;
-		} catch( final Exception ex ) {
-			throw new ConfigPathException( f, "Unable to decode ${BLJ_SUP} environment variable: " + ex.getMessage() );
-		}
-
-		return null;
-
-	}
-
-	/**
 	 * Return an ordered list of the class names from the input collection.
 	 * 
 	 * @param objs Objects

@@ -216,7 +216,6 @@ public class RuntimeParamUtil {
 	 */
 	public static String getJavaModuleArgs( final JavaModule module ) throws DockerVolCreationException {
 		Log.info( RuntimeParamUtil.class, "Building BLJ_OPTIONS for java_module script -->" );
-		if( DockerUtil.inDockerEnv() ) return getJavaContainerArgs( module );
 		return getJavaComputeNodeArgs( module );
 	}
 
@@ -399,34 +398,11 @@ public class RuntimeParamUtil {
 	}
 
 	private static String getJavaComputeNodeArgs( final JavaModule module ) throws DockerVolCreationException {
-		Log.info( RuntimeParamUtil.class, "Building java args for Cluster Compute nodes  -->" );
+		Log.info( RuntimeParamUtil.class, "Building java args for compute nodes  -->" );
 		return BLJ_PROJ_DIR + " " + get_BLJ_PROJ(false).getAbsolutePath() + " " 
 			 + HOME_DIR + " " + getHomeDir(false).getAbsolutePath() + " " 
 			 + CONFIG_FILE + " " + getConfigFile(false).getAbsolutePath() + " " 
 			 + DIRECT_MODE + " " + Config.pipelineName() + ":" + module.getModuleDir().getName();
-	}
-
-	//TODO: how does this handle direct modules ? (compare to getJavaComputeNodeArgs)
-	private static String getJavaContainerArgs( final JavaModule module ) {
-		Log.info( RuntimeParamUtil.class, "Building Docker BLJ_OPTIONS for java_module Docker script -->" );
-		String javaModArgs = "";
-		for( final String key: params.keySet() ) {
-			Log.debug( RuntimeParamUtil.class, "Found Docker param: " + key + "=" + params.get( key ) );
-			if( BLJ_CONTROLLER_ONLY_ARGS.contains( key ) ) continue;
-			String val = null;
-//			if( key.equals( HOST_CONFIG_DIR ) )
-//				val = CONFIG_FILE + " " + params.get( key ) + File.separator + getConfigFile().getName();
-//			else if( key.equals( HOST_HOME_DIR ) ) val = HOME_DIR + " " + params.get( key );
-//			else if( key.equals( HOST_BLJ_PROJ_DIR ) ) val = BLJ_PROJ_DIR + " " + params.get( key );
-			if( ARG_FLAGS.contains( key ) ) val = key;
-			else val = key + " " + params.get( key );
-
-			javaModArgs += ( javaModArgs.isEmpty() ? "": " " ) + val;
-			Log.info( RuntimeParamUtil.class, "Add Docker param: " + val );
-		}
-
-		//return javaModArgs + " " + RuntimeParamUtil.getDirectModuleParam( module ); //TODO: did I delete this method?
-		return javaModArgs;
 	}
 
 	private static void parseParams( final String[] args ) throws RuntimeParamException {
@@ -600,8 +576,6 @@ public class RuntimeParamUtil {
 	protected static final String SYSTEM_OUT_FLAG = "-systemOut";
 
 	private static final List<String> ARG_FLAGS = Arrays.asList( AWS_FLAG, SYSTEM_OUT_FLAG );
-	private static final List<String> BLJ_CONTROLLER_ONLY_ARGS =
-		Arrays.asList( BLJ_PROJ_DIR, CONFIG_FILE, HOME_DIR, PASSWORD, RESTART_DIR, HOSTNAME );
 	private static final List<String> DIR_ARGS = Arrays.asList( BLJ_PROJ_DIR, HOME_DIR, RESTART_DIR );
 	private static final List<String> extraParams = new ArrayList<>();
 	private static final List<String> NAMED_ARGS = Arrays.asList( CONFIG_FILE, DIRECT_MODE, HOSTNAME, PASSWORD );

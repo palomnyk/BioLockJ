@@ -779,9 +779,6 @@ public class Config {
 			else if( bashVal == null || bashVal.trim().isEmpty() ) if( bashVar.equals( BLJ_BASH_VAR ) ) {
 				final File blj = BioLockJUtil.getBljDir();
 				if( blj != null && blj.isDirectory() ) bashVal = blj.getAbsolutePath();
-			} else if( bashVar.equals( BLJ_SUP_BASH_VAR ) ) {
-				final File bljSup = BioLockJUtil.getBljSupDir();
-				if( bljSup != null && bljSup.isDirectory() ) bashVal = bljSup.getAbsolutePath();
 			} else bashVal = Processor.getBashVar( bashVar );
 
 			if( bashVal != null && !bashVal.trim().isEmpty() ) {

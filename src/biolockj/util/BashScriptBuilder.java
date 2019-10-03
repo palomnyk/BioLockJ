@@ -92,7 +92,8 @@ public class BashScriptBuilder {
 
 		mainScriptLines
 			.add( RETURN + "touch \"" + getMainScriptPath( module ) + "_" + Constants.SCRIPT_SUCCESS + "\"" );
-		createScript( module, getMainScriptPath( module ), mainScriptLines );
+		final List<String> mainScriptLinesEasyReading = insertPathVars(module, mainScriptLines);
+		createScript( module, getMainScriptPath( module ), mainScriptLinesEasyReading );
 	}
 
 	/**
@@ -197,14 +198,13 @@ public class BashScriptBuilder {
 		final List<String> lines = new ArrayList<>();
 		final String mainScriptPath = getMainScriptPath( module );
 		final String header = Config.getString( module, Constants.SCRIPT_DEFAULT_HEADER );
+		final String startedFlag = mainScriptPath + "_" + Constants.SCRIPT_STARTED;
 		if( header != null ) lines.add( header + RETURN );
 		lines.add( "# BioLockJ " + BioLockJUtil.getVersion() + ": " + mainScriptPath + RETURN );
-		lines.add( PIPE_DIR + "=\"" + Config.pipelinePath() + "\"" );
-		lines.add( MOD_DIR + "=\"" + module.getModuleDir().getAbsolutePath() + "\"" );
-		lines.add( SCRIPT_DIR + "=\"" + module.getScriptDir().getAbsolutePath() + "\"" + RETURN );
-		lines.add( "touch \"" + mainScriptPath + "_" + Constants.SCRIPT_STARTED + "\"" + RETURN );
+		lines.addAll( pathVariableVals(module) );
+		lines.add( "touch \"" + startedFlag + "\"" + RETURN );
 		lines.add( "cd " + module.getScriptDir().getAbsolutePath() + RETURN );
-		if( DockerUtil.inDockerEnv() ) lines.addAll( DockerUtil.buildSpawnDockerContainerFunction( module ) );
+		if( DockerUtil.inDockerEnv() ) lines.addAll( DockerUtil.buildSpawnDockerContainerFunction( module, startedFlag ) );
 		else if( Config.isOnCluster() ) {
 			lines.add( "# Submit job script" );
 			lines.add( "function " + FUNCTION_RUN_JOB + "() {" );
@@ -216,8 +216,50 @@ public class BashScriptBuilder {
 		return lines;
 	}
 	
-	private static boolean hasTempDir( final BioModule module ) {
-		return ModuleUtil.subDirExists( module, BioModule.TEMP_DIR );
+	/**
+	 * Get the script lines to assign values to the common directories.
+	 * Using these variables in place of full file paths makes the script easier to read.
+	 * The scripts file paths are replaced with variables in {@link insertPathVars}.
+	 * @see insertPathVars
+	 * @param module
+	 * @return
+	 */
+	protected static List<String> pathVariableVals (ScriptModule module) {
+		final List<String> lines = new ArrayList<>();
+		lines.add( PIPE_DIR + "=\"" + Config.pipelinePath() + "\"" );
+		lines.add( MOD_DIR + "=\"" + module.getModuleDir().getAbsolutePath() + "\"" );
+		lines.add( SCRIPT_DIR + "=\"" + module.getScriptDir().getAbsolutePath() + "\"" );
+		lines.add( TEMP_DIR + "=\"" + module.getTempDir().getAbsolutePath() + "\"" );
+		lines.add( OUTPUT_DIR + "=\"" + module.getOutputDir().getAbsolutePath() + "\"" );
+		lines.add( "" );
+		return lines;
+	}
+	
+	/**
+	 * Paths to common module directories are added via {@link pathVariableVals}.
+	 * Using these variables in place of full file paths makes the script easier to read.
+	 * @see pathVariableVals
+	 * @param module
+	 * @param scriptLines
+	 * @return
+	 */
+	protected static List<String> insertPathVars (ScriptModule module, List<String> scriptLines){
+		final List<String> lines = new ArrayList<>();
+		for( final String line: scriptLines ) {
+			String data = line;
+			if( !data.trim().startsWith( TEMP_DIR ) && data.contains( module.getTempDir().getAbsolutePath() ) ) 
+				data = data.replaceAll( module.getTempDir().getAbsolutePath(), Matcher.quoteReplacement( TEMP_DIR_VAR ) );
+			if( !data.trim().startsWith( SCRIPT_DIR ) && data.contains( module.getScriptDir().getAbsolutePath() ) ) 
+				data = data.replaceAll( module.getScriptDir().getAbsolutePath(), Matcher.quoteReplacement( SCRIPT_DIR_VAR ) );
+			if( !data.trim().startsWith( OUTPUT_DIR ) && data.contains( module.getOutputDir().getAbsolutePath() ) ) 
+				data = data.replaceAll( module.getOutputDir().getAbsolutePath(), Matcher.quoteReplacement( OUTPUT_DIR_VAR ) );
+			if( !data.trim().startsWith( MOD_DIR ) && data.contains( module.getModuleDir().getAbsolutePath() ) ) 
+				data = data.replaceAll( module.getModuleDir().getAbsolutePath(), Matcher.quoteReplacement( MOD_DIR_VAR ) );
+			if( !data.trim().startsWith( PIPE_DIR ) && data.contains( Config.pipelinePath() ) ) 
+				data = data.replaceAll( Config.pipelinePath(), Matcher.quoteReplacement( PIPE_DIR_VAR ) );
+			lines.add( data );
+		}
+		return lines;
 	}
 
 	/**
@@ -239,16 +281,13 @@ public class BashScriptBuilder {
 		if( Config.isOnCluster() && header != null ) lines.add( header );
 		else if( defaultHeader != null ) lines.add( defaultHeader );
 		lines.add( "" );
-		lines.add( "# BioLockJ." + BioLockJUtil.getVersion() + ": " + scriptPath + RETURN );
-		lines.add( PIPE_DIR + "=\"" + Config.pipelinePath() + "\"" );
-		lines.add( MOD_DIR + "=\"" + module.getModuleDir().getAbsolutePath() + "\"" );
-		lines.add( OUTPUT_DIR + "=\"" + module.getOutputDir().getAbsolutePath() + "\"" );
-		lines.add( SCRIPT_DIR + "=\"" + module.getScriptDir().getAbsolutePath() + "\"" );
-		if( hasTempDir( module ) ) 
-			lines.add( TEMP_DIR + "=\"" + module.getTempDir().getAbsolutePath() + "\"" );
+		lines.add( "# BioLockJ." + BioLockJUtil.getVersion() + ": " + scriptPath);
 		lines.add( "" );
-		lines.add( "touch \"" + scriptPath + "_" + Constants.SCRIPT_STARTED  + "\"" + RETURN );
-		lines.add( "cd " + module.getScriptDir().getAbsolutePath() + RETURN );
+		lines.addAll( pathVariableVals(module) );
+		lines.add( "touch \"" + scriptPath + "_" + Constants.SCRIPT_STARTED  + "\"");
+		lines.add( "" );
+		lines.add( "cd " + module.getScriptDir().getAbsolutePath());
+		lines.add( "" );
 		lines.addAll( loadModules( module ) );
 
 		final List<String> workerFunctions = module.getWorkerScriptFunctions();
@@ -269,23 +308,8 @@ public class BashScriptBuilder {
 	protected static void writeScript( final ScriptModule module, final BufferedWriter writer, final List<String> scriptLines )
 		throws IOException {
 		int indentCount = 0;
-		final List<String> lines = new ArrayList<>();
 		try {
-			for( final String line: scriptLines ) {
-				String data = line;
-				if( hasTempDir( module ) && !data.trim().startsWith( TEMP_DIR ) && data.contains( module.getTempDir().getAbsolutePath() ) ) 
-					data = data.replaceAll( module.getTempDir().getAbsolutePath(), Matcher.quoteReplacement( TEMP_DIR_VAR ) );
-				if( !data.trim().startsWith( SCRIPT_DIR ) && data.contains( module.getScriptDir().getAbsolutePath() ) ) 
-					data = data.replaceAll( module.getScriptDir().getAbsolutePath(), Matcher.quoteReplacement( SCRIPT_DIR_VAR ) );
-				if( !data.trim().startsWith( OUTPUT_DIR ) && data.contains( module.getOutputDir().getAbsolutePath() ) ) 
-					data = data.replaceAll( module.getOutputDir().getAbsolutePath(), Matcher.quoteReplacement( OUTPUT_DIR_VAR ) );
-				if( !data.trim().startsWith( MOD_DIR ) && data.contains( module.getModuleDir().getAbsolutePath() ) ) 
-					data = data.replaceAll( module.getModuleDir().getAbsolutePath(), Matcher.quoteReplacement( MOD_DIR_VAR ) );
-				if( !data.trim().startsWith( PIPE_DIR ) && data.contains( Config.pipelinePath() ) ) 
-					data = data.replaceAll( Config.pipelinePath(), Matcher.quoteReplacement( PIPE_DIR_VAR ) );
-				lines.add( data );
-			}
-			for( String line: lines ) {
+			for( String line: scriptLines ) {
 				String data = line.trim();
 				if( data.equals( "fi" ) || data.equals( "}" ) || data.equals( "elif" ) ||
 					data.equals( "else" ) || data.equals( "done" ) ) indentCount--;
@@ -319,7 +343,8 @@ public class BashScriptBuilder {
 			if( saveWorker( module, ++sampleCount, data.size() ) || !it.hasNext() ) {
 				if( !( module instanceof JavaModule ) )
 					workerLines.add( "touch \"" + workerScriptPath + "_" + Constants.SCRIPT_SUCCESS + "\"" );
-				workerScripts.add( createScript( module, workerScriptPath, workerLines ) );
+				final List<String> workerLinesEasyReading = insertPathVars(module, workerLines);
+				workerScripts.add( createScript( module, workerScriptPath, workerLinesEasyReading ) );
 				sampleCount = 0;
 				if( it.hasNext() ) {
 					workerScriptPath = getWorkerScriptPath( module );
