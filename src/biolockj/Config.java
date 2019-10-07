@@ -203,7 +203,9 @@ public class Config {
 	 */
 	public static File getLocalConfigFile( final String path ) throws ConfigPathException, DockerVolCreationException {
 		if( path == null || path.trim().isEmpty() ) return null;
-		final File file = new File( DockerUtil.containerizePath( replaceEnvVar( path.trim() ) ) );
+		String filePath = replaceEnvVar( path.trim() );
+		if (DockerUtil.inDockerEnv()) filePath = DockerUtil.containerizePath( filePath );
+		final File file = new File( filePath );
 		return file;
 	}
 
