@@ -317,6 +317,7 @@ public class Config {
 		if( prop == null || props.getProperty( prop ) == null ) prop = property;
 		String val = props.getProperty( prop );
 		if( val != null ) val = val.trim();
+		val = replaceEnvVar( val );
 		if( val != null && val.isEmpty() ) val = null;
 		usedProps.put( prop, val );
 		return val;
