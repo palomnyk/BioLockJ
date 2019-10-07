@@ -317,8 +317,8 @@ public class Config {
 		if( prop == null || props.getProperty( prop ) == null ) prop = property;
 		String val = props.getProperty( prop );
 		if( val != null ) val = val.trim();
-		usedProps.put( prop, val );
 		if( val != null && val.isEmpty() ) val = null;
+		usedProps.put( prop, val );
 		return val;
 	}
 
@@ -411,14 +411,13 @@ public class Config {
 	public static String replaceEnvVar( final String arg ) {
 		if( arg == null ) return null;
 		String val = arg.toString().trim();
+		if( !hasEnvVar( val ) ) return val;
+		if( val.substring( 0, 1 ).equals( "~" ) ) {
+			Log.debug( Config.class, "Found property value starting with \"~\" --> \"" + arg + "\"" );
+			val = val.replace( "~", "${HOME}" );
+			Log.debug( Config.class, "Converted value to use standard syntax --> " + val + "\"" );
+		}
 		try {
-			if( !hasEnvVar( val ) ) return val;
-			if( val.substring( 0, 1 ).equals( "~" ) ) {
-				Log.debug( Config.class, "Found property value starting with \"~\" --> \"" + arg + "\"" );
-				val = val.replace( "~", "${HOME}" );
-				Log.debug( Config.class, "Converted value to use standard syntax --> " + val + "\"" );
-			}
-
 			while( hasEnvVar( val ) ) {
 				final String bashVar = val.substring( val.indexOf( "${" ), val.indexOf( "}" ) + 1 );
 				Log.debug( Config.class, "Replace \"" + bashVar + "\" in \"" + arg + "\"" );
@@ -727,15 +726,15 @@ public class Config {
 	protected static Properties replaceEnvVars( final Properties properties ) {
 		final Properties convertedProps = properties;
 		final Enumeration<?> en = properties.propertyNames();
-		Log.debug( Properties.class, " ---------------------- replace Config Env Vars ----------------------" );
+		Log.debug( Config.class, " ---------------------- replace Config Env Vars ----------------------" );
 		while( en.hasMoreElements() ) {
 			final String key = en.nextElement().toString();
 			String val = properties.getProperty( key );
 			val = replaceEnvVar( val );
-			Log.debug( Properties.class, key + " = " + val );
+			Log.debug( Config.class, key + " = " + val );
 			convertedProps.put( key, val );
 		}
-		Log.debug( Properties.class, " --------------------------------------------------------------------" );
+		Log.debug( Config.class, " --------------------------------------------------------------------" );
 		return convertedProps;
 	}
 
@@ -771,26 +770,35 @@ public class Config {
 	}
 
 	private static String getBashVal( final String bashVar ) {
+		if( bashVarMap.get( bashVar ) != null ) {
+			return bashVarMap.get( bashVar );
+		}
+		
+		String bashVal = null;
 		try {
-			if( bashVarMap.get( bashVar ) != null ) return bashVarMap.get( bashVar );
-			String bashVal = props == null ? null: props.getProperty( stripBashMarkUp( bashVar ) );
-			if( stripBashMarkUp( bashVar ).equals( "HOME" ) )
-				bashVal = RuntimeParamUtil.getHomeDir().getAbsolutePath();
-			else if( bashVal == null || bashVal.trim().isEmpty() ) if( bashVar.equals( BLJ_BASH_VAR ) ) {
+			if (props == null) {Log.info(Config.class, "no props to reference.");}
+			if (props != null) {Log.info(Config.class, "Got props, value for ["+bashVar+"] is: " + props.getProperty( stripBashMarkUp( bashVar )));}
+			if (props != null && props.getProperty( stripBashMarkUp( bashVar )) != null ) {
+				bashVal = props.getProperty( stripBashMarkUp( bashVar ) );
+			}else if ( bashVar.equals( BLJ_BASH_VAR ) ) {
 				final File blj = BioLockJUtil.getBljDir();
-				if( blj != null && blj.isDirectory() ) bashVal = blj.getAbsolutePath();
-			} else bashVal = Processor.getBashVar( bashVar );
-
-			if( bashVal != null && !bashVal.trim().isEmpty() ) {
-				bashVarMap.put( bashVar, bashVal );
-				return bashVal;
+				if( blj != null && blj.isDirectory() ) {
+					bashVal =  blj.getAbsolutePath();
+				}
+			}else if( stripBashMarkUp( bashVar ).equals( "HOME" ) ) {
+				bashVal =  RuntimeParamUtil.getHomeDir().getAbsolutePath();
+			}else {
+				bashVal = Processor.getBashVar( bashVar );
 			}
-
 		} catch( final Exception ex ) {
 			Log.warn( Config.class,
 				"Error occurred attempting to decode bash var: " + bashVar + " --> " + ex.getMessage() );
 		}
-
+		
+		if( bashVal != null && !bashVal.trim().isEmpty() ) {
+			bashVarMap.put( bashVar, bashVal );
+			return bashVal;
+		}
 		return bashVar;
 	}
 
@@ -819,7 +827,9 @@ public class Config {
 	}
 
 	private static String stripBashMarkUp( final String bashVar ) {
-		if( bashVar != null && bashVar.length() > 3 ) return bashVar.substring( 2, bashVar.length() - 1 );
+		if( bashVar != null && bashVar.startsWith( "${" ) && bashVar.endsWith( "}" ) ) {
+			return bashVar.substring( 2, bashVar.length() - 1 ); 
+		}
 		return bashVar;
 	}
 
