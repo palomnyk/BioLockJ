@@ -104,19 +104,6 @@ public class DockerUtil {
 	}
 
 	/**
-	 * Get Config file path - update for Docker env or bash env var references as needed.
-	 * 
-	 * @param path Runtime arg or Config property path
-	 * @return Local File
-	 * @throws ConfigPathException if errors occur due to invalid file path
-	 */
-	public static File getConfigFile( final String path ) throws ConfigPathException {
-		final File config = getDockerVolumePath( path, DOCKER_CONFIG_DIR );
-		if( !config.isFile() ) throw new ConfigPathException( config, "Config file not found in Docker container" );
-		return config;
-	}
-
-	/**
 	 * Get the Docker container database found under the DockerDB directory or one of it's sub-directories.
 	 * 
 	 * @param module DatabaseModule
@@ -417,18 +404,6 @@ public class DockerUtil {
 		return volumeMap;
 	}
 
-	// private static String getVolumePath( final String path ) {
-	// Log.info( DockerUtil.class, "Map Docker volume getVolumePath( " + path + " )" );
-	// String newPath = path;
-	// if( path.startsWith( CONTAINER_BLJ_SUP_DIR ) )
-	// newPath = RuntimeParamUtil.getDockerHostBLJ_SUP().getAbsolutePath() +
-	// path.substring( CONTAINER_BLJ_SUP_DIR.length() );
-	// if( path.startsWith( CONTAINER_BLJ_DIR ) ) newPath =
-	// RuntimeParamUtil.getDockerHostBLJ().getAbsolutePath() + path.substring( CONTAINER_BLJ_DIR.length() );
-	// Log.info( DockerUtil.class, "Map Docker volume newPath -----> ( " + newPath + " )" );
-	// return newPath;
-	// }
-
 	private static final String rmFlag( final BioModule module ) throws ConfigFormatException {
 		return Config.getBoolean( module, SAVE_CONTAINER_ON_EXIT ) ? "": DOCK_RM_FLAG;
 	}
@@ -474,14 +449,9 @@ public class DockerUtil {
 	public static final String ROOT_HOME = File.separator + DOCKER_USER;
 
 	/**
-	 * Docker container blj_support dir for dev support: {@value #CONTAINER_BLJ_DIR}
+	 * Docker container blj dir: {@value #CONTAINER_BLJ_DIR}
 	 */
 	static final String CONTAINER_BLJ_DIR = "/app/biolockj";
-
-	/**
-	 * All containers mount the host {@link biolockj.Config} directory to the container volume: /mnt/efs/config
-	 */
-	static final String DOCKER_CONFIG_DIR = DOCKER_BLJ_MOUNT_DIR + "/config";
 
 	/**
 	 * {@link biolockj.Config} String property used to run specific version of Docker images:

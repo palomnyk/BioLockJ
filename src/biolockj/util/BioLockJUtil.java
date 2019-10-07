@@ -792,7 +792,6 @@ public class BioLockJUtil {
 	 */
 	public static final String RETURN = Constants.RETURN;
 
-	private static final String BLJ_SUPPORT = "blj_support";
 	private static final String DEFAULT_PROFILE_CMD = "get_default_profile";
 	private static List<File> inputFiles = new ArrayList<>();
 	private static File userProfile = null;

@@ -11,7 +11,6 @@
 ##  Optional Parameters:                                                     ##
 ##  Aws flag:                  aws                                           ##
 ##  Use local BLJ flag:        blj                                           ##
-##  Use local BLJ_SUP flag:    blj_sup                                       ##
 ##  Run GUI flag:              gui                                           ##
 ##  New email password:        pass    <new_password>                        ##
 ##  Restart flag:              restart <dir_path>                            ##
@@ -59,33 +58,17 @@ main(){
 # Read script args and bash env vars
 # Param 1 - Array of launch_docker script args
 scan_script_and_env_args() {
-	if ifArgUsed $BLJ_SUP_ARG ; then
-		blj_sup=$(get_arg_value $BLJ_SUP_ARG)
-		[ $blj_sup == "true" ] && blj_sup=${BLJ_SUP}
-		echo "mapping directory \"$blj_sup\" into container..."
-	fi
 	ifArgUsed $PASSWORD_ARG && newPass=$(get_arg_value $PASSWORD_ARG)
 	ifArgUsed $EXT_MODS_ARG && extMods=$(get_arg_value $EXT_MODS_ARG)
 	ifArgUsed $GUI_ARG && echo "Starting BioLockJ GUI..."
-	config=$configFile
-#	if ! ifArgUsed $GUI_ARG && [ ${#config} -gt 0 ] && [ -f $config ] ; then
-#		inputDir="$(get_property $config input.dirPaths)"
-#		metaPath="$(get_property $config metadata.filePath)" && [ ${#metaPath} -gt 0 ] && metaPath="$(dirname $metaPath)"
-#		primerPath="$(get_property $config trimPrimers.filePath)" && [ ${#primerPath} -gt 0 ] && primerPath="$(dirname $primerPath)"
-#	fi
 }
 
-# Verify paths are valid, if launch_docker is not run inside a Docker container
+# Verify paths are valid
+# Paths provided by config file are verified as they are collected, not here.
 verify_inputs() {
-# Paths provided by config file are verified as they are collected.
-#	ifDefined $inputDir && dirPath=( ${inputDir//, } )
-#	! ifDefined $inputDir || [ ${#dirPath[@]} -gt 1 ] && exit_script "Error [ launch_docker ]: The -i parameter must reference a single input directory"
-#	verify_dir $dirPath
 	verify_dir $BLJ_PROJ
 	ifDefined $restartDir && verify_dir $restartDir
-	ifDefined $config && verify_file $config
-#	ifDefined $metaPath && verify_dir $metaPath
-#	ifDefined $primerPath && verify_dir $primerPath	
+	ifDefined $configFile && verify_file $configFile
 }
 
 # Verify host directory exists, if launch_docker is not deployed inside a Docker container
@@ -121,18 +104,17 @@ blj_options() {
 	ifDefined $restartDir && options="${options} -restartDir $restartDir"
 	ifArgUsed $PASSWORD_ARG && options="${options} -password $newPass"
 	ifArgUsed $AWS_ARG && options="${options} -aws"
-	echo "${options} -config ${config}" # TODO - handle reset case in docker
+	echo "${options} -config ${configFile}" # TODO - handle reset case in docker
 }
 
 # Get mapped  Docker volumes
-# TODO - this method assumes that $config path is given in terms of the host machine
+# TODO - this method assumes that $configFile path is given in terms of the host machine
 # TODO use mount instead of volumes
 get_volumes() {
 	vols="-v ${DOCK_SOCK}:${DOCK_SOCK}"
 	vols="${vols} -v ${HOME}:${BLJ_HOST_HOME}:delegated" #TODO - DO NOT map home directory
 	ifArgUsed $BLJ_ARG && vols="${vols} -v ${BLJ}:/app/biolockj:ro"
 	ifArgUsed $EXT_MODS_ARG && vols="${vols} -v ${extMods}:/app/external_modules:ro"
-	ifDefined $config && vols="${vols} -v $(dirname $config):${BLJ_CONFIG}:ro"
 	if ifArgUsed $AWS_ARG ; then
 		#TODO - replace this; docker mounts will done the same way on aws or local machine
 		vols="${vols} -v ${EFS}:${EFS}:delegated" 
@@ -149,9 +131,6 @@ get_volumes() {
 				vols="${vols} -v ${dir}:${EFS}/vol_${i}:ro" 
 				i=$(( i + 1 ))
 			done
-#			vols="${vols} -v $inputDir:${BLJ_INPUT}:ro -v $(dirname $config):${BLJ_CONFIG}:ro"
-#			ifDefined $metaPath && vols="${vols} -v $metaPath:${EFS}/metadata:ro"
-#			ifDefined $primerPath && vols="${vols} -v $primerPath:${BLJ_PRIMER}:ro" 
 		fi
 	fi
 	echo "${vols}"

@@ -111,61 +111,6 @@ public class RuntimeParamUtil {
 		return params.get( DIRECT_PIPELINE_DIR ) == null ? null: new File( params.get( DIRECT_PIPELINE_DIR ) );
 	}
 
-//	/**
-//	 * Runtime property getter for Docker host BioLockJ dir
-//	 * 
-//	 * @return Host {@value #HOST_BLJ_DIR} directory
-//	 */
-//	public static File getDockerHostBLJ() {
-//		return params.get( HOST_BLJ_DIR ) == null ? null: new File( params.get( HOST_BLJ_DIR ) );
-//	}
-
-//	/**
-//	 * Runtime property getter for Docker host blj_support dir
-//	 * 
-//	 * @return Host {@value #HOST_BLJ_SUP_DIR} directory
-//	 */
-//	public static File getDockerHostBLJ_SUP() {
-//		return params.get( HOST_BLJ_SUP_DIR ) == null ? null: new File( params.get( HOST_BLJ_SUP_DIR ) );
-//	}
-
-//	/**
-//	 * Runtime property getter for Docker host config dir
-//	 * 
-//	 * @return Host directory mapped to config volume
-//	 */
-//	public static String getDockerHostConfigDir() {
-//		return params.get( HOST_CONFIG_DIR );
-//	}
-
-//	/**
-//	 * Runtime property getter for Docker host $USER $HOME path
-//	 * 
-//	 * @return Host {@value #HOST_HOME_DIR} directory path
-//	 */
-//	public static String getDockerHostHomeDir() {
-//		return params.get( HOST_HOME_DIR );
-//	}
-
-//	/**
-//	 * Runtime property getter for {@value #INPUT_DIR}
-//	 * 
-//	 * @return Host {@value biolockj.Constants#INPUT_DIRS} directory
-//	 */
-//	public static String getDockerHostInputDir() {
-//		//TODO - move this to a more approp place
-//		return Config.getString( null, Constants.INPUT_DIRS );
-//	}
-
-//	/**
-//	 * Runtime property getter for {@value #META_DIR}
-//	 * 
-//	 * @return Metadata file directory path
-//	 */
-//	public static String getDockerHostMetaDir() {
-//		return params.get( META_DIR );
-//	}
-
 	/**
 	 * Return host on which Docker container is running
 	 * 
@@ -174,24 +119,6 @@ public class RuntimeParamUtil {
 	public static String getDockerHostName() {
 		return params.get( HOSTNAME );
 	}
-
-//	/**
-//	 * Runtime property getter for Docker host pipeline dir
-//	 * 
-//	 * @return Host {@value biolockj.Constants#INTERNAL_PIPELINE_DIR} directory
-//	 */
-//	public static String getDockerHostPipelineDir() {
-//		return params.get( BLJ_PROJ_DIR ); //HOST_BLJ_PROJ_DIR
-//	}
-
-//	/**
-//	 * Runtime property getter for {@value #PRIMER_DIR}
-//	 * 
-//	 * @return Primer file directory path
-//	 */
-//	public static String getDockerHostPrimerDir() {
-//		return params.get( PRIMER_DIR );
-//	}
 
 	/**
 	 * Runtime property getter for Docker host $USER $HOME dir
@@ -514,56 +441,15 @@ public class RuntimeParamUtil {
 	 */
 	protected static final String HOME_DIR = "-homeDir";
 
-//	/**
-//	 * Host BioLockJ directory used to override installed $BLJ in Docker containers: {@value #HOST_BLJ_DIR}
-//	 */
-//	protected static final String HOST_BLJ_DIR = "-blj"; 
-	//TODO: I think this only matters when launching another docker container, and it will be handled the standard way
-
-//	/**
-//	 * Host $USER $BLJ_PROJ_DIR param: {@value #HOST_BLJ_PROJ_DIR}
-//	 */
-//	protected static final String HOST_BLJ_PROJ_DIR = "--host-pipeline";  //TODO now BLJ_PROJ should always be passed in host-path form
-
-//	/**
-//	 * Directory used to map $BLJ_SUP Host volume to local blj_support directory: {@value #HOST_BLJ_SUP_DIR}
-//	 */
-//	protected static final String HOST_BLJ_SUP_DIR = "-blj_sup";
-
-//	/**
-//	 * Host $USER config file path param: {@value #HOST_CONFIG_DIR}
-//	 */
-//	protected static final String HOST_CONFIG_DIR = "--host-config";
-
-//	/**
-//	 * Host $USER $HOME param: {@value #HOST_HOME_DIR}
-//	 */
-//	protected static final String HOST_HOME_DIR = "--host-home";
-
 	/**
 	 * Automatically added $(hostname) by biolockj/dockblj script: {@value #HOSTNAME}
 	 */
 	protected static final String HOSTNAME = "-hostname";
 
-//	/**
-//	 * Input directory file-path runtime parameter switch: {@value #INPUT_DIR}
-//	 */
-//	protected static final String INPUT_DIR = "-i";
-//
-//	/**
-//	 * Metadata file directory path runtime parameter switch: {@value #META_DIR}
-//	 */
-//	protected static final String META_DIR = "-m";
-
 	/**
 	 * Change password runtime parameter switch: {@value #PASSWORD}
 	 */
 	protected static final String PASSWORD = "-password";
-
-//	/**
-//	 * Primer file directory path runtime parameter switch: {@value #PRIMER_DIR}
-//	 */
-//	protected static final String PRIMER_DIR = "-t";
 
 	/**
 	 * Restart pipeline runtime parameter switch: {@value #RESTART_DIR}

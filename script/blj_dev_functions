@@ -27,7 +27,6 @@ blj_build() {
 
 # Pull the latest Git code and build BioLockJ.jar
 blj_deploy() {
-	blj_sup_git
 	blj_git
 	blj_build build-jar
 }
@@ -51,11 +50,5 @@ blj_git_reset() {
 	echo "${gitDir} permissions set: 770"
 	echo "$SPACER"
 	echo "" && cd "${gitDir}"
-}
-
-# Git latest ${BLJ_SUP}
-blj_sup_git() {
-	[ ! -d "${BLJ_SUP}" ] && echo "Cannot build BLJ_SUP: directory not found: ${BLJ_SUP}" && return
-	blj_git_reset "${BLJ_SUP}"
 }
 

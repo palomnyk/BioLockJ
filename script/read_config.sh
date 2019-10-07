@@ -22,8 +22,8 @@ main(){
 	allProps=()
 	split_list_props # populates allProps
 
-	dirList=()
-	fileList=()
+	dirList=($(dirname primaryConfig))
+	fileList=(primaryConfig)
 
 	if [ $2 == upload ]; then
 		find_files # populates dirList and fileList

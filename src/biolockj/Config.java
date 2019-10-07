@@ -199,11 +199,11 @@ public class Config {
 	 * @param path File path
 	 * @return Local File
 	 * @throws ConfigPathException if the local path
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getLocalConfigFile( final String path ) throws ConfigPathException {
+	public static File getLocalConfigFile( final String path ) throws ConfigPathException, DockerVolCreationException {
 		if( path == null || path.trim().isEmpty() ) return null;
-		final File file = new File( replaceEnvVar( path.trim() ) );
-		if( DockerUtil.inDockerEnv() && !file.isFile() ) return DockerUtil.getConfigFile( file.getAbsolutePath() );
+		final File file = new File( DockerUtil.containerizePath( replaceEnvVar( path.trim() ) ) );
 		return file;
 	}
 
@@ -842,11 +842,6 @@ public class Config {
 	 * Bash variable with path to BioLockJ directory: {@value #BLJ_BASH_VAR}
 	 */
 	public static final String BLJ_BASH_VAR = "${BLJ}";
-
-	/**
-	 * Bash variable with path to blj_support directory: {@value #BLJ_SUP_BASH_VAR}
-	 */
-	public static final String BLJ_SUP_BASH_VAR = "${BLJ_SUP}";
 
 	private static final Map<String, String> bashVarMap = new HashMap<>();
 	private static File configFile = null;

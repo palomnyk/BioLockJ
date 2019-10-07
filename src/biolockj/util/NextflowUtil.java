@@ -113,11 +113,10 @@ public class NextflowUtil {
 	 * 
 	 * @return TRUE if not errors occur
 	 */
-	public static boolean purgeEfsData() {
+	public static boolean purgeEfsData() { //TODO: this needs to be smarted after the dockerVols generalization
 		try {
 			if( Config.getBoolean( null, AWS_PURGE_EFS_OUTPUT ) ) purge( Config.pipelinePath() );
 			else if( Config.getBoolean( null, AWS_PURGE_EFS_INPUTS ) ) {
-				purge( DockerUtil.DOCKER_CONFIG_DIR );
 				purge( DockerUtil.DOCKER_DB_DIR );
 			}
 			return true;
