@@ -22,7 +22,7 @@ main(){
 	allProps=()
 	split_list_props # populates allProps
 
-	dirList=($(dirname primaryConfig))
+	dirList=($(dirname $(to_abs_path $primaryConfig)))
 	fileList=(primaryConfig)
 
 	if [ $2 == upload ]; then
