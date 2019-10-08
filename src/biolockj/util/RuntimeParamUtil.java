@@ -232,6 +232,8 @@ public class RuntimeParamUtil {
 	}
 
 	/**
+	 * TODO: runtime params should always store the string as given on the command line, 
+	 *       and that should be the host-file path, even when running in docker.
 	 * Register and verify the runtime parameters. There are 2 required parameters:<br>
 	 * <ol>
 	 * <li>The {@link biolockj.Config} file path
@@ -245,7 +247,6 @@ public class RuntimeParamUtil {
 	public static void registerRuntimeParameters( final String[] args ) throws RuntimeParamException, DockerVolCreationException {
 		printRuntimeArgs( args );
 		parseParams( args );
-		//if( DockerUtil.inDockerEnv() ) reassignDockerConfig(); //TODO: should just take the host path given after -c
 		verify_BLJ_PROJ();
 
 		if( getDirectModuleDir() != null ) assignMasterConfig( DIRECT_MODE, assignDirectPipelineDir() );
@@ -311,7 +312,6 @@ public class RuntimeParamUtil {
 		for( final File file: pipelineDir.listFiles() )
 			if( file.getName().startsWith( Constants.MASTER_PREFIX ) ) {
 				params.put( CONFIG_FILE, file.getAbsolutePath() );
-//				if( DockerUtil.inDockerEnv() ) params.put( HOST_CONFIG_DIR, getDockerHostPipelineDir() );
 				return;
 			}
 
@@ -349,50 +349,7 @@ public class RuntimeParamUtil {
 			throw new RuntimeParamException( "Unexpected runtime parameters found:  { " + extraParams + " }" );
 	}
 
-//	private static void reassignDockerConfig() {
-//		Log.info( RuntimeParamUtil.class,
-//			"Assign \"" + HOST_BLJ_PROJ_DIR + "\" arg ---> " + params.get( BLJ_PROJ_DIR ) );
-//		Log.info( RuntimeParamUtil.class,
-//			"Reassign \"" + BLJ_PROJ_DIR + "\" arg ---> " + DockerUtil.DOCKER_PIPELINE_DIR );
-//		params.put( HOST_BLJ_PROJ_DIR, params.get( BLJ_PROJ_DIR ) );
-//		params.put( HOST_CONFIG_DIR, getConfigFile().getParentFile().getAbsolutePath() );
-//		params.put( HOST_HOME_DIR, params.get( HOME_DIR ) );
-//		if( doRestart() )
-//			params.put( RESTART_DIR, DockerUtil.DOCKER_PIPELINE_DIR + File.separator + getRestartDir().getName() );
-//
-//		params.put( BLJ_PROJ_DIR, DockerUtil.DOCKER_PIPELINE_DIR );
-//		params.put( HOME_DIR, DockerUtil.ROOT_HOME );
-//	}
-
-//	private static String[] simplifyArgs( final String[] args ) {
-//		final String[] simpleArgs = new String[ args.length ];
-//		int i = 0;
-//		String prevArg = "";
-//		boolean foundConfig = false;
-//
-//		for( String arg: args ) {
-//			if( LONG_ARG_NAMES.contains( arg ) || NAMED_ARGS.contains( prevArg ) || DIR_ARGS.contains( prevArg ) ||
-//				i == args.length - 1 && !foundConfig ) simpleArgs[ i++ ] = arg;
-//			else {
-//				while( arg.startsWith( "--" ) )
-//					arg = arg.substring( 1 );
-//				if( !arg.startsWith( "-" ) ) arg = "-" + arg;
-//				arg = arg.substring( 0, 2 );
-//				simpleArgs[ i++ ] = arg;
-//			}
-//			prevArg = arg;
-//			foundConfig = arg.equals( CONFIG_FILE ) || foundConfig;
-//		}
-//
-//		return simpleArgs;
-//	}
-
 	private static void validateParams() throws RuntimeParamException, DockerVolCreationException {
-//		if( DockerUtil.inDockerEnv() && getDockerHostHomeDir() == null )
-//			throw new RuntimeParamException( HOME_DIR, "", "Docker host $HOME directory required, but not found" );
-//		if( DockerUtil.inDockerEnv() && getDockerHostConfigDir() == null )
-//			throw new RuntimeParamException( HOST_CONFIG_DIR, "",
-//				"Docker host Config directory required, but not found" );
 		if( getHomeDir() == null )
 			throw new RuntimeParamException( HOME_DIR, "", "$HOME directory required, but not found" );
 		if( getConfigFile() == null )
