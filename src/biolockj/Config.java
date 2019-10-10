@@ -689,7 +689,8 @@ public class Config {
 	public static void setPipelineDir( final File dir ) throws DockerVolCreationException {
 		setFilePathProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
 		pipelineDir = dir;
-		System.out.println( Constants.PIPELINE_LOCATION_KEY + pipelineDir.getAbsolutePath());
+		String printPathOnScreen = DockerUtil.inDockerEnv() ? DockerUtil.deContainerizePath( pipelineDir.getAbsolutePath() ) : pipelineDir.getAbsolutePath();
+		System.out.println( Constants.PIPELINE_LOCATION_KEY + printPathOnScreen);
 	}
 
 	/**
