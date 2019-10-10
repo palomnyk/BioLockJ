@@ -29,17 +29,18 @@ set_arg_names(){
 	EXT_MODS_ARG="external-modules"
 	BLJ_ARG="blj"
 	PROJ_ARG="blj_proj"
+	ENV_ARG="env-var"
 	WAIT_ARG="wait-for-start"
 }
 
 init_defaults(){
 	# Order does not matter for $longArgName or $takeShortArg, but it is easier to read if they match
 	# Order MATTERS for $shortArgName and $parameters ---they must match whatever order is in $longArgName.
-	longArgName=( $GUI_ARG $PASSWORD_ARG $CONFIG_ARG $RESTART_ARG $AWS_ARG $DOCKER_ARG $FG_ARG $WAIT_ARG $PROJ_ARG $EXT_MODS_ARG $BLJ_ARG )
-	takeShortArg=($GUI_ARG $PASSWORD_ARG $CONFIG_ARG $RESTART_ARG $AWS_ARG $DOCKER_ARG $FG_ARG $WAIT_ARG help version)
+	longArgName=( $GUI_ARG $PASSWORD_ARG $CONFIG_ARG $RESTART_ARG $AWS_ARG $DOCKER_ARG $FG_ARG $ENV_ARG $WAIT_ARG $PROJ_ARG $EXT_MODS_ARG $BLJ_ARG )
+	takeShortArg=($GUI_ARG $PASSWORD_ARG $CONFIG_ARG $RESTART_ARG $AWS_ARG $DOCKER_ARG $FG_ARG $ENV_ARG $WAIT_ARG help version)
 	shortArgName=()
 	parameters=()
-	mustTakeValue=($PASSWORD_ARG $CONFIG_ARG $EXT_MODS_ARG $PROJ_ARG)
+	mustTakeValue=($PASSWORD_ARG $CONFIG_ARG $EXT_MODS_ARG $PROJ_ARG $ENV_ARG)
 	canTakeValue=(${mustTakeValue[@]})
 	for i in ${!longArgName[@]}; do
 		longName=${longArgName[ $i ]}
@@ -160,6 +161,19 @@ export_env_vars(){
 		BLJ_PROJ="${BLJ_PROJ:0:len}"
 	fi
 	export BLJ_PROJ
+	if ifArgUsed $ENV_ARG ; then
+		envVars=$(get_arg_value $ENV_ARG)
+		vars=${envVars//,/" "}
+		for v in ${vars[@]}; do
+			$(string_contains "$v" "=") && hasEq=true || hasEq=false
+			if [ $hasEq == "false" ]; then
+				ifArgUsed $DOCKER_ARG && exit_with_message "Values for $ENV_ARG should take the form var=val; found [ $v ]."
+				echo "Values for $ENV_ARG should take the form var=val; found [ $v ]." 
+				echo "In this mode, this is equivilent to $v=\$$v, which is ok."
+			fi
+			export $v
+		done
+	fi
 }
 
 
@@ -292,6 +306,8 @@ display_help() {
     addSpace "$EXT_MODS_ARG <dir>" "Directory with compiled java code giving additional modules"
     addSpace "$BLJ_ARG"      "Map \$BLJ folder into the docker container;"
     continueDescriptoin      "this replaces BioLockJ packaged in a docker container with the local copy."
+    addSpace "$ENV_ARG <var=val>"      "Environment variables to be passed to the BioLockJ environment."
+    continueDescriptoin      "Can be a comma-sep list. Values take the form: a=foo,b=bar,c=baz"
     addSpace "$PROJ_ARG <dir>" "Directory that contains BioLockJ pipelines. If not supplied, "
     continueDescriptoin "biolockj will use the value of environment variable \"BLJ_PROJ\"."
     echo ""
