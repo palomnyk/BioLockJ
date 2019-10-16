@@ -17,6 +17,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import biolockj.exception.DirectModuleException;
+import biolockj.exception.FatalExceptionHandler;
 import biolockj.module.*;
 import biolockj.module.report.Email;
 import biolockj.module.report.r.R_Module;
@@ -120,6 +122,7 @@ public class Pipeline {
 				module.getClass().getSimpleName(), ex );
 			module.moduleFailed();
 			SummaryUtil.reportFailure( ex );
+			throw ex; //ultimately let FatalExceptionHandler handle this.
 		}
 	}
 
@@ -276,7 +279,7 @@ public class Pipeline {
 
 		if( numFailed > 0 ) {
 			final String failMsg = "SCRIPT FAILED: " + BioLockJUtil.getCollectionAsString( module.getScriptErrors() );
-			throw new Exception( failMsg );
+			throw new DirectModuleException( failMsg );
 		}
 
 		return numScripts > 0 && numSuccess + numFailed == numScripts;

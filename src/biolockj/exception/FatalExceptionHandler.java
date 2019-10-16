@@ -39,23 +39,38 @@ public class FatalExceptionHandler {
 	 */
 	public static void logFatalError( final String[] args, final Exception ex ) {
 		System.out.println( "System encountered a FATAL ERROR" );
-		System.out.println( ERROR_TYPE + ex.getClass().getSimpleName() );
-		System.out.println( ERROR_MSG + ex.getMessage() );
+
 		if( Log.getFile() != null && Log.getFile().isFile() ) {
 			setErrorLog( Log.getFile() );
-			setFailedStatus(ex);
-			SummaryUtil.addSummaryFooterForFailedPipeline();
-		} else setErrorLog( createErrorLog() );
+		} else {
+			setErrorLog( createErrorLog() );
+		}
+		
+		if( ex instanceof DirectModuleException && getExistingFailFlag() != null ) {
+			File failFlag = getExistingFailFlag();
+				try {
+					BufferedReader reader = BioLockJUtil.getFileReader( failFlag );
+					for( String line = reader.readLine(); line != null; line = reader.readLine() ) {
+						System.out.println(line); // for test suite
+					}
+					reader.close();
+				} catch( Exception e ) {} // well then don't do that.
+		} else {
+			System.out.println( ERROR_TYPE + ex.getClass().getSimpleName() );
+			System.out.println( ERROR_MSG + ex.getMessage() );
+			setFailedStatus( ex );
+		}
 
+		if( !BioLockJUtil.isDirectMode() ) SummaryUtil.addSummaryFooterForFailedPipeline();
 		logFatalException( args, ex );
 
 		if( getErrorLog() != null ) {
 			Log.info( FatalExceptionHandler.class,
 				"Local file-system error log path: " + getErrorLog().getAbsolutePath() );
-			if( DockerUtil.inDockerEnv() ) try{
-				Log.info( FatalExceptionHandler.class, "Host file-system error log path: " + 
-				RuntimeParamUtil.getHomeDir(false) + File.separator + getErrorLog().getName() );
-			}catch(DockerVolCreationException docEx) {
+			if( DockerUtil.inDockerEnv() ) try {
+				Log.info( FatalExceptionHandler.class, "Host file-system error log path: " +
+					RuntimeParamUtil.getHomeDir( false ) + File.separator + getErrorLog().getName() );
+			} catch( DockerVolCreationException docEx ) {
 				// well, then, don't do that.
 			}
 			if( !getErrorLog().isFile() ) dumpLogs( getLogs() );
@@ -63,6 +78,7 @@ public class FatalExceptionHandler {
 			Log.warn( FatalExceptionHandler.class, "Unable to save logs to file-system: " );
 			printLogsOnScreen( getLogs() );
 		}
+		
 	}
 
 	private static File createErrorLog() {
@@ -166,6 +182,17 @@ public class FatalExceptionHandler {
 
 	private static void setErrorLog( final File file ) {
 		errorLog = file;
+	}
+	
+	private static File getExistingFailFlag() {
+		boolean fileExists = false;
+		File failFlag = null;
+		if( Config.getPipelineDir() != null ) {
+			failFlag = new File( Config.getPipelineDir() + File.separator + Constants.BLJ_FAILED );
+			fileExists = failFlag.exists();
+		}
+		if (fileExists) return failFlag;
+		return null;
 	}
 
 	private static void setFailedStatus(Exception fetalEx) {
