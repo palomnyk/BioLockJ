@@ -294,10 +294,17 @@ public class ValidationUtil {
 	 * @throws DockerVolCreationException 
 	 */
 	private static String fileNameToKey( final String fileName ) throws DockerVolCreationException {
-		final String pipePrifix = RuntimeParamUtil.getProjectName();
-		String key = fileName.replaceAll( pipePrifix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
-		if( key.equals( fileName ) )
-			key = fileName.replaceAll( pipePrifix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
+		final String pipePrefix = RuntimeParamUtil.getProjectName();
+		final String PIPE_DATE = "PIPELINE_DATE";
+		String key;
+		if( BioLockJUtil.isDirectMode() ) {
+			key = fileName.replaceAll( pipePrefix, PIPE_DATE );
+		} else {
+			key = fileName.replaceAll( pipePrefix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+			if( key.equals( fileName ) )
+				key = fileName.replaceAll( pipePrefix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+		}
+		
 		Log.debug( ValidationUtil.class, "Using [" + key + "] as the key based on [" + fileName + "]." );
 		return key;
 	}
