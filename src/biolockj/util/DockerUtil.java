@@ -338,8 +338,14 @@ public class DockerUtil {
 	
 	public static String containerizePath(String path) throws DockerVolCreationException  {
 		if (path == null || path.isEmpty()) return null;
-		TreeMap<String, String> vmap = getVolumeMap();
 		String innerPath = path;
+		TreeMap<String, String> vmap = getVolumeMap();
+		String pipelineKey = null;
+		for (String key : volumeMap.keySet()) {
+			if (volumeMap.get( key ).startsWith( DOCKER_PIPELINE_DIR ) ) pipelineKey = key;
+		}
+		if (pipelineKey == null) throw new DockerVolCreationException("no pipeline dir !");
+		if ( pipelineKey != null && path.startsWith( pipelineKey ) ) return innerPath.replaceFirst( pipelineKey, vmap.get( pipelineKey ) );
 		for (String s : vmap.keySet()) {
 			if ( path.startsWith( s ) ) {
 				innerPath = innerPath.replaceFirst( s, vmap.get( s ) );
