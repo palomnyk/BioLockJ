@@ -56,14 +56,15 @@ public class DockerUtil {
 		lines.add( "# Spawn Docker container" );
 		lines.add( "function " + SPAWN_DOCKER_CONTAINER + "() {" );
 		lines.add(  SCRIPT_ID_VAR + "=$(basename $1)");
+		lines.add( LOG_VAR + "=" + tempDir + "/${" + SCRIPT_ID_VAR + "}.log" );
 		lines.add(  ID_VAR + "=$(" + Config.getExe( module, Constants.EXE_DOCKER ) + " run " + DOCKER_DETACHED_FLAG + " "+ rmFlag( module ) + WRAP_LINE );
 		lines.addAll(  getDockerVolumes( module )); 
 		lines.add(  getDockerImage( module ) + WRAP_LINE );
-		lines.add( "$(/bin/bash $1 &> " + tempDir + "/${" + SCRIPT_ID_VAR + "}.log ) )" );
+		lines.add( "/bin/bash -c \"$1 &> $" + LOG_VAR + "\" )" );
 		lines.add( "echo \"Launched docker image: " + getDockerImage( module ) + "\"" );
 		lines.add( "echo \"To execute module: " + module.getClass().getSimpleName() + "\"" );
 		lines.add( "echo \"Docker container id: $" + ID_VAR + "\"" );
-		lines.add( "echo \"$" + ID_VAR + "\" > " + startedFlag );
+		lines.add( "echo \"$" + ID_VAR + "\" >> " + startedFlag );
 		lines.add( "}" + Constants.RETURN );
 		return lines;
 	}
@@ -495,4 +496,5 @@ public class DockerUtil {
 	private static final String DOCKER_DETACHED_FLAG = "--detach";
 	private static final String ID_VAR = "containerId";
 	private static final String SCRIPT_ID_VAR = "SCRIPT_ID";
+	private static final String LOG_VAR = "LOG_FILE";
 }
