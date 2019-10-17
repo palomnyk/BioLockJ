@@ -16,7 +16,7 @@ public class DockerVolCreationException extends DockerVolumeException {
 		super( "An error occurred when attempting to create the docker volume map." );
 		Log.debug(this.getClass(), "The following error occurred when attempting to create the volume map:");
 		Log.debug(this.getClass(), ex.getClass().getSimpleName() );
-		Log.debug(this.getClass(), ex.getStackTrace().toString() );
+		ex.printStackTrace();
 	}
 	
 	private static final long serialVersionUID = -8548087131239616854L;
