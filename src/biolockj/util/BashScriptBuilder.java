@@ -204,16 +204,23 @@ public class BashScriptBuilder {
 		lines.addAll( pathVariableVals(module) );
 		lines.add( "touch \"" + startedFlag + "\"" + RETURN );
 		lines.add( "cd " + module.getScriptDir().getAbsolutePath() + RETURN );
-		if( DockerUtil.inDockerEnv() ) lines.addAll( DockerUtil.buildSpawnDockerContainerFunction( module, startedFlag ) );
-		else if( Config.isOnCluster() ) {
-			lines.add( "# Submit job script" );
-			lines.add( "function " + FUNCTION_RUN_JOB + "() {" );
-			lines.add( Config.requireString( module, CLUSTER_BATCH_COMMAND ) + " $1" );
-			lines.add( "}" + RETURN );
+		if( DockerUtil.inDockerEnv() ) {
+			lines.addAll( DockerUtil.buildSpawnDockerContainerFunction( module, startedFlag ) );
+		}else if( Config.isOnCluster() ) {
+			lines.addAll( buildRunClusterJobFunction( module ) );
 		}
 		lines.addAll( buildScriptFailureFunction( mainScriptPath ) );
 		lines.addAll( buildExecuteFunction() );
 		return lines;
+	}
+	
+	private static List<String> buildRunClusterJobFunction( ScriptModule module ) throws ConfigNotFoundException{
+		List<String> lines = new ArrayList<>();
+		lines.add( "# Submit job script" );
+		lines.add( "function " + FUNCTION_RUN_JOB + "() {" );
+		lines.add( Config.requireString( module, CLUSTER_BATCH_COMMAND ) + " $1" );
+		lines.add( "}" + RETURN );
+		return(lines);
 	}
 	
 	/**
