@@ -216,9 +216,12 @@ public class BashScriptBuilder {
 	
 	private static List<String> buildRunClusterJobFunction( ScriptModule module ) throws ConfigNotFoundException{
 		List<String> lines = new ArrayList<>();
+		String startedFlag = getMainScriptPath( module ) + "_" + Constants.SCRIPT_STARTED;
 		lines.add( "# Submit job script" );
 		lines.add( "function " + FUNCTION_RUN_JOB + "() {" );
-		lines.add( Config.requireString( module, CLUSTER_BATCH_COMMAND ) + " $1" );
+		lines.add( "scriptName=$(basename $1)");
+		lines.add( "id=$(" + Config.requireString( null, CLUSTER_BATCH_COMMAND ) + " $1)" );
+		lines.add( "echo \"$scriptName:" + CLUSTER_KEY + ":$id\" >> " + startedFlag );
 		lines.add( "}" + RETURN );
 		return(lines);
 	}
@@ -413,6 +416,12 @@ public class BashScriptBuilder {
 	 * Terminal command used to submit jobs on the cluster.
 	 */
 	protected static final String CLUSTER_BATCH_COMMAND = "cluster.batchCommand";
+	
+	/**
+	 * {@link biolockj.Config} String property: {@value #CLUSTER_STATUS_COMMAND}<br>
+	 * Terminal command used to submit jobs on the cluster.
+	 */
+	protected static final String CLUSTER_STATUS_COMMAND = "cluster.statusCommand";
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #CLUSTER_MODULES}<br>
@@ -439,6 +448,7 @@ public class BashScriptBuilder {
 
 	private static final String FUNCTION_EXECUTE_LINE = "executeLine";
 	private static final String FUNCTION_RUN_JOB = "runJob";
+	private static final String CLUSTER_KEY = "cluster";
 	private static final String FUNCTION_SCRIPT_FAILED = "scriptFailed";
 	private static final String MOD_DIR = "modDir";
 	private static final String MOD_DIR_VAR = "${" + MOD_DIR + "}";
