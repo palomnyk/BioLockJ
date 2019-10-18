@@ -253,6 +253,7 @@ public class Pipeline {
 	 */
 	protected static boolean poll( final ScriptModule module ) throws Exception {
 		final Collection<File> scriptFiles = getWorkerScripts( module );
+		final File mainStarted = getMainStartedFlag(module);
 		final int numScripts = scriptFiles.size();
 		int numSuccess = 0;
 		int numStarted = 0;
@@ -262,6 +263,14 @@ public class Pipeline {
 			final File testStarted = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_STARTED );
 			final File testSuccess = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_SUCCESS );
 			final File testFailure = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_FAILURES );
+			if ( DockerUtil.inDockerEnv() 
+							&& testStarted.isFile() 
+							&& DockerUtil.workerContainerStopped(mainStarted, f) 
+							&& !testSuccess.isFile() ) {
+				Log.info(Pipeline.class, "Worker script [" + f.getName() + "] is not complete, and its container is not running."); 
+				Log.info(Pipeline.class, "Marking worker script [" + f.getName() + "] as failed.");
+				if (!testFailure.isFile()) testFailure.createNewFile();
+			}
 			numStarted = numStarted + ( testStarted.isFile() ? 1: 0 );
 			numSuccess = numSuccess + ( testSuccess.isFile() ? 1: 0 );
 			numFailed = numFailed + ( testFailure.isFile() ? 1: 0 );
@@ -321,6 +330,12 @@ public class Pipeline {
 			Log.debug( Pipeline.class, "Worker Script = " + f.getAbsolutePath() );
 
 		return scriptFiles;
+	}
+	
+	private static File getMainStartedFlag ( final ScriptModule module ) throws Exception {
+		final File mainScriptStarted = new File(module.getMainScript().getAbsolutePath() + "_" + Constants.SCRIPT_STARTED);
+		if (mainScriptStarted.exists()) return mainScriptStarted;
+		return null;
 	}
 
 	private static void info( final String msg ) {

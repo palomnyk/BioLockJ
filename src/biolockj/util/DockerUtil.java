@@ -13,6 +13,7 @@ package biolockj.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -64,9 +65,47 @@ public class DockerUtil {
 		lines.add( "echo \"Launched docker image: " + getDockerImage( module ) + "\"" );
 		lines.add( "echo \"To execute module: " + module.getClass().getSimpleName() + "\"" );
 		lines.add( "echo \"Docker container id: $" + ID_VAR + "\"" );
-		lines.add( "echo \"$" + ID_VAR + "\" >> " + startedFlag );
+		lines.add( "echo \"${" + SCRIPT_ID_VAR + "}:" + DOCKER_KEY + ":${" + ID_VAR + "}\" >> " + startedFlag );
 		lines.add( "}" + Constants.RETURN );
 		return lines;
+	}
+	
+	public static boolean workerContainerStopped (final File mainStarted, final File workerScript) {
+		boolean hasStopped = false;
+		String containerId = null;
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader( new FileReader( mainStarted ));
+			String s = null;
+			String key = workerScript.getName() + ":" + DOCKER_KEY + ":";
+			while( ( s = reader.readLine() ) != null )
+			{
+				if (s.startsWith( workerScript.getName() )) containerId=s.replaceFirst( key, "" );
+			}
+			reader.close();
+		} catch( IOException e ) {
+			Log.warn(DockerUtil.class, "Failed to extract container id from [" + mainStarted.getName() + "].");
+			e.printStackTrace();
+		}
+		if ( containerId == null ) {
+			Log.warn(DockerUtil.class, "No container id for [" + workerScript.getName() + "].");
+		}else {
+			try {
+				hasStopped = ! containerIsRunning(containerId);
+			} catch( IOException e ) {
+				Log.warn(DockerUtil.class, "Could not determine if container [" + containerId + "] is running.");
+				e.printStackTrace();
+			}
+		}
+		return(hasStopped);
+	}
+	private static boolean containerIsRunning (final String containerId) throws IOException {
+		String cmd = "docker inspect -f '{{.State.Running}}' " + containerId + " 2>/dev/null";
+		final Process p = Runtime.getRuntime().exec( cmd ); 
+		final BufferedReader br = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
+		String s = br.readLine();
+		br.close();
+		return s.equals( "true" );
 	}
 	
 	private static List<String> getDockerVolumes( final BioModule module )
@@ -497,4 +536,5 @@ public class DockerUtil {
 	private static final String ID_VAR = "containerId";
 	private static final String SCRIPT_ID_VAR = "SCRIPT_ID";
 	private static final String LOG_VAR = "LOG_FILE";
+	private static final String DOCKER_KEY = "docker";
 }
