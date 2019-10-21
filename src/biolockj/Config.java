@@ -392,6 +392,7 @@ public class Config {
 	 * @return Pipeline directory path
 	 */
 	public static String pipelinePath() {
+		if ( getPipelineDir() == null ) return null;
 		return getPipelineDir().getAbsolutePath();
 	}
 
