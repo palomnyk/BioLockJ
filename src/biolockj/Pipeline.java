@@ -13,6 +13,7 @@ package biolockj;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -265,11 +266,12 @@ public class Pipeline {
 			final File testFailure = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_FAILURES );
 			if ( DockerUtil.inDockerEnv() 
 							&& testStarted.isFile() 
+							&& !testFailure.isFile()
 							&& DockerUtil.workerContainerStopped(mainStarted, f) 
 							&& !testSuccess.isFile() ) {
 				Log.info(Pipeline.class, "Worker script [" + f.getName() + "] is not complete, and its container is not running."); 
 				Log.info(Pipeline.class, "Marking worker script [" + f.getName() + "] as failed.");
-				if (!testFailure.isFile()) testFailure.createNewFile();
+				testFailure.createNewFile();
 			}
 			numStarted = numStarted + ( testStarted.isFile() ? 1: 0 );
 			numSuccess = numSuccess + ( testSuccess.isFile() ? 1: 0 );
@@ -287,8 +289,14 @@ public class Pipeline {
 		} else if( ++pollCount % 10 == 0 ) Log.info( Pipeline.class, logMsg );
 
 		if( numFailed > 0 ) {
-			final String failMsg = "SCRIPT FAILED: " + BioLockJUtil.getCollectionAsString( module.getScriptErrors() );
-			throw new DirectModuleException( failMsg );
+			String scriptMsgs = BioLockJUtil.getCollectionAsString( module.getScriptErrors() );
+			if (scriptMsgs != null && !scriptMsgs.isEmpty()) {
+				throw new DirectModuleException( "SCRIPT FAILED: " + scriptMsgs );
+			}else if( module instanceof JavaModuleImpl ) {
+				// this creates a default message; hopefully the module is able to produce a more informative one.
+				throw new DirectModuleException( "Java module failed before the module instance of BioLockJ could establish error logging." );
+			}
+			throw new DirectModuleException();
 		}
 
 		return numScripts > 0 && numSuccess + numFailed == numScripts;
@@ -372,14 +380,21 @@ public class Pipeline {
 	private static void waitForModuleScripts() throws Exception {
 		final ScriptModule module = (ScriptModule) exeModule();
 		logScriptTimeOutMsg( module );
-		int numMinutes = 0;
+		long startTime = (new Date()).getTime();
+		long millisWaiting;
+		long delayMillis;
 		boolean finished = false;
 		while( !finished ) {
 			finished = poll( module );
 			if( !finished ) {
-				if( module.getTimeout() != null && module.getTimeout() > 0 && numMinutes++ >= module.getTimeout() )
-					throw new Exception( module.getClass().getName() + " timed out after " + numMinutes + " minutes." );
-				Thread.sleep( BioLockJUtil.minutesToMillis( 1 ) );
+				millisWaiting = (new Date()).getTime() - startTime;
+				if( module.getTimeout() != null && module.getTimeout() > 0 
+								&& millisWaiting >= BioLockJUtil.minutesToMillis(module.getTimeout() ))
+					throw new Exception( module.getClass().getName() + " timed out after " + BioLockJUtil.millisToMinutes( millisWaiting ) + " minutes." );
+				if ( BioLockJUtil.millisToMinutes(millisWaiting) < 1 ) { delayMillis = 2 * 1000;
+				}else if ( BioLockJUtil.millisToMinutes(millisWaiting) < 5 ) { delayMillis = 10 * 1000;
+				}else {delayMillis = BioLockJUtil.minutesToMillis(1);}
+				Thread.sleep( delayMillis );
 			}
 		}
 	}
