@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import biolockj.*;
+import biolockj.exception.BioLockJException;
 import biolockj.exception.DockerVolCreationException;
 import biolockj.exception.RuntimeParamException;
 import biolockj.module.JavaModule;
@@ -44,7 +45,7 @@ public class RuntimeParamUtil {
 	public static File getFileParam(String paramName, boolean dockerize) throws DockerVolCreationException{
 		String filePath = params.get( paramName );
 		if ( dockerize && DockerUtil.inDockerEnv() ) 
-		filePath = DockerUtil.containerizePath( filePath );
+			filePath = DockerUtil.containerizePath( filePath );
 		return filePath == null ? null: new File( filePath );
 	}
 	
@@ -65,10 +66,11 @@ public class RuntimeParamUtil {
 	 * @throws DockerVolCreationException 
 	 */
 	public static File get_BLJ_PROJ() throws DockerVolCreationException {
-		return getFileParam( BLJ_PROJ_DIR, true );
+		return get_BLJ_PROJ( true );
 	}
 	public static File get_BLJ_PROJ(boolean dockerize) throws DockerVolCreationException {
-		return getFileParam( BLJ_PROJ_DIR, dockerize );
+		if (dockerize && DockerUtil.inDockerEnv()) return new File(DockerUtil.DOCKER_PIPELINE_DIR);
+		return getFileParam( BLJ_PROJ_DIR, false );
 	}
 
 	/**
@@ -87,7 +89,7 @@ public class RuntimeParamUtil {
 	 * @throws DockerVolCreationException 
 	 */
 	public static File getConfigFile() throws DockerVolCreationException {
-		return getFileParam( CONFIG_FILE, true );
+		return getConfigFile( true );
 	}
 	public static File getConfigFile(boolean dockerize) throws DockerVolCreationException {
 		return getFileParam( CONFIG_FILE, dockerize );
@@ -127,9 +129,11 @@ public class RuntimeParamUtil {
 	 * @throws DockerVolCreationException 
 	 */
 	public static File getHomeDir() throws DockerVolCreationException {
-		return getFileParam( HOME_DIR, true );
+		return getHomeDir( true );
 	}
+	//TODO: cut down on usage of home dir
 	public static File getHomeDir(boolean dockerize) throws DockerVolCreationException {
+		if (dockerize && DockerUtil.inDockerEnv()) return new File(DockerUtil.AWS_EC2_HOME);
 		return getFileParam( HOME_DIR, dockerize );
 	}
 
@@ -305,18 +309,15 @@ public class RuntimeParamUtil {
 	}
 
 	private static void assignMasterConfig( final String param, final File pipelineDir ) throws RuntimeParamException {
-		final String masterPrefix = Constants.MASTER_PREFIX.substring( 0, Constants.MASTER_PREFIX.length() - 1 );
 		if( pipelineDir == null ) throw new RuntimeParamException( param, "", "Pipeline root directory not found!" );
 		if( !pipelineDir.isDirectory() )
 			throw new RuntimeParamException( param, pipelineDir.getAbsolutePath(), "System directory not found" );
-		for( final File file: pipelineDir.listFiles() )
-			if( file.getName().startsWith( Constants.MASTER_PREFIX ) ) {
-				params.put( CONFIG_FILE, file.getAbsolutePath() );
-				return;
-			}
-
-		throw new RuntimeParamException( param, pipelineDir.getAbsolutePath(),
-			masterPrefix + " Config file not found in: " + pipelineDir.getAbsolutePath() );
+		try {
+			File masterConfig = MasterConfigUtil.getExistingMasterConfig( pipelineDir );
+			params.put( CONFIG_FILE, masterConfig.getAbsolutePath() );
+		}catch( BioLockJException bljEx ) {
+			throw new RuntimeParamException( param, "", bljEx.getMessage() );
+		}
 	}
 
 	private static String getDir( final String path ) {
@@ -328,7 +329,6 @@ public class RuntimeParamUtil {
 		Log.info( RuntimeParamUtil.class, "Building java args for compute nodes  -->" );
 		return BLJ_PROJ_DIR + " " + get_BLJ_PROJ(false).getAbsolutePath() + " " 
 			 + HOME_DIR + " " + getHomeDir(false).getAbsolutePath() + " " 
-			 + CONFIG_FILE + " " + getConfigFile(false).getAbsolutePath() + " " 
 			 + DIRECT_MODE + " " + Config.pipelineName() + ":" + module.getModuleDir().getName();
 	}
 

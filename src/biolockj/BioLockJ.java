@@ -224,6 +224,7 @@ public class BioLockJ {
 		if( DownloadUtil.getDownloadListFile().isFile() ) DownloadUtil.getDownloadListFile().delete();
 		if( ValidationUtil.getValidationDir().exists() ) ValidationUtil.getValidationDir().delete();
 		if( NextflowUtil.getMainNf().isFile() ) NextflowUtil.getMainNf().delete();
+		//if( DockerUtil.getInfoFile().exists() ) DockerUtil.getInfoFile().delete();
 
 		BioLockJUtil.markStatus( Constants.BLJ_STARTED );
 	}
@@ -282,7 +283,7 @@ public class BioLockJ {
 		}
 
 		Pipeline.initializePipeline();
-
+		
 		if( BioLockJUtil.isDirectMode() )
 			Pipeline.runDirectModule( getDirectModuleID( RuntimeParamUtil.getDirectModuleDir() ) );
 		else {

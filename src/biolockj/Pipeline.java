@@ -226,6 +226,7 @@ public class Pipeline {
 			info( "Check dependencies for: " + module.getClass().getName() );
 			module.checkDependencies();
 			ValidationUtil.checkDependencies( module );
+			DockerUtil.checkDependencies( module );
 
 			if( ModuleUtil.isComplete( module ) ) {
 				module.cleanUp();

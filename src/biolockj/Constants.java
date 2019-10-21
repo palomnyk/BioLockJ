@@ -296,6 +296,12 @@ public class Constants {
 	 * Set value of suffix to trim from sequence file names or headers to obtain Sample ID.
 	 */
 	public static final String INPUT_TRIM_SUFFIX = "input.trimSuffix";
+	
+	/**
+	 * Any {@link biolockj.Config} property that starts with the {@value INTERNAL_PREFIX}
+	 * prefix will not be included in the final MASTER properties file.
+	 */
+	public static final String INTERNAL_PREFIX = "internal.";
 
 	/**
 	 * Internal {@link biolockj.Config} List property: {@value #INTERNAL_ALL_MODULES}<br>
