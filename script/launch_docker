@@ -116,7 +116,8 @@ blj_options() {
 	ifDefined $restartDir && options="${options} -restartDir $restartDir"
 	ifArgUsed $PASSWORD_ARG && options="${options} -password $newPass"
 	ifArgUsed $AWS_ARG && options="${options} -aws"
-	echo "${options} -config $(to_abs_path ${configFile})" # TODO - handle reset case in docker
+	ifDefined $configFile && options="${options} -config $(to_abs_path ${configFile})"
+	echo "${options}"
 }
 
 # Get mapped  Docker volumes
@@ -138,7 +139,8 @@ get_volumes() {
 			[ -f "$(which aws)" ] && [ -d "$(dirname $(which aws))" ] && vols="${vols} -v $(dirname $(which aws)):${APP_BIN}"
 		else 
 			local i=1
-			configuredDirs=$(${BLJ}/script/read_config.sh $configFile "mount")
+			readableConfig=$(get_readable_config)
+			configuredDirs=$(${BLJ}/script/read_config.sh $readableConfig "mount")
 			for dir in ${configuredDirs[@]}; do
 				vols="${vols} -v ${dir}:${EFS}/vol_${i}:ro" 
 				i=$(( i + 1 ))
@@ -146,6 +148,16 @@ get_volumes() {
 		fi
 	fi
 	echo "${vols}"
+}
+
+get_readable_config(){
+	if ifArgUsed $RESTART_ARG && ! ifDefined $configFile ; then
+		echo $(ls ${restartDir}/MASTER*properties )
+	elif ifDefined $configFile; then
+		echo $configFile
+	else
+		exit_with_message "Could not get a readable config file."
+	fi
 }
 
 args_for_gui(){
