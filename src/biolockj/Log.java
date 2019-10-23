@@ -80,6 +80,7 @@ public class Log {
 
 	/**
 	 * Boolean toggle to enable/disable all log messages
+	 * TODO: when is this a good idea?
 	 * 
 	 * @param enable boolean
 	 */
@@ -165,13 +166,23 @@ public class Log {
 	 * @throws Exception if unable to create the log file or print {@link biolockj.Config} properties
 	 */
 	public static void initialize( final String name ) throws Exception {
-		logFile = BioLockJUtil.createFile( Config.pipelinePath() + File.separator + name + Constants.LOG_EXT );
+		logFile = new File( Config.pipelinePath(), name + Constants.LOG_EXT);
+		logFile.createNewFile();
+		
 		System.setProperty( LOG_FILE, logFile.getAbsolutePath() );
 		System.setProperty( Constants.LOG_LEVEL_PROPERTY, validateLogLevel() );
 		System.setProperty( LOG_APPEND, String.valueOf( logFile.isFile() ) );
 		System.setProperty( LOG_FORMAT,
 			BioLockJUtil.isDirectMode() && !Config.isOnCluster() ? DIRECT_FORMAT: DEFAULT_FORMAT );
 
+		if (RuntimeParamUtil.doRestart()) {
+			Log.info( Log.class, Constants.LOG_SPACER );
+			Log.info( Log.class, "" );
+			Log.info( Log.class, "Restarting pipeline" );
+			Log.info( Log.class, "" );
+			Log.info( Log.class, Constants.LOG_SPACER );
+		}
+		
 		if( !BioLockJUtil.isDirectMode() ) {
 			logWelcomeMsg();
 			for( final String[] m: Log.logMesseges ) {
