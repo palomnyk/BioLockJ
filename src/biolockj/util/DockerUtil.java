@@ -417,7 +417,7 @@ public class DockerUtil {
 		if( BioLockJUtil.isDirectMode() )
 			parentDir = new File((new File(Config.getPipelineDir(), RuntimeParamUtil.getDirectModuleDir())), BioModuleImpl.TEMP_DIR);
 		if( parentDir != null && parentDir.exists() ) {
-			System.out.println("path to info file: " + (new File( parentDir, DOCKER_INFO_FILE )).getAbsolutePath());
+			Log.debug(DockerUtil.class, "path to info file: " + (new File( parentDir, DOCKER_INFO_FILE )).getAbsolutePath());
 			return new File( parentDir, DOCKER_INFO_FILE );
 		} else {
 			return null;
