@@ -120,6 +120,7 @@ public class MasterConfigUtil {
 
 			usedProps.remove( Constants.INTERNAL_BLJ_MODULE );
 			usedProps.remove( Constants.PIPELINE_DEFAULT_PROPS );
+			usedProps.remove( Constants.PROJECT_DEFAULT_PROPS);
 
 			for( final String key: usedProps.keySet() ) {
 				final String val = usedProps.get( key );

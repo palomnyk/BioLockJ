@@ -60,8 +60,8 @@ read_properties(){
 			: #ignore it.
 		elif ! string_contains "$line" "="; then 
 			: #ignore it.
-		elif string_starts_with $line "pipeline.defaultProps"; then
-			DPROPS=${line#"pipeline.defaultProps="}
+		elif string_starts_with $line "pipeline.defaultProps" || string_starts_with $line "project.defaultProps"; then
+			DPROPS=${line##*.defaultProps=}
 			DPROPS=${DPROPS//,/" "} # split on ',' because this could be a list
 			for DPROP in ${DPROPS[@]}; do
 				processedVars=$(eval echo "$DPROP") && DPROP=$processedVars

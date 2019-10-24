@@ -505,6 +505,13 @@ public class Constants {
 	public static final String PROCESSED = "_reported" + Constants.TSV_EXT;
 
 	/**
+	 * {@link biolockj.Config} String property: {@value #PROJECT_DEFAULT_PROPS}<br>
+	 * Set file path of default property file. Nested default properties are supported (so the default property file can
+	 * also have a default, and so on).
+	 */
+	public static final String PROJECT_DEFAULT_PROPS = "project.defaultProps";
+	
+	/**
 	 * {@link biolockj.Config} property to assign a free-hand to a project: {@value #PROJECT_DESC} TODO: needs to be
 	 * implemented.
 	 */

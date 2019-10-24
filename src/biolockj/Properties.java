@@ -132,10 +132,15 @@ public class Properties extends java.util.Properties {
 			reader = BioLockJUtil.getFileReader( propFile );
 			for( String line = reader.readLine(); line != null; line = reader.readLine() ) {
 				final StringTokenizer st = new StringTokenizer( line, "=" );
-				if( st.countTokens() > 1 && st.nextToken().trim().equals( Constants.PIPELINE_DEFAULT_PROPS ) ) {
-					final StringTokenizer inner = new StringTokenizer( st.nextToken().trim(), "," );
-					while( inner.hasMoreTokens() )
-						defProps.add( Config.getLocalConfigFile( inner.nextToken().trim() ) );
+				if( st.countTokens() > 1 ) {
+					String propName = st.nextToken().trim();
+					if ( propName.equals( Constants.PIPELINE_DEFAULT_PROPS ) ||
+							propName.equals( Constants.PROJECT_DEFAULT_PROPS )) {
+						final StringTokenizer inner = new StringTokenizer( st.nextToken().trim(), "," );
+						while ( inner.hasMoreTokens() ) {
+							defProps.add( Config.getLocalConfigFile( inner.nextToken().trim() ) );
+						}
+					}
 				}
 			}
 		} catch( IOException e ) {
