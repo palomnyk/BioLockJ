@@ -170,6 +170,10 @@ public class FatalExceptionHandler {
 			ex );
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
 		ex.printStackTrace();
+		if ( ex.getCause() instanceof BioLockJException ) {
+			Log.error( FatalExceptionHandler.class, "Caused by ... " + ex.getClass().getSimpleName());
+			ex.getCause().printStackTrace();
+		}
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
 		Log.error( FatalExceptionHandler.class, BioLockJ.getHelpInfo() );
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
