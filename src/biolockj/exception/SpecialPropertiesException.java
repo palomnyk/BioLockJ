@@ -1,8 +1,5 @@
 package biolockj.exception;
 
-import java.nio.file.FileSystem;
-import javafx.collections.SetChangeListener;
-
 /**
  * This type of exception is thrown if an error occurs while processing a special type of property such as "exe."
  * properties or defaultProps.

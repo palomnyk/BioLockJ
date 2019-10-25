@@ -49,9 +49,10 @@ public class DockerUtil {
 	 * {@value biolockj.Constants#TRUE} or {@value biolockj.Constants#FALSE}
 	 * @throws ConfigPathException If mounted Docker volumes are not found on host or container file-system
 	 * @throws DockerVolCreationException 
+	 * @throws SpecialPropertiesException 
 	 */
 	public static List<String> buildSpawnDockerContainerFunction( final BioModule module, final String startedFlag )
-		throws ConfigViolationException, ConfigNotFoundException, ConfigFormatException, ConfigPathException, DockerVolCreationException {
+		throws ConfigException, DockerVolCreationException {
 		String tempDir = module.getTempDir().getAbsolutePath();
 		Log.info( DockerUtil.class, "tempDir String: " + tempDir);
 		final List<String> lines = new ArrayList<>();
@@ -191,40 +192,6 @@ public class DockerUtil {
 		if( user == null ) return DEFAULT_DOCKER_HUB_USER;
 		return user;
 	}
-
-//	/**
-//	 * Get mapped Docker system File from {@link biolockj.Config} directory-property by replacing the host system path
-//	 * with the mapped container path.
-//	 * 
-//	 * @param prop {@link biolockj.Config} directory-property
-//	 * @param containerPath Local container path
-//	 * @return Docker volume directory or null
-//	 * @throws ConfigNotFoundException if prop not found
-//	 * @throws ConfigPathException if path is defined but is not an existing directory
-//	 */
-//	public static File getDockerVolumeDir( final String prop, final String containerPath )
-//		throws ConfigPathException, ConfigNotFoundException {
-//		final String path = Config.requireString( null, prop );
-//		final File dir = inAwsEnv() ? getDockerVolumePath( path, containerPath ): new File( containerPath );
-//		if( !dir.isDirectory() ) throw new ConfigPathException( dir );
-//		Log.info( BioLockJUtil.class, "Replace Config directory path \"" + path + "\" with Docker container path \"" +
-//			dir.getAbsolutePath() + "\"" );
-//		return dir;
-//	}
-
-//	/**
-//	 * Get mapped Docker system File from {@link biolockj.Config} file-property by replacing the host system path with
-//	 * the mapped container path.
-//	 * 
-//	 * @param prop {@link biolockj.Config} file-property
-//	 * @param containerPath Local container path
-//	 * @return Docker volume file or null
-//	 * @throws ConfigNotFoundException if prop not found
-//	 */
-//	public static File getDockerVolumeFile( final String prop, final String containerPath )
-//		throws ConfigNotFoundException {
-//		return getDockerVolumePath( Config.requireString( null, prop ), containerPath );
-//	}
 
 	/**
 	 * Get Docker file path through mapped volume
@@ -504,7 +471,8 @@ public class DockerUtil {
 			if ( ! getInfoFile().exists() ) writeDockerInfo();
 			String image = getDockerImage( module );
 			Log.info(DockerUtil.class, "The " + module.getClass().getSimpleName() + " module will use this docker image: " + image );
-			//if (Config.getBoolean( module, "docker.verifyImage" )) verifyImage(image);//some quick test to make sure the image exists
+			//if (Config.getBoolean( module, "docker.verifyImage" )) verifyImage(image);
+			//    TODO: some quick test to make sure the image exists 
 		}else {
 			Log.info(DockerUtil.class, "Not running in Docker.  No need to check Docker dependencies.");
 		}

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Log;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.ScriptModuleImpl;
@@ -46,7 +47,7 @@ public class GenMod extends ScriptModuleImpl {
 	protected String getLauncher() throws Exception {
 		String launcher = Config.getString( this, LAUNCHER );
 		if( launcher != null ) {
-			launcher = Config.getExe( this, "exe." + launcher ) + " ";
+			launcher = Config.getExe( this, Constants.EXE_PREFIX + launcher ) + " ";
 			Log.debug( GenMod.class, "Launcher used: " + launcher );
 		} else {
 			launcher = "";

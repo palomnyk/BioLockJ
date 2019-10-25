@@ -141,6 +141,15 @@ public class Constants {
 	public static final String DOMAIN = "domain";
 
 	/**
+	 * Prefix used in several {@link biolockj.Config} String properties. {@value #EXE_PREFIX}<br>
+	 * These properties are used to give the path to executables. Unlike most file path properties, they are not
+	 * converted from host-path style when using a docker container; thus, an "{@value #EXE_PREFIX}" property can be
+	 * used to specify an executable within a docker container.
+	 * In contrast, the "hostExe." prefix is used the same way, but it is translated to allow an in-container script to use the host file path specified.
+	 */
+	public static final String EXE_PREFIX = "exe.";
+	
+	/**
 	 * {@link biolockj.Config} String property: {@value #EXE_AWK}<br>
 	 * Set command line executable awk.
 	 */
@@ -201,6 +210,12 @@ public class Constants {
 	 * Argument to print help menu: {@value #HELP}
 	 */
 	public static final String HELP = "-help";
+	
+	/**
+	 * Prefix used in several {@link biolockj.Config} String properties. {@value #HOST_EXE_PREFIX}<br>
+	 * @see #EXE_PREFIX
+	 */
+	public static final String HOST_EXE_PREFIX = "hostExe.";
 
 	/**
 	 * {@link biolockj.Config} Boolean property to disable HumanN2 Gene Family report:

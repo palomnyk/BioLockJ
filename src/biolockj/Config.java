@@ -94,15 +94,33 @@ public class Config {
 	 * @param module BioModule to check for module-specific form of this property
 	 * @param property Property name
 	 * @return String value of executable
-	 * @throws ConfigViolationException if property name does not start with "exe."
+	 * @throws SpecialPropertiesException if property name does not start with "exe." or if other exceptions are encountered
 	 */
-	public static String getExe( final BioModule module, final String property ) throws ConfigViolationException {
-		if( !property.startsWith( "exe." ) ) throw new ConfigViolationException(
-			"Config.getExe() can only be called for properties that begin with \"exe.\"" );
+	public static String getExe( final BioModule module, final String property ) throws SpecialPropertiesException {
+		if( !property.startsWith( Constants.EXE_PREFIX ) ) throw new SpecialPropertiesException( property,
+			"Config.getExe() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
+		String inContainerPath = null;
+		String rawPath = getString( module, property );
+		try {
+			if( DockerUtil.inDockerEnv() ) {
+				File hostFile = getExistingFile( module, property.replaceFirst( Constants.EXE_PREFIX, Constants.HOST_EXE_PREFIX ) );
+				if (hostFile != null) inContainerPath = hostFile.getAbsolutePath();
 
+				if( inContainerPath == null && rawPath != null ) {
+					Log.warn( Config.class, "Unlike most properties, the \"" + Constants.EXE_PREFIX +
+						"\" properties are not converted to an in-container path." );
+					Log.warn( Config.class, "The exact string given will be used in scripts in a docker container." );
+					Log.warn( Config.class,
+						"To override this behavior, use the \"" + Constants.HOST_EXE_PREFIX + "\" prefix instead." );
+				}
+			}
+		} catch( BioLockJException ex ) {
+			throw new SpecialPropertiesException( property, ex );
+		}
 		// property name after trimming "exe." prefix, for example if exe.Rscript is undefined, return "Rscript"
-		if( getString( module, property ) == null ) return property.substring( property.indexOf( "." ) + 1 );
-		return getString( module, property );
+		if( inContainerPath != null ) return inContainerPath;
+		if( rawPath != null ) return rawPath;
+		return property.replaceFirst( Constants.EXE_PREFIX, "" );
 	}
 
 	/**
@@ -117,8 +135,8 @@ public class Config {
 	 */
 	public static String getExeParams( final BioModule module, final String property ) throws Exception {
 		final String property2 = property;
-		if( !property2.startsWith( "exe." ) )
-			throw new Exception( "Config.getExeParams() can only be called for properties that begin with \"exe.\"" );
+		if( !property2.startsWith( Constants.EXE_PREFIX ) )
+			throw new SpecialPropertiesException( property, "Config.getExeParams() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
 		if( getString( module, property2 + Constants.PARAMS ) == null ) return "";
 		String val = getString( module, property2 + Constants.PARAMS );
 		if( val != null && !val.isEmpty() && !val.endsWith( " " ) ) val = val + " ";
