@@ -1,6 +1,10 @@
-# Deployment path: $DOCKER_DIR/knead_data_dbfree.Dockerfile
+# suggested build command:
+# name=knead_data_dbfree
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-FROM biolockj/blj_basic_py2
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/blj_basic_py2
 ARG DEBIAN_FRONTEND=noninteractive
 
 #1.) Install Java

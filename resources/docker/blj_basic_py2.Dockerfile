@@ -1,6 +1,7 @@
-# build example:
+# suggested build command:
+# name=biolockj_controller
 # cd ${BLJ}
-# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/blj_basic_py2:latest . -f resources/docker/blj_basic_py2.Dockerfile 
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
 ARG DOCKER_HUB_USER=biolockj
 FROM ${DOCKER_HUB_USER}/blj_basic
