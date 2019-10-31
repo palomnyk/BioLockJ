@@ -342,8 +342,11 @@ public class Pipeline {
 	}
 	
 	private static File getMainStartedFlag ( final ScriptModule module ) throws Exception {
-		final File mainScriptStarted = new File(module.getMainScript().getAbsolutePath() + "_" + Constants.SCRIPT_STARTED);
-		if (mainScriptStarted.exists()) return mainScriptStarted;
+		File mainScriptStarted = null;
+		if ( module.getMainScript() != null ) {
+			mainScriptStarted = new File(module.getMainScript().getAbsolutePath() + "_" + Constants.SCRIPT_STARTED);
+		}
+		if ( mainScriptStarted != null && mainScriptStarted.exists()) return mainScriptStarted;
 		return null;
 	}
 
