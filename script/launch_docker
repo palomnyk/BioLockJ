@@ -52,7 +52,6 @@ main(){
 	ifArgUsed $GUI_ARG && startBrowser # if the gui has its own docker container, this CMD would be defined there
 }
 
-. ${BLJ_SCRIPT}/docker_functions
 . ${BLJ_SCRIPT}/blj_user_arg_lib
 
 # Read script args and bash env vars
@@ -165,7 +164,7 @@ args_for_gui(){
 }
 
 get_docker_img() {
-	echo "$(dock_id)/biolockj_controller"
+	echo "${DOCKER_ID}/biolockj_controller"
 }
 
 cmd_for_gui(){
