@@ -400,6 +400,7 @@ public class DockerUtil {
 		String pipelineKey = null;
 		for (String key : volumeMap.keySet()) {
 			if (volumeMap.get( key ).startsWith( DOCKER_PIPELINE_DIR ) ) pipelineKey = key;
+			if ( DockerUtil.inAwsEnv() && volumeMap.get( key ).startsWith( DOCKER_BLJ_MOUNT_DIR ) ) pipelineKey = key;
 		}
 		if (pipelineKey == null) throw new DockerVolCreationException("no pipeline dir !");
 		if ( pipelineKey != null && path.startsWith( pipelineKey ) ) return innerPath.replaceFirst( pipelineKey, vmap.get( pipelineKey ) );
