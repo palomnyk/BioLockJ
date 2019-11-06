@@ -70,10 +70,10 @@ java_cmd_core(){
 
 # Put together the arguments to pass to the java program
 assemble_args(){
-	args="-b ${BLJ_PROJ} -u ${HOME}"
-	ifArgUsed $PASSWORD_ARG && args="${args} -p $(get_arg_value $PASSWORD_ARG)" 
-	ifArgUsed $RESTART_ARG && args="${args} -r ${restartDir}"
-	[ ${#configFile} -gt 0 ] && args="${args} -c ${configFile}"
+	args="-projectDir ${BLJ_PROJ} -homeDir ${HOME}"
+	ifArgUsed $PASSWORD_ARG && args="${args} -password $(get_arg_value $PASSWORD_ARG)" 
+	ifArgUsed $RESTART_ARG && args="${args} -restartDir ${restartDir}"
+	[ ${#configFile} -gt 0 ] && args="${args} -config ${configFile}"
 	echo $args
 }
 

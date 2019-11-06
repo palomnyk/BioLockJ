@@ -39,26 +39,46 @@ public class FatalExceptionHandler {
 	 */
 	public static void logFatalError( final String[] args, final Exception ex ) {
 		System.out.println( "System encountered a FATAL ERROR" );
-		System.out.println( ERROR_TYPE + ex.getClass().getSimpleName() );
-		System.out.println( ERROR_MSG + ex.getMessage() );
+
 		if( Log.getFile() != null && Log.getFile().isFile() ) {
 			setErrorLog( Log.getFile() );
-			setFailedStatus(ex);
-			SummaryUtil.addSummaryFooterForFailedPipeline();
-		} else setErrorLog( createErrorLog() );
+		} else {
+			setErrorLog( createErrorLog() );
+		}
+		
+		if( ex instanceof DirectModuleException && getExistingFailFlag() != null ) {
+			File failFlag = getExistingFailFlag();
+				try {
+					BufferedReader reader = BioLockJUtil.getFileReader( failFlag );
+					for( String line = reader.readLine(); line != null; line = reader.readLine() ) {
+						System.out.println(line); // for test suite
+					}
+					reader.close();
+				} catch( Exception e ) {} // well then don't do that.
+		} else {
+			System.out.println( ERROR_TYPE + ex.getClass().getSimpleName() );
+			System.out.println( ERROR_MSG + ex.getMessage() );
+			setFailedStatus( ex );
+		}
 
+		if( !BioLockJUtil.isDirectMode() ) SummaryUtil.addSummaryFooterForFailedPipeline();
 		logFatalException( args, ex );
 
 		if( getErrorLog() != null ) {
 			Log.info( FatalExceptionHandler.class,
 				"Local file-system error log path: " + getErrorLog().getAbsolutePath() );
-			if( DockerUtil.inDockerEnv() ) Log.info( FatalExceptionHandler.class, "Host file-system error log path: " +
-				RuntimeParamUtil.getDockerHostHomeDir() + File.separator + getErrorLog().getName() );
+			if( DockerUtil.inDockerEnv() ) try {
+				Log.info( FatalExceptionHandler.class, "Host file-system error log path: " +
+					RuntimeParamUtil.getHomeDir( false ) + File.separator + getErrorLog().getName() );
+			} catch( DockerVolCreationException docEx ) {
+				// well, then, don't do that.
+			}
 			if( !getErrorLog().isFile() ) dumpLogs( getLogs() );
 		} else {
 			Log.warn( FatalExceptionHandler.class, "Unable to save logs to file-system: " );
 			printLogsOnScreen( getLogs() );
 		}
+		
 	}
 
 	private static File createErrorLog() {
@@ -95,10 +115,16 @@ public class FatalExceptionHandler {
 	}
 
 	private static File getErrorLogDir() {
-		File dir = RuntimeParamUtil.get_BLJ_PROJ();
-		if( dir == null || !dir.isDirectory() )
-			if( DockerUtil.inDockerEnv() ) dir = new File( DockerUtil.AWS_EC2_HOME );
-			else dir = RuntimeParamUtil.getHomeDir();
+		File dir = null;
+		try {
+			dir = RuntimeParamUtil.get_BLJ_PROJ();
+			if( dir == null || !dir.isDirectory() ) {
+				if( DockerUtil.inDockerEnv() ) dir = new File( DockerUtil.AWS_EC2_HOME );
+				else dir = RuntimeParamUtil.getHomeDir();
+			}
+		} catch( DockerVolCreationException docEx ) {
+			// well then don't do that.
+		}
 
 		if( dir == null || !dir.isDirectory() ) {
 			final String path = Config.replaceEnvVar( "${HOME}" );
@@ -114,9 +140,15 @@ public class FatalExceptionHandler {
 	}
 
 	private static String getErrorLogSuffix() {
+		File config = null;
+		try {
+			config = RuntimeParamUtil.getConfigFile();
+		}catch(DockerVolCreationException docEx) {
+			// well then don't do that.
+		}
 		if( BioLockJUtil.isDirectMode() ) return RuntimeParamUtil.getDirectModuleDir();
 		else if( Config.pipelineName() != null ) return Config.pipelineName();
-		else if( RuntimeParamUtil.getConfigFile() != null ) return RuntimeParamUtil.getConfigFile().getName();
+		else if( config != null ) return config.getName();
 		return "Unknown_Config";
 	}
 
@@ -138,6 +170,10 @@ public class FatalExceptionHandler {
 			ex );
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
 		ex.printStackTrace();
+		if ( ex.getCause() instanceof BioLockJException ) {
+			Log.error( FatalExceptionHandler.class, "Caused by ... " + ex.getClass().getSimpleName());
+			ex.getCause().printStackTrace();
+		}
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
 		Log.error( FatalExceptionHandler.class, BioLockJ.getHelpInfo() );
 		Log.error( FatalExceptionHandler.class, Constants.LOG_SPACER );
@@ -150,6 +186,17 @@ public class FatalExceptionHandler {
 
 	private static void setErrorLog( final File file ) {
 		errorLog = file;
+	}
+	
+	private static File getExistingFailFlag() {
+		boolean fileExists = false;
+		File failFlag = null;
+		if( Config.getPipelineDir() != null ) {
+			failFlag = new File( Config.getPipelineDir() + File.separator + Constants.BLJ_FAILED );
+			fileExists = failFlag.exists();
+		}
+		if (fileExists) return failFlag;
+		return null;
 	}
 
 	private static void setFailedStatus(Exception fetalEx) {

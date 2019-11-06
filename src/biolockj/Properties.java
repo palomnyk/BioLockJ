@@ -13,6 +13,8 @@ package biolockj;
 
 import java.io.*;
 import java.util.*;
+import biolockj.exception.BioLockJException;
+import biolockj.exception.ConfigPathException;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.DockerUtil;
 
@@ -104,7 +106,7 @@ public class Properties extends java.util.Properties {
 				defaultProps = readProps( dockConf, defaultProps );
 		}
 
-		for( final File pipelineDefaultConfig: getNestedDefaultProps( propFile ) )
+		for( final File pipelineDefaultConfig: getNestedDefaultPropertyFiles( propFile ) )
 			if( !configRegister.contains( pipelineDefaultConfig ) )
 				defaultProps = readProps( pipelineDefaultConfig, defaultProps );
 
@@ -119,20 +121,39 @@ public class Properties extends java.util.Properties {
 	 * 
 	 * @param propFile BioLockJ Config file
 	 * @return nested default prop file or null
+	 * @throws BioLockJException 
+	 * @throws IOException if FileReader reader fails to close.
 	 * @throws Exception if errors occur
 	 */
-	protected static File getDefaultConfig( final File propFile ) throws Exception {
-		final BufferedReader reader = BioLockJUtil.getFileReader( propFile );
+	protected static ArrayList<File> getDefaultConfig( final File propFile ) throws BioLockJException, IOException  {
+		BufferedReader reader = null;
+		ArrayList<File> defProps = new ArrayList<>();
 		try {
+			reader = BioLockJUtil.getFileReader( propFile );
 			for( String line = reader.readLine(); line != null; line = reader.readLine() ) {
 				final StringTokenizer st = new StringTokenizer( line, "=" );
-				if( st.countTokens() > 1 ) if( st.nextToken().trim().equals( Constants.PIPELINE_DEFAULT_PROPS ) )
-					return Config.getLocalConfigFile( st.nextToken().trim() );
+				if( st.countTokens() > 1 ) {
+					String propName = st.nextToken().trim();
+					if ( propName.equals( Constants.PIPELINE_DEFAULT_PROPS ) ||
+							propName.equals( Constants.PROJECT_DEFAULT_PROPS )) {
+						final StringTokenizer inner = new StringTokenizer( st.nextToken().trim(), "," );
+						while ( inner.hasMoreTokens() ) {
+							defProps.add( Config.getLocalConfigFile( inner.nextToken().trim() ) );
+						}
+					}
+				}
 			}
-		} finally {
+		} catch( IOException e ) {
+			if (propFile.exists()) {
+				throw new BioLockJException("An error occurred while attempted to read config file: " + propFile.getAbsolutePath());
+			}else {
+				throw new ConfigPathException(propFile);
+			}
+		}finally {
 			if( reader != null ) reader.close();
 		}
-		return null;
+		
+		return defProps ;
 	}
 
 	/**
@@ -177,13 +198,17 @@ public class Properties extends java.util.Properties {
 		return modules;
 	}
 
-	private static List<File> getNestedDefaultProps( final File propFile ) throws Exception {
+	private static List<File> getNestedDefaultPropertyFiles( final File propFile ) throws Exception {
 		final List<File> configFiles = new ArrayList<>();
-		do {
-			final File defConfig = getDefaultConfig( propFile );
-			if( defConfig == null || configRegister.contains( defConfig ) || configFiles.contains( defConfig ) ) break;
-			configFiles.add( defConfig );
-		} while( true );
+		final LinkedList<File> defConfigs = new LinkedList<>(getDefaultConfig( propFile ));
+		while ( defConfigs.size() > 0 ){
+			File defConfig = defConfigs.pop();
+			if( ! (configRegister.contains( defConfig ) || configFiles.contains( defConfig )) )
+			{
+				configFiles.add( defConfig );
+				defConfigs.addAll( getDefaultConfig( defConfig ) );
+			}
+		}
 		Collections.reverse( configFiles );
 		return configFiles;
 	}

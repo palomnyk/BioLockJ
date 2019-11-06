@@ -1,6 +1,10 @@
-# Deployment path: $DOCKER_DIR/genome_assembly.Dockerfile
+# suggested build command:
+# name=genome_assembly
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-FROM biolockj/blj_basic_py2
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/blj_basic_py2
 ARG DEBIAN_FRONTEND=noninteractive
 
 #1.) Install Ubuntu Software + Python libs
@@ -16,7 +20,7 @@ ENV CHECKM_DB_URL="https://data.ace.uq.edu.au/public/CheckM_databases/checkm_dat
 ENV HMMER_URL="http://eddylab.org/software/hmmer/hmmer.tar.gz"
 ENV MASH_URL="https://github.com/marbl/Mash/releases/download/v2.2/mash-Linux64-v2.2.tar"
 ENV META_BAT_URL="https://bitbucket.org/berkeleylab/metabat/downloads/metabat-static-binary-linux-x64_v2.12.1.tar.gz"
-ENV META_SPADE_URL="http://cab.spbu.ru/files/release3.13.0/SPAdes-3.13.0-Linux.tar.gz"
+ENV META_SPADE_URL="https://github.com/ablab/spades/releases/download/v3.13.0/SPAdes-3.13.0-Linux.tar.gz"
 ENV PPLACER_URL="https://github.com/matsen/pplacer/releases/download/v1.1.alpha19/pplacer-linux-v1.1.alpha19.zip"
 ENV PRODIGAL_URL="https://github.com/hyattpd/Prodigal/releases/download/v2.6.3/prodigal.linux"
 ENV PATH="$BIN/SPAdes-3.13.0-Linux/bin:$PATH"

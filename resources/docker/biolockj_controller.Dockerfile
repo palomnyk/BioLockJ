@@ -1,19 +1,18 @@
-# Deployment path: $DOCKER_DIR/biolockj_controller.Dockerfile
+# suggested build command:
+# name=biolockj_controller
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-# From git repo root:
-# docker build -t test/biolockj_controller . -f resources/docker/biolockj_controller.Dockerfile 
+ARG BUILDER_IMG=biolockjdevteam/build_with_ant
 ARG DOCKER_HUB_USER=biolockj
-FROM java:8 AS builder
+FROM ${BUILDER_IMG} AS builder
 
 COPY . /blj
 RUN ls /blj
-ENV ANT_DIST=apache-ant-1.9.14
-RUN wget http://apache.mirrors.lucidnetworks.net//ant/binaries/$ANT_DIST-bin.tar.bz2
-RUN tar xfj $ANT_DIST-bin.tar.bz2
 RUN $ANT_DIST/bin/ant -buildfile blj/resources/build.xml build-jar
 
-
-FROM biolockj/blj_basic_py2
+ARG DOCKER_HUB_USER
+FROM ${DOCKER_HUB_USER}/blj_basic_py2
 ARG DEBIAN_FRONTEND=noninteractive
 
 #1.) Install Ubuntu Software

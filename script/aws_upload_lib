@@ -31,7 +31,8 @@ build_start_script() {
 	echo '[ -f "${flagFile}" ] && rm "${flagFile}"'                            >> "${ss}"
 	echo "docker pull $(get_blj_prop docker.user)/biolockj_controller:$(get_blj_prop docker.imgVersion)" >> "${ss}"
 	echo "clearDock"                                                           >> "${ss}"
-	echo "launch_docker $(get_config ec2)"                                     >> "${ss}"
+	echo "export DOCKER_ID=$(get_blj_prop docker.user)"                        >> "${ss}"
+	echo "launch_docker --aws -f $(get_config ec2) > $EFS_PROJ/most_recent_run.log"  >> "${ss}"
 	echo "sudo chown -R ${EC2_USER}:${EC2_USER} ${EFS}"                        >> "${ss}"
 	echo "sudo chmod -R 777 ${EFS}"                                            >> "${ss}"
 	if [ "$(get_blj_prop aws.ec2TerminateHead)" == "Y" ]; then

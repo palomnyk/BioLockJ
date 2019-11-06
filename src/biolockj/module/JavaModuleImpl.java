@@ -32,8 +32,7 @@ public abstract class JavaModuleImpl extends ScriptModuleImpl implements JavaMod
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
 		final List<List<String>> data = new ArrayList<>();
 		final ArrayList<String> lines = new ArrayList<>();
-		if( DockerUtil.inDockerEnv() ) lines.add( "java" + runBioLockJ_CMD() + " $" + BLJ_OPTIONS );
-		else lines.add( "java" + runBioLockJ_CMD() + " " + RuntimeParamUtil.getJavaModuleArgs( this ) );
+		lines.add( runBioLockJ_CMD() + " " + RuntimeParamUtil.getJavaModuleArgs( this ) );
 
 		data.add( lines );
 		return data;
@@ -128,27 +127,19 @@ public abstract class JavaModuleImpl extends ScriptModuleImpl implements JavaMod
 	}
 
 	/**
-	 * Get the program source (either the jar path or main class biolockj.BioLockJ);
+	 * Get the java command to launch a module directly.  
+	 * The java command will be a repeat of the command originally used to launch the program, 
+	 * only the arguments to BioLockJ will be different; they are set in a different method.
+	 * If any external modules were used in this pipeline, they should be added to the class path in the launch script.
+	 * At this stage, the same class path used to launch the program is used for the module.
 	 * 
 	 * @return java source parameter (either Jar or main class with class-path)
 	 * @throws Exception if unable to determine source
 	 */
-	protected final String runBioLockJ_CMD() throws Exception {
-		final File source =
-			new File( JavaModuleImpl.class.getProtectionDomain().getCodeSource().getLocation().toURI() );
-		String javaString = null;
-		if( source.isFile() ) javaString = " " + Constants.JAR_ARG + " " + source.getAbsolutePath();
-		else if( source.isDirectory() ) {
-			final String lib = source.getAbsolutePath().replace( "bin", "lib/*" );
-			javaString = " -cp " + source.getAbsolutePath() + ":" + lib + " " + BioLockJ.class.getName();
-		}
-
-		if( javaString != null ) {
-			Log.debug( getClass(), "BioLockJ Java source code for java command: " + javaString );
-			return javaString;
-		}
-
-		throw new Exception( "Cannot find BioLockJ program source: " + source.getAbsolutePath() );
+	protected final String runBioLockJ_CMD() {
+		String javaString = "java -cp " + System.getProperty("java.class.path") + " " + BioLockJ.class.getName();
+		Log.debug( getClass(), "BioLockJ Java source code for java command: " + javaString );
+		return javaString;
 	}
 
 	/**

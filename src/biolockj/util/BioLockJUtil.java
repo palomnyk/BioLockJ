@@ -203,26 +203,6 @@ public class BioLockJUtil {
 	}
 
 	/**
-	 * Return default ${BLJ_SUP} dir
-	 * 
-	 * @return blj_support dir
-	 * @throws ConfigPathException if $BLJ_SUP directory path is configured, but invalid
-	 */
-	public static File getBljSupDir() throws ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) return new File( DockerUtil.CONTAINER_BLJ_SUP_DIR );
-		File f = null;
-		try {
-			f = new File( getBljDir().getParentFile().getAbsolutePath() + File.separator + BLJ_SUPPORT );
-			if( f.isDirectory() ) return f;
-		} catch( final Exception ex ) {
-			throw new ConfigPathException( f, "Unable to decode ${BLJ_SUP} environment variable: " + ex.getMessage() );
-		}
-
-		return null;
-
-	}
-
-	/**
 	 * Return an ordered list of the class names from the input collection.
 	 * 
 	 * @param objs Objects
@@ -303,15 +283,9 @@ public class BioLockJUtil {
 	 * @return List of system directory file paths
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system "N" value
+	 * @throws DockerVolCreationException 
 	 */
-	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) {
-			final File dir = DockerUtil.getDockerVolumeDir( Constants.INPUT_DIRS, DockerUtil.DOCKER_INPUT_DIR );
-			Log.debug( BioLockJUtil.class, "Docker input dir --> " + dir.getAbsolutePath() );
-			final List<File> dirs = new ArrayList<>();
-			dirs.add( dir );
-			return dirs;
-		}
+	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		return Config.requireExistingDirs( null, Constants.INPUT_DIRS );
 	}
 
@@ -411,9 +385,10 @@ public class BioLockJUtil {
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system
 	 * @throws ConfigViolationException if input directories contain duplicate file names
+	 * @throws DockerVolCreationException 
 	 */
 	public static void initPipelineInput()
-		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException {
+		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException, DockerVolCreationException {
 		Collection<File> files = new HashSet<>();
 		for( final File dir: getInputDirs() ) {
 			Log.info( BioLockJUtil.class, "Found pipeline input dir " + dir.getAbsolutePath() );
@@ -681,13 +656,10 @@ public class BioLockJUtil {
 	private static void printHelp() {
 		System.err.println( RETURN + "BioLockJ " + getVersion() + " java help menu:" );
 		System.err.println( "The BioLockJ.jar file is not intended to be called directly," + RETURN +
-			"it should be called through the biolockj command." );
-		System.err
-			.println( RETURN + "Developers: When calling java directly, the following parameters are recognized: " );
-		System.err.println( "Stand alone arguments:" + RETURN + Constants.HELP + Constants.TAB_DELIM +
-			"print this help menu" + RETURN + Constants.VERSION + Constants.TAB_DELIM + "print version number" );
+			"it should be called through the biolockj shell command." );
+		System.err.println( RETURN + "Developers: " );
 		RuntimeParamUtil.printArgsDescriptions();
-		System.err.println( RETURN + "Users: please use the biolockj command." );
+		System.err.println( RETURN + "Users:" + RETURN + "please use the biolockj command." );
 		System.err.println( "See: \"biolockj --help\" " );
 	}
 
@@ -820,7 +792,6 @@ public class BioLockJUtil {
 	 */
 	public static final String RETURN = Constants.RETURN;
 
-	private static final String BLJ_SUPPORT = "blj_support";
 	private static final String DEFAULT_PROFILE_CMD = "get_default_profile";
 	private static List<File> inputFiles = new ArrayList<>();
 	private static File userProfile = null;

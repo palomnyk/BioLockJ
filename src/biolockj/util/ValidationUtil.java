@@ -13,12 +13,10 @@ package biolockj.util;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import biolockj.*;
 import biolockj.exception.*;
@@ -126,7 +124,7 @@ public class ValidationUtil {
 			this.md5 = md5sum;
 		}
 
-		protected String getAtt( final String col ) {
+		protected String getAtt( final String col ) throws DockerVolCreationException {
 			switch( col ) {
 				case NAME:
 					return fileNameToKey( getName() );
@@ -293,12 +291,20 @@ public class ValidationUtil {
 	 * 
 	 * @param fileName
 	 * @return
+	 * @throws DockerVolCreationException 
 	 */
-	private static String fileNameToKey( final String fileName ) {
-		final String pipePrifix = RuntimeParamUtil.getProjectName();
-		String key = fileName.replaceAll( pipePrifix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
-		if( key.equals( fileName ) )
-			key = fileName.replaceAll( pipePrifix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
+	private static String fileNameToKey( final String fileName ) throws DockerVolCreationException {
+		final String pipePrefix = RuntimeParamUtil.getProjectName();
+		final String PIPE_DATE = "PIPELINE_DATE";
+		String key;
+		if( BioLockJUtil.isDirectMode() ) {
+			key = fileName.replaceAll( pipePrefix, PIPE_DATE );
+		} else {
+			key = fileName.replaceAll( pipePrefix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+			if( key.equals( fileName ) )
+				key = fileName.replaceAll( pipePrefix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+		}
+		
 		Log.debug( ValidationUtil.class, "Using [" + key + "] as the key based on [" + fileName + "]." );
 		return key;
 	}
@@ -327,15 +333,17 @@ public class ValidationUtil {
 		return compareFeatures;
 	}
 
-	private static File getExpectationFile( final BioModule module ) throws ConfigException {
+	private static File getExpectationFile( final BioModule module ) throws ConfigException, DockerVolCreationException {
 		File expectationFile = null;
-		final String expectationFilePath = Config.getString( module, EXPECTATION_FILE );
+		String expectationFilePath = Config.getString( module, EXPECTATION_FILE );
 		if( expectationFilePath != null && !expectationFilePath.isEmpty() ) {
+			if ( DockerUtil.inDockerEnv() ) expectationFilePath = DockerUtil.containerizePath( expectationFilePath );
 			expectationFile = new File( expectationFilePath );
 			if( !expectationFile.exists() ) throw new ConfigPathException( expectationFile );
+			System.out.println("expectation file path: " + expectationFilePath );
 			if( expectationFile.isDirectory() ) {
 				expectationFile = new File(
-					Config.getString( module, EXPECTATION_FILE ) + File.separator + getOutputFileName( module ) );
+					expectationFilePath + File.separator + getOutputFileName( module ) );
 				if( !expectationFile.exists() )
 					throw new ConfigPathException( expectationFile, "Could not find file: " +
 						getOutputFileName( module ) + " in directory " + Config.getString( module, EXPECTATION_FILE ) );

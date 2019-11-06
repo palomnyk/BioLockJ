@@ -14,6 +14,7 @@ package biolockj;
 import java.io.File;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
+import biolockj.exception.DockerVolCreationException;
 import biolockj.exception.FatalExceptionHandler;
 import biolockj.module.BioModule;
 import biolockj.module.report.Email;
@@ -109,7 +110,10 @@ public class BioLockJ {
 		// since copy will take place as S3 xFer.
 		if( DockerUtil.inAwsEnv() && Config.getBoolean( null, Constants.PIPELINE_COPY_FILES ) &&
 			!Config.getBoolean( null, NextflowUtil.AWS_COPY_PIPELINE_TO_S3 ) ) {
-			NextflowUtil.awsSyncS3( DockerUtil.DOCKER_INPUT_DIR, false );
+			//NextflowUtil.awsSyncS3( DockerUtil.DOCKER_INPUT_DIR, false );
+			for ( File f : BioLockJUtil.getInputDirs() ) {
+				NextflowUtil.awsSyncS3( f.getAbsolutePath(), false );
+			}
 			return;
 		}
 		final File inputDir = BioLockJUtil.pipelineInternalInputDir();
@@ -138,8 +142,9 @@ public class BioLockJ {
 	 * </ul>
 	 *
 	 * @return Pipeline root directory
+	 * @throws DockerVolCreationException 
 	 */
-	protected static File createPipelineDirectory() {
+	protected static File createPipelineDirectory() throws DockerVolCreationException {
 		final String year = String.valueOf( new GregorianCalendar().get( Calendar.YEAR ) );
 		final String month = new GregorianCalendar().getDisplayName( Calendar.MONTH, Calendar.SHORT, Locale.ENGLISH );
 		final String day = BioLockJUtil.formatDigits( new GregorianCalendar().get( Calendar.DATE ), 2 );
@@ -219,6 +224,7 @@ public class BioLockJ {
 		if( DownloadUtil.getDownloadListFile().isFile() ) DownloadUtil.getDownloadListFile().delete();
 		if( ValidationUtil.getValidationDir().exists() ) ValidationUtil.getValidationDir().delete();
 		if( NextflowUtil.getMainNf().isFile() ) NextflowUtil.getMainNf().delete();
+		//if( DockerUtil.getInfoFile().exists() ) DockerUtil.getInfoFile().delete();
 
 		BioLockJUtil.markStatus( Constants.BLJ_STARTED );
 	}
@@ -277,7 +283,7 @@ public class BioLockJ {
 		}
 
 		Pipeline.initializePipeline();
-
+		
 		if( BioLockJUtil.isDirectMode() )
 			Pipeline.runDirectModule( getDirectModuleID( RuntimeParamUtil.getDirectModuleDir() ) );
 		else {

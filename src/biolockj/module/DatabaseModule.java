@@ -14,6 +14,7 @@ package biolockj.module;
 import java.io.File;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.ConfigPathException;
+import biolockj.exception.DockerVolCreationException;
 
 /**
  * Interface for BioModules that use a reference database that is used by the DockerUtil to find the correct database
@@ -29,7 +30,8 @@ public interface DatabaseModule extends BioModule {
 	 * @throws ConfigPathException if path is defined but does not exists
 	 * @throws ConfigNotFoundException if DB property is undefined and the default DB is not included in the module
 	 * runtime env
+	 * @throws DockerVolCreationException 
 	 */
-	public File getDB() throws ConfigPathException, ConfigNotFoundException;
+	public File getDB() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException;
 
 }

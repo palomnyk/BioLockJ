@@ -1,6 +1,10 @@
-# Deployment path:  $DOCKER_DIR/dock.Dockerfile
+# suggested build command:
+# name=rdp_classifier
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} -f resources/docker/${name}.Dockerfile ${BLJ}
 
-FROM biolockj/blj_basic_java
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/blj_basic_java
 
 #1.) Install RDP
 ENV RDP="rdp_classifier_2.12"

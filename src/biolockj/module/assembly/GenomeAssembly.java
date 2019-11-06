@@ -116,15 +116,15 @@ public class GenomeAssembly extends SeqModuleImpl {
 			getRuntimeParams( Config.getList( this, EXE_METASPADES_PARAMS ), NUM_THREADS_PARAM );
 	}
 
-	private String getCheckmExe() throws ConfigViolationException {
+	private String getCheckmExe() throws SpecialPropertiesException {
 		return Config.getExe( this, EXE_CHECKM );
 	}
 
-	private String getMetabatExe() throws ConfigViolationException {
+	private String getMetabatExe() throws SpecialPropertiesException {
 		return Config.getExe( this, EXE_METABAT2 );
 	}
 
-	private String getMetaspadesExe() throws ConfigViolationException {
+	private String getMetaspadesExe() throws SpecialPropertiesException {
 		return Config.getExe( this, EXE_METASPADES2 );
 	}
 

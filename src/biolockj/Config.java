@@ -94,15 +94,33 @@ public class Config {
 	 * @param module BioModule to check for module-specific form of this property
 	 * @param property Property name
 	 * @return String value of executable
-	 * @throws ConfigViolationException if property name does not start with "exe."
+	 * @throws SpecialPropertiesException if property name does not start with "exe." or if other exceptions are encountered
 	 */
-	public static String getExe( final BioModule module, final String property ) throws ConfigViolationException {
-		if( !property.startsWith( "exe." ) ) throw new ConfigViolationException(
-			"Config.getExe() can only be called for properties that begin with \"exe.\"" );
+	public static String getExe( final BioModule module, final String property ) throws SpecialPropertiesException {
+		if( !property.startsWith( Constants.EXE_PREFIX ) ) throw new SpecialPropertiesException( property,
+			"Config.getExe() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
+		String inContainerPath = null;
+		String rawPath = getString( module, property );
+		try {
+			if( DockerUtil.inDockerEnv() ) {
+				File hostFile = getExistingFile( module, property.replaceFirst( Constants.EXE_PREFIX, Constants.HOST_EXE_PREFIX ) );
+				if (hostFile != null) inContainerPath = hostFile.getAbsolutePath();
 
+				if( inContainerPath == null && rawPath != null ) {
+					Log.warn( Config.class, "Unlike most properties, the \"" + Constants.EXE_PREFIX +
+						"\" properties are not converted to an in-container path." );
+					Log.warn( Config.class, "The exact string given will be used in scripts in a docker container." );
+					Log.warn( Config.class,
+						"To override this behavior, use the \"" + Constants.HOST_EXE_PREFIX + "\" prefix instead." );
+				}
+			}
+		} catch( BioLockJException ex ) {
+			throw new SpecialPropertiesException( property, ex );
+		}
 		// property name after trimming "exe." prefix, for example if exe.Rscript is undefined, return "Rscript"
-		if( getString( module, property ) == null ) return property.substring( property.indexOf( "." ) + 1 );
-		return getString( module, property );
+		if( inContainerPath != null ) return inContainerPath;
+		if( rawPath != null ) return rawPath;
+		return property.replaceFirst( Constants.EXE_PREFIX, "" );
 	}
 
 	/**
@@ -117,8 +135,8 @@ public class Config {
 	 */
 	public static String getExeParams( final BioModule module, final String property ) throws Exception {
 		final String property2 = property;
-		if( !property2.startsWith( "exe." ) )
-			throw new Exception( "Config.getExeParams() can only be called for properties that begin with \"exe.\"" );
+		if( !property2.startsWith( Constants.EXE_PREFIX ) )
+			throw new SpecialPropertiesException( property, "Config.getExeParams() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
 		if( getString( module, property2 + Constants.PARAMS ) == null ) return "";
 		String val = getString( module, property2 + Constants.PARAMS );
 		if( val != null && !val.isEmpty() && !val.endsWith( " " ) ) val = val + " ";
@@ -132,12 +150,13 @@ public class Config {
 	 * @param property Property name
 	 * @return File directory or null
 	 * @throws ConfigPathException if path is defined but is not an existing file
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getExistingDir( final BioModule module, final String property ) throws ConfigPathException {
+	public static File getExistingDir( final BioModule module, final String property ) throws ConfigPathException, DockerVolCreationException {
 		final File f = getExistingFileObject( getString( module, property ) );
 		if( f != null && !f.isDirectory() ) throw new ConfigPathException( property, ConfigPathException.DIRECTORY );
 
-		if( props != null && f != null ) Config.setConfigProperty( property, f.getAbsolutePath() );
+		if( props != null && f != null ) Config.setFilePathProperty( property, f.getAbsolutePath() );
 
 		return f;
 	}
@@ -149,8 +168,9 @@ public class Config {
 	 * @param property Property name
 	 * @return File (not directory) or null
 	 * @throws ConfigPathException if path is defined but is not an existing file
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getExistingFile( final BioModule module, final String property ) throws ConfigPathException {
+	public static File getExistingFile( final BioModule module, final String property ) throws ConfigPathException, DockerVolCreationException {
 		File f = getExistingFileObject( getString( module, property ) );
 		if( f != null && !f.isFile() ) if( f.isDirectory() && f.list( HiddenFileFilter.VISIBLE ).length == 1 ) {
 			Log.warn( Config.class,
@@ -158,7 +178,7 @@ public class Config {
 			f = new File( f.list( HiddenFileFilter.VISIBLE )[ 0 ] );
 		} else throw new ConfigPathException( property, ConfigPathException.FILE );
 
-		if( props != null && f != null ) Config.setConfigProperty( property, f.getAbsolutePath() );
+		if( props != null && f != null ) Config.setFilePathProperty( property, f.getAbsolutePath() );
 
 		return f;
 	}
@@ -197,11 +217,13 @@ public class Config {
 	 * @param path File path
 	 * @return Local File
 	 * @throws ConfigPathException if the local path
+	 * @throws DockerVolCreationException 
 	 */
-	public static File getLocalConfigFile( final String path ) throws ConfigPathException {
+	public static File getLocalConfigFile( final String path ) throws ConfigPathException, DockerVolCreationException {
 		if( path == null || path.trim().isEmpty() ) return null;
-		final File file = new File( replaceEnvVar( path.trim() ) );
-		if( DockerUtil.inDockerEnv() && !file.isFile() ) return DockerUtil.getConfigFile( file.getAbsolutePath() );
+		String filePath = replaceEnvVar( path.trim() );
+		if (DockerUtil.inDockerEnv()) filePath = DockerUtil.containerizePath( filePath );
+		final File file = new File( filePath );
 		return file;
 	}
 
@@ -315,8 +337,9 @@ public class Config {
 		if( prop == null || props.getProperty( prop ) == null ) prop = property;
 		String val = props.getProperty( prop );
 		if( val != null ) val = val.trim();
-		usedProps.put( prop, val );
+		val = replaceEnvVar( val );
 		if( val != null && val.isEmpty() ) val = null;
+		usedProps.put( prop, val );
 		return val;
 	}
 
@@ -387,6 +410,7 @@ public class Config {
 	 * @return Pipeline directory path
 	 */
 	public static String pipelinePath() {
+		if ( getPipelineDir() == null ) return null;
 		return getPipelineDir().getAbsolutePath();
 	}
 
@@ -409,14 +433,13 @@ public class Config {
 	public static String replaceEnvVar( final String arg ) {
 		if( arg == null ) return null;
 		String val = arg.toString().trim();
+		if( !hasEnvVar( val ) ) return val;
+		if( val.substring( 0, 1 ).equals( "~" ) ) {
+			Log.debug( Config.class, "Found property value starting with \"~\" --> \"" + arg + "\"" );
+			val = val.replace( "~", "${HOME}" );
+			Log.debug( Config.class, "Converted value to use standard syntax --> " + val + "\"" );
+		}
 		try {
-			if( !hasEnvVar( val ) ) return val;
-			if( val.substring( 0, 1 ).equals( "~" ) ) {
-				Log.debug( Config.class, "Found property value starting with \"~\" --> \"" + arg + "\"" );
-				val = val.replace( "~", "${HOME}" );
-				Log.debug( Config.class, "Converted value to use standard syntax --> " + val + "\"" );
-			}
-
 			while( hasEnvVar( val ) ) {
 				final String bashVar = val.substring( val.indexOf( "${" ), val.indexOf( "}" ) + 1 );
 				Log.debug( Config.class, "Replace \"" + bashVar + "\" in \"" + arg + "\"" );
@@ -479,9 +502,10 @@ public class Config {
 	 * @return File directory
 	 * @throws ConfigPathException if path is defined but is not an existing file
 	 * @throws ConfigNotFoundException if property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static File requireExistingDir( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final File f = getExistingDir( module, property );
 		if( f == null ) throw new ConfigNotFoundException( property );
 
@@ -496,9 +520,10 @@ public class Config {
 	 * @return List of File directories
 	 * @throws ConfigPathException if directory paths are undefined or do not exist
 	 * @throws ConfigNotFoundException if a required property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static List<File> requireExistingDirs( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final List<File> returnDirs = new ArrayList<>();
 		for( final String d: requireSet( module, property ) ) {
 			final File dir = getExistingFileObject( d );
@@ -520,9 +545,10 @@ public class Config {
 	 * @return File with filename defined by property
 	 * @throws ConfigPathException if path is defined but is not an existing file
 	 * @throws ConfigNotFoundException if property is undefined
+	 * @throws DockerVolCreationException 
 	 */
 	public static File requireExistingFile( final BioModule module, final String property )
-		throws ConfigPathException, ConfigNotFoundException {
+		throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final File f = getExistingFile( module, property );
 		if( f == null ) throw new ConfigNotFoundException( property );
 		return f;
@@ -650,6 +676,11 @@ public class Config {
 		}
 	}
 
+	public static void setFilePathProperty(final String name, String val) throws DockerVolCreationException {
+		if ( DockerUtil.inDockerEnv() ) val = DockerUtil.deContainerizePath( val );
+		setConfigProperty(name, val);
+	}
+	
 	/**
 	 * Sets a property value in the props cache
 	 *
@@ -672,11 +703,13 @@ public class Config {
 	 * Set the root pipeline directory path
 	 * 
 	 * @param dir Pipeline directory path
+	 * @throws DockerVolCreationException 
 	 */
-	public static void setPipelineDir( final File dir ) {
-		setConfigProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
+	public static void setPipelineDir( final File dir ) throws DockerVolCreationException {
+		setFilePathProperty( Constants.INTERNAL_PIPELINE_DIR, dir.getAbsolutePath() );
 		pipelineDir = dir;
-		System.out.println( Constants.PIPELINE_LOCATION_KEY + pipelineDir.getAbsolutePath());
+		String printPathOnScreen = DockerUtil.inDockerEnv() ? DockerUtil.deContainerizePath( pipelineDir.getAbsolutePath() ) : pipelineDir.getAbsolutePath();
+		System.out.println( Constants.PIPELINE_LOCATION_KEY + printPathOnScreen);
 	}
 
 	/**
@@ -685,9 +718,13 @@ public class Config {
 	 * @param filePath File path
 	 * @return File or null
 	 * @throws ConfigPathException if path is defined but is not found on the file system
+	 * @throws DockerVolCreationException 
 	 */
-	protected static File getExistingFileObject( final String filePath ) throws ConfigPathException {
+	protected static File getExistingFileObject( String filePath ) throws ConfigPathException, DockerVolCreationException {
 		if( filePath != null ) {
+			if ( DockerUtil.inDockerEnv() ) {
+				filePath = DockerUtil.containerizePath( filePath );
+			} 
 			final File f = new File( filePath );
 			if( f.exists() ) return f;
 			throw new ConfigPathException( f );
@@ -712,15 +749,15 @@ public class Config {
 	protected static Properties replaceEnvVars( final Properties properties ) {
 		final Properties convertedProps = properties;
 		final Enumeration<?> en = properties.propertyNames();
-		Log.debug( Properties.class, " ---------------------- replace Config Env Vars ----------------------" );
+		Log.debug( Config.class, " ---------------------- replace Config Env Vars ----------------------" );
 		while( en.hasMoreElements() ) {
 			final String key = en.nextElement().toString();
 			String val = properties.getProperty( key );
 			val = replaceEnvVar( val );
-			Log.debug( Properties.class, key + " = " + val );
+			Log.debug( Config.class, key + " = " + val );
 			convertedProps.put( key, val );
 		}
-		Log.debug( Properties.class, " --------------------------------------------------------------------" );
+		Log.debug( Config.class, " --------------------------------------------------------------------" );
 		return convertedProps;
 	}
 
@@ -756,29 +793,35 @@ public class Config {
 	}
 
 	private static String getBashVal( final String bashVar ) {
+		if( bashVarMap.get( bashVar ) != null ) {
+			return bashVarMap.get( bashVar );
+		}
+		
+		String bashVal = null;
 		try {
-			if( bashVarMap.get( bashVar ) != null ) return bashVarMap.get( bashVar );
-			String bashVal = props == null ? null: props.getProperty( stripBashMarkUp( bashVar ) );
-			if( DockerUtil.inDockerEnv() && stripBashMarkUp( bashVar ).equals( "HOME" ) )
-				bashVal = RuntimeParamUtil.getDockerHostHomeDir();
-			else if( bashVal == null || bashVal.trim().isEmpty() ) if( bashVar.equals( BLJ_BASH_VAR ) ) {
+			if (props == null) {Log.info(Config.class, "no props to reference.");}
+			if (props != null) {Log.info(Config.class, "Got props, value for ["+bashVar+"] is: " + props.getProperty( stripBashMarkUp( bashVar )));}
+			if (props != null && props.getProperty( stripBashMarkUp( bashVar )) != null ) {
+				bashVal = props.getProperty( stripBashMarkUp( bashVar ) );
+			}else if ( bashVar.equals( BLJ_BASH_VAR ) ) {
 				final File blj = BioLockJUtil.getBljDir();
-				if( blj != null && blj.isDirectory() ) bashVal = blj.getAbsolutePath();
-			} else if( bashVar.equals( BLJ_SUP_BASH_VAR ) ) {
-				final File bljSup = BioLockJUtil.getBljSupDir();
-				if( bljSup != null && bljSup.isDirectory() ) bashVal = bljSup.getAbsolutePath();
-			} else bashVal = Processor.getBashVar( bashVar );
-
-			if( bashVal != null && !bashVal.trim().isEmpty() ) {
-				bashVarMap.put( bashVar, bashVal );
-				return bashVal;
+				if( blj != null && blj.isDirectory() ) {
+					bashVal =  blj.getAbsolutePath();
+				}
+			}else if( stripBashMarkUp( bashVar ).equals( "HOME" ) ) {
+				bashVal =  RuntimeParamUtil.getHomeDir().getAbsolutePath();
+			}else {
+				bashVal = Processor.getBashVar( bashVar );
 			}
-
 		} catch( final Exception ex ) {
 			Log.warn( Config.class,
 				"Error occurred attempting to decode bash var: " + bashVar + " --> " + ex.getMessage() );
 		}
-
+		
+		if( bashVal != null && !bashVal.trim().isEmpty() ) {
+			bashVarMap.put( bashVar, bashVal );
+			return bashVal;
+		}
 		return bashVar;
 	}
 
@@ -807,7 +850,9 @@ public class Config {
 	}
 
 	private static String stripBashMarkUp( final String bashVar ) {
-		if( bashVar != null && bashVar.length() > 3 ) return bashVar.substring( 2, bashVar.length() - 1 );
+		if( bashVar != null && bashVar.startsWith( "${" ) && bashVar.endsWith( "}" ) ) {
+			return bashVar.substring( 2, bashVar.length() - 1 ); 
+		}
 		return bashVar;
 	}
 
@@ -819,11 +864,6 @@ public class Config {
 	 * Bash variable with path to BioLockJ directory: {@value #BLJ_BASH_VAR}
 	 */
 	public static final String BLJ_BASH_VAR = "${BLJ}";
-
-	/**
-	 * Bash variable with path to blj_support directory: {@value #BLJ_SUP_BASH_VAR}
-	 */
-	public static final String BLJ_SUP_BASH_VAR = "${BLJ_SUP}";
 
 	private static final Map<String, String> bashVarMap = new HashMap<>();
 	private static File configFile = null;

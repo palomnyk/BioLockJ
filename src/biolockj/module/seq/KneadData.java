@@ -17,6 +17,7 @@ import java.util.List;
 import biolockj.*;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.ConfigPathException;
+import biolockj.exception.DockerVolCreationException;
 import biolockj.module.DatabaseModule;
 import biolockj.module.SeqModuleImpl;
 import biolockj.util.*;
@@ -153,7 +154,7 @@ public class KneadData extends SeqModuleImpl implements DatabaseModule {
 		return new File( getTempDir().getAbsolutePath() + File.separator + sampleId + suffix + fastqExt() );
 	}
 
-	private String getDBs() throws ConfigPathException, ConfigNotFoundException {
+	private String getDBs() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		String dbs = "";
 		if( DockerUtil.inDockerEnv() ) for( final String path: Config.requireList( this, KNEAD_DBS ) )
 			dbs += DB_PARAM + " " + DockerUtil.getDockerDB( this, path ).getAbsolutePath() + " ";

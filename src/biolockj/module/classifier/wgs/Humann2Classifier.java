@@ -148,7 +148,7 @@ public class Humann2Classifier extends ClassifierModuleImpl {
 	}
 
 	@Override
-	public File getDB() throws ConfigNotFoundException, ConfigPathException {
+	public File getDB() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		if( getDbCache() != null ) return getDbCache();
 		setDbCache( BioLockJUtil.getCommonParent( new File( getNuclDbPath() ), new File( getProtDbPath() ) ) );
 		return getDbCache();
@@ -318,7 +318,7 @@ public class Humann2Classifier extends ClassifierModuleImpl {
 			SeqUtil.getSampleId( file.getName() ) + BioLockJUtil.fileExt( file ) );
 	}
 
-	private String getNuclDbPath() throws ConfigNotFoundException, ConfigPathException {
+	private String getNuclDbPath() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		if( nuclDbCache != null ) return nuclDbCache;
 		final String prop = Config.requireString( this, HN2_NUCL_DB );
 		if( DockerUtil.inDockerEnv() ) {
@@ -354,7 +354,7 @@ public class Humann2Classifier extends ClassifierModuleImpl {
 		return params;
 	}
 
-	private String getProtDbPath() throws ConfigNotFoundException, ConfigPathException {
+	private String getProtDbPath() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		if( protDbCache != null ) return protDbCache;
 		final String prop = Config.requireString( this, HN2_PROT_DB );
 		if( DockerUtil.inDockerEnv() ) {

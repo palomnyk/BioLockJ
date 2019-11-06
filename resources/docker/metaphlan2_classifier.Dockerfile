@@ -1,6 +1,10 @@
-# Deployment path:  $DOCKER_DIR/metaphlan2_classifier.Dockerfile
+# suggested build command:
+# name=metaphlan2_classifier
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-FROM biolockj/metaphlan2_classifier_dbfree
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/metaphlan2_classifier_dbfree
 
 #1.) Remove DB-less MetaPhlAn2
 RUN	cd $BIN && rm -rf strain* && rm -rf [_u]* && rm -rf metaphlan2.py 

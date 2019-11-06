@@ -232,7 +232,7 @@ public class MetaUtil {
 		try {
 			if( Config.getString( null, META_FILE_PATH ) == null ) return null;
 			if( DockerUtil.inDockerEnv() ) {
-				setFile( DockerUtil.getDockerVolumeFile( META_FILE_PATH, DockerUtil.DOCKER_META_DIR ) );
+				setFile( Config.getExistingFile( null, META_FILE_PATH ) );
 				if( !metadataFile.isFile() )
 					throw new ConfigPathException( metadataFile, "Metadata file not found in Docker container" );
 			} else setFile( new File( Config.getString( null, META_FILE_PATH ) ) );

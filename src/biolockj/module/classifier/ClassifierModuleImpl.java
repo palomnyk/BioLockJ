@@ -51,7 +51,7 @@ public abstract class ClassifierModuleImpl extends SeqModuleImpl implements Clas
 	public abstract List<String> getClassifierParams() throws ConfigException;
 
 	@Override
-	public abstract File getDB() throws ConfigPathException, ConfigNotFoundException;
+	public abstract File getDB() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException;
 
 	/**
 	 * This method returns the corresponding Parser module associated with the classifier. The Parser module name is
