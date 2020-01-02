@@ -4,6 +4,9 @@
 ##  This script contains common functions used in                ##
 ##  BioLockJ scripts to interpret user input.                    ##
 ##                                                               ##
+##  This is used by the biolockj script, and its luanchers,      ##
+##  AND by the biolockj_api.                                     ##
+##                                                               ##
 ###################################################################
 
 . ${BLJ_SCRIPT}/blj_functions
@@ -59,7 +62,7 @@ init_defaults(){
 # all preceding arguments are options
 split_main_arg_from_options(){
 	local args=( "$@" )	
-	numArgs=${#args[@]}
+	local numArgs=${#args[@]}
 	mainArg=${args[$numArgs-1]}
 	options=()
 	if [ $numArgs -gt 1 ]; then
@@ -297,7 +300,7 @@ display_help() {
 	addSpaceNoShortArg(){ 
 		printf '%-1s %-3s %-25s %-10s\n' "" "" "--$1" "$2"
 	}
-	continueDescriptoin(){
+	continueDescription(){
 		printf '%-1s %-3s %-25s %-10s\n' "" "" "" "$1"
 	}
 	echo ""
@@ -320,11 +323,11 @@ display_help() {
     addSpace "$WAIT_ARG"     "Do not release terminal until pipeline completes check-dependencies step."
     addSpace "$EXT_MODS_ARG <dir>" "Directory with compiled java code giving additional modules"
     addSpace "$BLJ_ARG"      "Map \$BLJ folder into the docker container;"
-    continueDescriptoin      "this replaces BioLockJ packaged in a docker container with the local copy."
+    continueDescription      "this replaces BioLockJ packaged in a docker container with the local copy."
     addSpace "$ENV_ARG <var=val>"      "Environment variables to be passed to the BioLockJ environment."
-    continueDescriptoin      "Can be a comma-sep list. Values take the form: a=foo,b=bar,c=baz"
+    continueDescription      "Can be a comma-sep list. Values take the form: a=foo,b=bar,c=baz"
     addSpace "$PROJ_ARG <dir>" "Directory that contains BioLockJ pipelines. If not supplied, "
-    continueDescriptoin "biolockj will use the value of environment variable \"BLJ_PROJ\"."
+    continueDescription "biolockj will use the value of environment variable \"BLJ_PROJ\"."
     echo ""
 }
 
