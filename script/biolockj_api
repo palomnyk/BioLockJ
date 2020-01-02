@@ -1,0 +1,147 @@
+#!/bin/bash
+###############################
+## This is the biolock api interface.
+## It calls the BiolockjAPI class.
+###############################
+
+main(){
+	MAIN_CLASS="biolockj.api.BioLockJ_API"
+	check_env_vars
+	
+	# Before anything else, check to see if the user just wants help or version info.
+	containsElement [ $# -eq 0 ] && display_help && exit 0
+	
+	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && printf "\n ---------> Execute CMD [  biolockj_api $(echo ${@})  ]\n"
+	
+	CMD="$(java_cmd_core) $(echo ${@})"
+	continue_after_command $CMD
+	
+	statusCode=$?
+    if [ ${statusCode} -ne 0 ]; then
+    	display_help
+    fi
+}
+
+. ${BLJ_SCRIPT}/blj_functions
+. ${BLJ_SCRIPT}/blj_user_arg_lib # note that several functions are over-written
+
+# Make sure required variables exist and are valid
+check_env_vars(){
+	pls_use_install="\nThe install script packaged with BioLockJ sets this value. You may need to start a new terminal window.\n"
+	[ ${#BLJ_PROJ} -eq 0 ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ_PROJ is not defined. $pls_use_install"
+	[ ! -d "${BLJ_PROJ}" ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ_PROJ [\"${BLJ_PROJ}\"] must be a directory on the filesystem. $pls_use_install"
+	[ ${#BLJ} -eq 0 ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ is not defined. $pls_use_install"
+	[ ! -d "${BLJ}" ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ [\"${BLJ}\"] must be a directory on the filesystem. $pls_use_install"
+	BLJ_JAR=${BLJ}/dist/BioLockJ.jar
+	[ ! -f "${BLJ_JAR}" ] && exit_script "Error [ biolockj_api ]: BioLockJ Jar file \"${BLJ_JAR}\" not found."
+}
+
+
+
+function display_help(){ #this over-rides the function definition found in blj_user_arg_lib
+	CMD="java -cp ${BLJ_JAR} ${MAIN_CLASS} help"
+	continue_after_command $CMD     
+	statusCode=$?
+    if [ ${statusCode} -ne 0 ]; then
+    	display_help_without_java
+    fi
+}
+
+display_help_without_java(){
+	echo ""
+	echo "BioLockJ API $(display_version) - UNCC Fodor Lab" 
+	echo ""
+	echo "Requires java (version 1.8 or higher)"
+	echo "Current java version:"
+	eval "java -version"
+	echo ""
+	echo "Requries BioLockJ (version 1.2.6 or higher)"
+	echo "Current jar file version:"
+	eval "java -jar $BLJ/dist/BioLockJ.jar --version"
+	echo ""
+	echo "Usage:"
+	echo "biolockj_api <querry> [args...]"
+	echo ""
+	echo "Use biolockj_api without args to get help menu."
+	echo ""
+}
+
+java_cmd_core(){
+	echo "java -cp ${BLJ_JAR} $MAIN_CLASS"
+}
+
+# set_arg_names(){ #this over-rides the function definition found in blj_user_arg_lib
+# 	AWS_ARG="aws"
+# 	DOCKER_ARG="docker"
+# 	EXT_MODS_ARG="external-modules"
+# 	BLJ_ARG="blj"
+# 	PROJ_ARG="blj_proj"
+# 	ENV_ARG="env-var"
+# }
+
+# init_defaults(){ #this over-rides the function definition found in blj_user_arg_lib
+# 	# Order does not matter for $longArgName or $takeShortArg, but it is easier to read if they match
+# 	# Order MATTERS for $shortArgName and $parameters ---they must match whatever order is in $longArgName.
+# 	longArgName=( $AWS_ARG $DOCKER_ARG $ENV_ARG $PROJ_ARG $EXT_MODS_ARG $BLJ_ARG )
+# 	takeShortArg=($AWS_ARG $DOCKER_ARG $ENV_ARG help version)
+# 	shortArgName=()
+# 	parameters=()
+# 	mustTakeValue=($EXT_MODS_ARG $PROJ_ARG $ENV_ARG)
+# 	canTakeValue=(${mustTakeValue[@]})
+# 	for i in ${!longArgName[@]}; do
+# 		longName=${longArgName[ $i ]}
+# 		if containsElement $longName ${takeShortArg[@]}
+# 			then shortArgName[ $i ]=${longName:0:1}
+# 			else shortArgName[ $i ]=$longName # a place holder
+# 		fi 
+# 		parameters[ $i ]="default"
+# 		i=$((i+1))
+# 	done
+# 	argsFromUser=()
+# }
+
+# # Get the first argument, and call it mainArg (the querry command); 
+# # keep shifting to the right until mainArg does not start with "-".
+# # Options start with "-" or "--" and they come before the mainArg.  
+# # Args to the querry command follow the main arg, no "-"s.
+# split_main_arg_from_options(){ #this over-rides the function definition found in blj_user_arg_lib
+# 	local args=( "$@" )	
+# 	local numArgs=${#args[@]}
+# 	local numOps=0
+# 	mainArg=${args[0]}
+# 	options=()
+# 	cmd_args()
+	
+# 	local loops=0 # no inf while loop
+# 	while [ ${mainArg:0:1} == "-" ] && [ loops -lt $numArgs ]; do
+# 		numOps=$numOps + 1
+# 		mainArg=${args[$numOps]}
+# 		loops=$loops + 1
+# 	done
+# 	if [ ${mainArg:0:1} == "-" ]; then
+# 		exit_with_message "error: the biolockj_api requires at least one querry command."
+# 	fi
+	
+# 	# Options are before the querry command
+# 	if [ $numOps -gt 0 ]; then
+# 		for i in $(seq 0 $numOps ); do
+# 			options[ $i ]=${args[ $i ]}
+# 		done
+# 	fi
+	
+# 	# Command args are after the querry command
+# 	local nonComdArgs=$($numOps + 1 )
+# 	if [ $nonComdArgs -lt $numArgs) ]; then
+# 		for i in $(seq $nonComdArgs $numArgs ); do
+# 			local ithCmdArg=$($i - $nonComdArgs)
+# 			cmd_args[ $ithCmdArg ]=${args[ $i ]}
+# 		done
+# 	fi
+
+# }
+
+# assign_main_arg(){ #this over-rides the function definition found in blj_user_arg_lib
+# 	api_cmd=$mainArg
+# }
+
+main $@

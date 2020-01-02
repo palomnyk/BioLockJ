@@ -228,8 +228,87 @@ public class Properties extends java.util.Properties {
 		Log.debug( Properties.class,
 			" ----------------------------------------------------------------------------------" );
 	}
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private static HashMap<String, String> propDescMap = new HashMap<>();
+	private static void fillPropDescMap() {
+		if (propDescMap.size() == 0) {
+			propDescMap.put( Constants.CLUSTER_HOST, Constants.CLUSTER_HOST_DESC );
+			propDescMap.put( Constants.DEFAULT_MOD_DEMUX, Constants.DEFAULT_MOD_DEMUX_DESC );
+			propDescMap.put( Constants.DEFAULT_MOD_FASTA_CONV, Constants.DEFAULT_MOD_FASTA_CONV_DESC );
+			propDescMap.put( Constants.DEFAULT_MOD_SEQ_MERGER, Constants.DEFAULT_MOD_SEQ_MERGER_DESC );
+			propDescMap.put( Constants.DEFAULT_STATS_MODULE, Constants.DEFAULT_STATS_MODULE_DESC );
+			propDescMap.put( Constants.DETACH_JAVA_MODULES, Constants.DETACH_JAVA_MODULES_DESC );
+			propDescMap.put( Constants.DISABLE_ADD_IMPLICIT_MODULES, Constants.DISABLE_ADD_IMPLICIT_MODULES_DESC );
+			propDescMap.put( Constants.DISABLE_PRE_REQ_MODULES, Constants.DISABLE_PRE_REQ_MODULES_DESC );
+			propDescMap.put( Constants.DOCKER_CONFIG_PATH, Constants.DOCKER_CONFIG_PATH_DESC);
+			propDescMap.put( Constants.DOCKER_CONTAINER_NAME, Constants.DOCKER_CONTAINER_NAME_DESC);
+		}
+	}
+	/**
+	 * Allow the API to access the list of properties and descriptions.
+	 * @return
+	 */
+	public static HashMap<String, String> getPropDescMap() {
+		fillPropDescMap();
+		return propDescMap;
+	}
+	public static String getDescription( String prop ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) ) {
+			return "Path for the \"" + prop.replaceFirst( Constants.EXE_PREFIX, "" ) + "\" executable." ;
+		}else if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return "Host machine path for the \"" + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) + "\" executable." ;
+		}
+		return getPropDescMap().get( prop );
+	}
+	
+	/**
+	 * HashMap with property name as key and the type for this property as the value.
+	 */
+	private static HashMap<String, String> propTypeMap = new HashMap<>();
+	private static void fillPropTypeMap() {
+		if (propTypeMap.size() == 0) {
+			propTypeMap.put( Constants.CLUSTER_HOST, STRING_TYPE );
+			propTypeMap.put( Constants.DEFAULT_MOD_DEMUX, STRING_TYPE );
+			propTypeMap.put( Constants.DEFAULT_MOD_FASTA_CONV, STRING_TYPE );
+			propTypeMap.put( Constants.DEFAULT_MOD_SEQ_MERGER, STRING_TYPE );
+			propTypeMap.put( Constants.DEFAULT_STATS_MODULE, STRING_TYPE );
+			propTypeMap.put( Constants.DETACH_JAVA_MODULES, BOOLEAN_TYPE );
+			propTypeMap.put( Constants.DISABLE_ADD_IMPLICIT_MODULES, BOOLEAN_TYPE );
+			propTypeMap.put( Constants.DISABLE_PRE_REQ_MODULES, BOOLEAN_TYPE );
+			propTypeMap.put( Constants.DOCKER_CONFIG_PATH, FILE_PATH);
+			propTypeMap.put( Constants.DOCKER_CONTAINER_NAME, STRING_TYPE );
+		}
+		if (! getPropDescMap().keySet().containsAll( propTypeMap.keySet() ) ||
+			! propTypeMap.keySet().containsAll( getPropDescMap().keySet() )){
+			Log.warn(Properties.class, "Property list in descriptions map and type map are not identical.");
+		}
+	}
+	/**
+	 * Allow the API to access the list of properties and descriptions.
+	 * @return
+	 */
+	public static HashMap<String, String> getPropTypeMap() {
+		fillPropTypeMap();
+		return propTypeMap;
+	}
+	public static String getPropertyType( String prop ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) ) return EXE_PATH;
+		if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) return EXE_PATH;
+		return getPropTypeMap().get( prop );
+	}
 
 	private static List<File> configRegister = new ArrayList<>();
 	private static int loadOrder = -1;
 	private static final long serialVersionUID = 2980376615128441545L;
+	
+	//Property Types
+	public static final String STRING_TYPE = "string";
+	public static final String BOOLEAN_TYPE = "boolean";
+	public static final String FILE_PATH = "file path";
+	public static final String EXE_PATH = "executable";
+	
+	
 }

@@ -2,8 +2,10 @@ package biolockj.module.report.taxa;
 
 import java.util.List;
 import biolockj.Log;
+import biolockj.api.ApiModule;
+import biolockj.util.BioLockJUtil;
 
-public class AddPseudoCount extends TransformTaxaTables {
+public class AddPseudoCount extends TransformTaxaTables implements ApiModule {
 
 	@Override
 	protected TaxaLevelTable transform( TaxaLevelTable inputData, List<String> filteredSampleIDs,
@@ -44,6 +46,27 @@ public class AddPseudoCount extends TransformTaxaTables {
 	@Override
 	protected String getProcessSuffix() {
 		return "p1";
+	}
+
+	@Override
+	public String valueType( String prop ) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getTitle() {
+		return this.getClass().getSimpleName();
+	}
+
+	@Override
+	public String getDescription() {
+		return "Add a pseudocount (+1) to each value in each taxa table.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "BioLockJ " + BioLockJUtil.getVersion( );
 	}
 
 }

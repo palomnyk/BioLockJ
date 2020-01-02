@@ -76,34 +76,40 @@ public class Constants {
 	public static final String CLASS = "class";
 
 	/**
-	 * {@link biolockj.Config} String property: {@value #CLUSTER_HOST}<br>
-	 * The remote cluster host URL (used for ssh, scp, rsync, etc)
+	 * {@link biolockj.Config} {@value biolockj.Properties#STRING_TYPE} property: {@value #CLUSTER_HOST}<br>
+	 * {@value #CLUSTER_HOST_DESC}
 	 */
 	public static final String CLUSTER_HOST = "cluster.host";
+	static final String CLUSTER_HOST_DESC = "The remote cluster host URL (used for ssh, scp, rsync, etc)";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used to demultiplex data:
-	 * {@value #DEFAULT_MOD_DEMUX}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_DEMUX}
+	 * {@value #DEFAULT_MOD_DEMUX_DESC}
 	 */
 	public static final String DEFAULT_MOD_DEMUX = "pipeline.defaultDemultiplexer";
+	static final String DEFAULT_MOD_DEMUX_DESC = "Java class name for default module used to demultiplex data";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used to convert files into fasta:
-	 * {@value #DEFAULT_MOD_FASTA_CONV} format
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_FASTA_CONV}
+	 * {@value #DEFAULT_MOD_FASTA_CONV_DESC}
 	 */
-	public static final String DEFAULT_MOD_FASTA_CONV = "pipeline.defaultFastaConverter";
+	 public static final String DEFAULT_MOD_FASTA_CONV = "pipeline.defaultFastaConverter";
+	 static final String DEFAULT_MOD_FASTA_CONV_DESC = "Java class name for default module used to convert files into fasta format";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used combined paired read files:
-	 * {@value #DEFAULT_MOD_SEQ_MERGER}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_SEQ_MERGER}
+	 * {@value #DEFAULT_MOD_SEQ_MERGER_DESC}
+	 * 
 	 */
 	public static final String DEFAULT_MOD_SEQ_MERGER = "pipeline.defaultSeqMerger";
+	static final String DEFAULT_MOD_SEQ_MERGER_DESC = "Java class name for default module used combined paired read files";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used generate p-value and other
-	 * stats: {@value #DEFAULT_STATS_MODULE}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_STATS_MODULE}
+	 * {@value #DEFAULT_STATS_MODULE_DESC}
 	 */
 	public static final String DEFAULT_STATS_MODULE = "pipeline.defaultStatsModule";
+	static final String DEFAULT_STATS_MODULE_DESC = "Java class name for default module used generate p-value and other stats";
 
 	/**
 	 * In an otu string for multiple levels, each separated by {@value #OTU_SEPARATOR}, each otu has a level prefix
@@ -112,33 +118,39 @@ public class Constants {
 	public static final String DELIM_SEP = "__";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DETACH_JAVA_MODULES}<br>
-	 * If {@value biolockj.Constants#TRUE} Java modules do not run with main BioLockJ Java application. Instead they run
-	 * on compute nodes on the CLUSTER or AWS environments.
+	 * {@link biolockj.Config} {@value Properties.BOOLEAN_TYPE} property: {@value #DETACH_JAVA_MODULES}<br>
+	 * {@value #DETACH_JAVA_MODULES_DESC}
 	 */
 	public static final String DETACH_JAVA_MODULES = "pipeline.detachJavaModules";
+	static final String DETACH_JAVA_MODULES_DESC = "If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
-	 * If set to {@value #TRUE}, implicit modules will not be added to the pipeline.
+	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE} property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
+	 * {@value #DISABLE_ADD_IMPLICIT_MODULES_DESC}
 	 */
 	public static final String DISABLE_ADD_IMPLICIT_MODULES = "pipeline.disableAddImplicitModules";
+	static final String DISABLE_ADD_IMPLICIT_MODULES_DESC = "If set to true, implicit modules will not be added to the pipeline.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DISABLE_PRE_REQ_MODULES}<br>
-	 * If set to {@value #TRUE}, prerequisite modules will not be added to the pipeline.
+	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE } property: {@value #DISABLE_PRE_REQ_MODULES}<br>
+	 * {@value #DISABLE_PRE_REQ_MODULES_DESC}
 	 */
 	public static final String DISABLE_PRE_REQ_MODULES = "pipeline.disableAddPreReqModules";
+	static final String DISABLE_PRE_REQ_MODULES_DESC = "If set to true, prerequisite modules will not be added to the pipeline.";
 
 	/**
-	 * Default Docker {@link biolockj.Config} file imported after {@value #STANDARD_CONFIG_PATH} (if files exist)
+	 * {@link biolockj.Config} {@value biolockj.Properties#FILE_PATH } property: {@value #DOCKER_CONFIG_PATH}
+	 * {@value #DOCKER_CONFIG_PATH_DESC}
 	 */
 	public static final String DOCKER_CONFIG_PATH = "${BLJ}/resources/config/default/docker.properties";
+	static final String DOCKER_CONFIG_PATH_DESC = "Default path for an additional configuration file used for any pipeline run in docker.";
 
 	/**
-	 * {@link biolockj.Config} property for GenMod to set its Docker container name: {@value #DOCKER_CONTAINER_NAME}
+	 * {@link biolockj.Config} {@value biolockj.Properties#STRING_TYPE} property: {@value #DOCKER_CONTAINER_NAME}
+	 * {@value #DOCKER_CONTAINER_NAME_DESC}
 	 */
 	public static final String DOCKER_CONTAINER_NAME = "genMod.dockerContainerName";
+	static final String DOCKER_CONTAINER_NAME_DESC = "Name of the docker container to use when executing an instance of the GenMod module.";
 
 	/**
 	 * {@link biolockj.Config} option for {@value #REPORT_TAXONOMY_LEVELS}: {@value #DOMAIN}
@@ -155,30 +167,27 @@ public class Constants {
 	public static final String EXE_PREFIX = "exe.";
 	
 	/**
-	 * {@link biolockj.Config} String property: {@value #EXE_AWK}<br>
-	 * Set command line executable awk.
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_AWK}<br>
 	 */
 	public static final String EXE_AWK = "exe.awk";
 
 	/**
-	 * {@link biolockj.Config} String property {@value #EXE_DOCKER}<br>
-	 * Set command line executable docker
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_DOCKER}<br>
 	 */
 	public static final String EXE_DOCKER = "exe.docker";
 
 	/**
-	 * {@link biolockj.Config} String property {@value #EXE_GZIP}<br>
-	 * Set command line executable gzip
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_GZIP}<br>
 	 */
 	public static final String EXE_GZIP = "exe.gzip";
 
 	/**
-	 * {@link biolockj.Config} property for java executable: {@value #EXE_JAVA}
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_JAVA}
 	 */
 	public static final String EXE_JAVA = "exe.java";
 
 	/**
-	 * {@link biolockj.Config} property to python executable
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_PYTHON}
 	 */
 	public static final String EXE_PYTHON = "exe.python";
 
@@ -698,9 +707,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #SCRIPT_DEFAULT_HEADER}<br>
-	 * Store default script header for MAIN script and locally run WORKER scripts.
+	 * {@value SCRIPT_DEFAULT_HEADER_DESC}
 	 */
 	public static final String SCRIPT_DEFAULT_HEADER = "script.defaultHeader";
+	public static final String SCRIPT_DEFAULT_HEADER_DESC = "Store default script header for MAIN script and locally run WORKER scripts.";
 
 	/**
 	 * Name of the script sub-directory: {@value #SCRIPT_DIR}
@@ -714,22 +724,24 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_NUM_THREADS}<br>
-	 * Used to reserve cluster resources and passed to any external application call that accepts a numThreads
-	 * parameter.
+	 * {@value SCRIPT_NUM_THREADS_DESC}
 	 */
 	public static final String SCRIPT_NUM_THREADS = "script.numThreads";
+	public static final String SCRIPT_NUM_THREADS_DESC = "Used to reserve cluster resources and passed to any external application call that accepts a numThreads parameter.";
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_NUM_WORKERS}<br>
-	 * Set number of samples to process per script (if parallel processing)
+	 * {@value SCRIPT_NUM_WORKERS_DESC}
 	 */
 	public static final String SCRIPT_NUM_WORKERS = "script.numWorkers";
+	public static final String SCRIPT_NUM_WORKERS_DESC = "Set number of samples to process per script (if parallel processing)";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #SCRIPT_PERMISSIONS}<br>
-	 * Used as chmod permission parameter (ex: 774)
+	 * {@value SCRIPT_PERMISSIONS_DESC}
 	 */
 	public static final String SCRIPT_PERMISSIONS = "script.permissions";
+	public static final String SCRIPT_PERMISSIONS_DESC = "Used as chmod permission parameter (ex: 774)";
 
 	/**
 	 * File suffix appended to started script: {@value #SCRIPT_STARTED}
@@ -743,9 +755,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_TIMEOUT}<br>
-	 * Sets # of minutes before worker scripts times out.
+	 * {@value SCRIPT_TIMEOUT_DESC}
 	 */
 	public static final String SCRIPT_TIMEOUT = "script.timeout";
+	public static final String SCRIPT_TIMEOUT_DESC = "Sets # of minutes before worker scripts times out.";
 
 	/**
 	 * {@link biolockj.Config} property {@value #SET_SEED} set the seed for a random process. Must be positive integer.

@@ -50,10 +50,11 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 	 */
 	@Override
 	public void checkDependencies() throws Exception {
-		Config.requireString( this, Constants.SCRIPT_PERMISSIONS );
-		Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_WORKERS );
-		Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
-		Config.getPositiveInteger( this, Constants.SCRIPT_TIMEOUT );
+		validatePropDirectly( Constants.SCRIPT_PERMISSIONS);
+		validatePropDirectly( Constants.SCRIPT_PERMISSIONS );
+		validatePropDirectly( Constants.SCRIPT_NUM_WORKERS );
+		validatePropDirectly( Constants.SCRIPT_NUM_THREADS );
+		validatePropDirectly( Constants.SCRIPT_TIMEOUT );
 	}
 
 	/**
@@ -184,4 +185,43 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 		return Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
 	}
 
+	/**
+	 * Fill in properties used by the script modules
+	 */
+	@Override
+	protected void fillPropDescMap() {
+		propDescMap.put(Constants.SCRIPT_DEFAULT_HEADER, Constants.SCRIPT_DEFAULT_HEADER_DESC);
+		propDescMap.put(Constants.SCRIPT_NUM_WORKERS, Constants.SCRIPT_NUM_WORKERS_DESC);
+		propDescMap.put(Constants.SCRIPT_NUM_THREADS, Constants.SCRIPT_NUM_THREADS_DESC);
+		propDescMap.put(Constants.SCRIPT_PERMISSIONS, Constants.SCRIPT_PERMISSIONS_DESC);
+		propDescMap.put(Constants.SCRIPT_TIMEOUT, Constants.SCRIPT_TIMEOUT_DESC);
+	}
+
+	@Override
+	public Boolean validatePropDirectly( String property ) throws Exception {
+		Boolean isValid = null;
+		switch(property) {
+			case Constants.SCRIPT_DEFAULT_HEADER:
+				isValid = true;
+				break;
+			case Constants.SCRIPT_NUM_WORKERS:
+				Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_WORKERS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_NUM_THREADS:
+				Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_PERMISSIONS:
+				Config.requireString( this, Constants.SCRIPT_PERMISSIONS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_TIMEOUT:
+				Config.getPositiveInteger( this, Constants.SCRIPT_TIMEOUT );
+				isValid = true;
+				break;
+		}
+		return isValid;
+	}
+	
 }

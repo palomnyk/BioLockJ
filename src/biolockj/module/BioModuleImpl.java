@@ -26,7 +26,7 @@ import biolockj.util.*;
  * Superclass for standard BioModules (classifiers, parsers, etc). Sets standard behavior for many of the BioModule
  * interface methods.
  */
-public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> {
+public abstract class BioModuleImpl extends SuperModule implements BioModule, Comparable<BioModule> {
 
 	/**
 	 * If restarting or running a direct pipeline execute the cleanup for completed modules.
@@ -296,6 +296,86 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	private File moduleDir = null;
 	private Integer moduleId;
 	private String alias = null;
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	protected HashMap<String, String> propDescMap = new HashMap<>();
+	protected final void getParentProps() {
+		propDescMap.putAll( super.getPropDescMap() );
+	}
+	/**
+	 * Method for individual modules to add their own properties to the map of properties. 
+	 * The map already includes properties used by super modules.
+	 * Individual modules may over-write the description a parent class gave to a property to better describe how it is used.
+	 */
+	protected void fillPropDescMap() {
+		//propDescMap.put(property, value);
+		//propDescMap.put(property, value);
+	}
+	protected final HashMap<String, String> getPropDescMap() {
+		getParentProps();
+		fillPropDescMap();
+		return propDescMap;
+	}
+	public final String getDescription( String prop ) {
+		HashMap<String, String> descriptions = getPropDescMap();
+		return descriptions.get( prop );
+	}
+	public final List<String> listProps() {
+		List<String> props = new ArrayList<>(getPropDescMap().keySet());
+		Collections.sort(props);
+		return props;
+	}
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	protected HashMap<String, String> propTypeMap = new HashMap<>();
+	protected final void getParentPropTypes() {
+		propTypeMap.putAll( super.getPropTypeMap() );
+	}
+	/**
+	 * Method for individual modules to add their own properties to the map of properties.
+	 * Modules should ONLY add to this map for properties that are newly created by this individual module.
+	 * Any property that already exists, should already be in the map, and its type should not be changed.
+	 */
+	protected void fillPropTypeMap() {
+		//propTypeMap.put(property, type);
+		//propTypeMap.put(property, type);
+	}
+	protected final HashMap<String, String> getPropTypeMap() {
+		getParentPropTypes();
+		fillPropTypeMap();
+		return propTypeMap;
+	}
+	public final String getPropType( String prop ) {
+		HashMap<String, String> types = getPropTypeMap();
+		return types.get( prop );
+	}
+	
+	public final Boolean validateProp( String property ) throws Exception {
+		if ( ! listProps().contains( property ) ) return null; //property is not recognized
+		Boolean isValidAbove = super.validateProp(property);
+		Boolean direct = validatePropDirectly(property);
+		Boolean isValid;
+		
+		if ( direct == null ) isValid = isValidAbove;
+		else if (isValidAbove == null) isValid = direct;
+		else isValid = isValidAbove && direct;
+		
+		return isValid;
+	}
+	/**
+	 * This is the method for modules to override.
+	 * @param property
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
+	public Boolean validatePropDirectly(String property) throws Exception{
+		return null;
+	}	
 
 	/**
 	 * BioLockJ gzip file extension constant: {@value #GZIP_EXT}

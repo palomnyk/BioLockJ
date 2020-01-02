@@ -48,9 +48,14 @@ public abstract class ConfigException extends BioLockJException {
 	protected static String buildMessage( final String property, final String msg ) {
 		String val = Config.getString( null, property );
 		if( val == null ) val = "{undefined}";
-		return "[ " + property + "=" + val + " ] " + RETURN + msg + RETURN +
-			"Restart pipeline after updating the property value in: " + Config.getConfigFilePath() + RETURN +
-			"RESTART SHORTCUT CMD ---> \"blj_rerun " + Config.getConfigFilePath() + "\"";
+		String bigMsg = "[ " + property + "=" + val + " ] " + RETURN + msg;
+		String addedMsg = "";
+		try {
+			String path  = Config.getConfigFilePath();
+			addedMsg = RETURN + "Restart pipeline after updating the property value in: " + path;
+		}catch(Exception e) {
+			addedMsg = RETURN + "Restart pipeline after updating the property value in your config file.";		}
+		return bigMsg + addedMsg;
 	}
 
 	private static final long serialVersionUID = 3479702562753539290L;

@@ -392,6 +392,16 @@ public class Config {
 		unmodifiedInputProps.putAll( props );
 		TaxaUtil.initTaxaLevels();
 	}
+	
+	/**
+	 * Allow the system to act with no properties to allow for quick testing of individual props.
+	 * @param prop
+	 * @param val
+	 * @throws Exception
+	 */
+	public static void initBlankProps() throws Exception {
+		props = new Properties();
+	}
 
 	/**
 	 * Check if running on cluster
