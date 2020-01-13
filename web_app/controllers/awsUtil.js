@@ -5,7 +5,7 @@ Notes: Backend server functions
 */
 
 const { spawn } = require('child_process');//for running child processes
-const   bljDir = process.env.BLJ;
+const bljDir = process.env.BLJ;
 const fs = require('fs'),
   path = require('path');
 

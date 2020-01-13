@@ -101,6 +101,10 @@ body {background-color: #A9A9A9;}/* for dark theme */
   display: none !important;
 }
 
+p{
+  vertical-align: top;
+}
+
 /* for menu and tabbed buttons of menu */
 .menu {
   padding: 14px 10px;
