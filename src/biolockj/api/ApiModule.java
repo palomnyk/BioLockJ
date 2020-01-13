@@ -28,13 +28,6 @@ public interface ApiModule extends BioModule {
 	 * @throws Exception
 	 */
 	public Boolean validatePropDirectly(String property) throws Exception;
-	
-	/**
-	 * String describing the type of value accepted by this property
-	 * @param prop
-	 * @return
-	 */
-	public String valueType(String prop);
 
 	/**
 	 * List properties that this module uses, including those called by any super class.
@@ -67,8 +60,6 @@ public interface ApiModule extends BioModule {
 	 * @return
 	 */
 	public String getPropType(String prop);
-	
-	
 	
 	/**
 	 *  At a minimum, this should return the name and/or url for the wrapped tool.

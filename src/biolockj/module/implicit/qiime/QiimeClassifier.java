@@ -492,7 +492,7 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	 * {@link biolockj.Config} property for {@value #EXE_VSEARCH} parameters (such as alternate reference database
 	 * path): {@value #EXE_VSEARCH_PARAMS}
 	 */
-	protected static final String EXE_VSEARCH_PARAMS = "exe.vsearchParams";
+	protected static final String EXE_VSEARCH_PARAMS = "qiime.vsearchParams";
 
 	/**
 	 * File produced by QIIME {@value #SCRIPT_SUMMARIZE_BIOM} script: {@value #OTU_SUMMARY_FILE}

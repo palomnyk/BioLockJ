@@ -157,7 +157,7 @@ public class PearMergeReads extends SeqModuleImpl {
 	/**
 	 * {@link biolockj.Config} property {@value #EXE_PEAR_PARAMS} is used to set the PEAR executable runtime parameters
 	 */
-	protected static final String EXE_PEAR_PARAMS = "exe.pearParams";
+	protected static final String EXE_PEAR_PARAMS = "pearMergeReads.pearParams";
 	/**
 	 * Name of the bash function that merges files with PEAR: {@value #FUNCTION_PEAR_MERGE}
 	 */

@@ -125,7 +125,7 @@ public class RdpClassifier extends ClassifierModuleImpl {
 	}
 
 	private String getJavaParams() throws Exception {
-		return Config.getExeParams( this, Constants.EXE_JAVA );
+		return Config.getExeParams( this, JAVA_PARAMS );
 	}
 
 	/**
@@ -147,6 +147,12 @@ public class RdpClassifier extends ClassifierModuleImpl {
 	 * {@link biolockj.Config} List property for RDP java executable JAR runtime params: {@value #RDP_PARAMS}
 	 */
 	protected static final String RDP_PARAMS = "rdp.params";
+	
+	/**
+	 * {@link biolockj.Config} List property: {@value #JAVA_PARAMS}
+	 * The parameters for the call to java when running rdp.
+	 */
+	protected static final String JAVA_PARAMS = "rdp.javaParams";
 
 	private static final String DB_PARAM = "-t";
 	private static final String OUTPUT_PARAM = "-o";

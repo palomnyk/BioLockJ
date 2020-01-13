@@ -189,7 +189,7 @@ public class KneadData extends SeqModuleImpl implements DatabaseModule {
 	 * {@link biolockj.Config} property containing parameters for {@value #EXE_KNEADDATA}:
 	 * {@value #EXE_KNEADDATA_PARAMS}
 	 */
-	protected static final String EXE_KNEADDATA_PARAMS = "exe.kneaddataParams";
+	protected static final String EXE_KNEADDATA_PARAMS = "kneaddata.kneaddataParams";
 
 	/**
 	 * Name of the bash function used to decompress gzipped files: {@value #FUNCTION_SANATIZE}

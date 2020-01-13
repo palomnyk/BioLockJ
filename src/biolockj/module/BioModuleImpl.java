@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import biolockj.*;
+import biolockj.Properties;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.PipelineFormationException;
@@ -297,6 +298,10 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 	private Integer moduleId;
 	private String alias = null;
 	
+	
+	public String getTitle() {
+		return this.getClass().getSimpleName();
+	}
 	/**
 	 * HashMap with property name as key and the description for this property as the value.
 	 */
@@ -319,6 +324,9 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		return propDescMap;
 	}
 	public final String getDescription( String prop ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return Properties.getDescription( prop ) ;
+		}
 		HashMap<String, String> descriptions = getPropDescMap();
 		return descriptions.get( prop );
 	}
@@ -350,6 +358,9 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		return propTypeMap;
 	}
 	public final String getPropType( String prop ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX )) {
+			return Properties.getPropertyType(prop);
+		}
 		HashMap<String, String> types = getPropTypeMap();
 		return types.get( prop );
 	}

@@ -14,6 +14,8 @@ package biolockj.module.classifier.wgs;
 import java.io.File;
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.classifier.ClassifierModuleImpl;
 import biolockj.util.*;
@@ -31,7 +33,7 @@ import biolockj.util.*;
  * 
  * @blj.web_desc HumanN2 Classifier
  */
-public class Humann2Classifier extends ClassifierModuleImpl {
+public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule {
 
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
@@ -428,39 +430,93 @@ public class Humann2Classifier extends ClassifierModuleImpl {
 	private static boolean waitForDownloadDBs() {
 		return !dlHn2DBs.isEmpty();
 	}
+	
+
+	@Override
+	public String getTitle() {
+		return "HUMAnN2";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Profile the presence/absence and abundance of microbial pathways in a community from metagenomic or metatranscriptomic sequencing data.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Franzosa EA*, McIver LJ*, Rahnavard G, Thompson LR, Schirmer M, Weingart G, Schwarzberg Lipson K, Knight R, Caporaso JG, Segata N, Huttenhower C. "
+						+ System.lineSeparator() + "Species-level functional profiling of metagenomes and metatranscriptomes. Nat Methods 15: 962-968 (2018)."
+						+ System.lineSeparator() + "http://huttenhower.sph.harvard.edu/humann2"
+						+ System.lineSeparator() + "BioLockJ module developed by Mike Siota";
+	}
+
+	@Override
+	protected void fillPropTypeMap() {
+		propTypeMap.put( EXE_HUMANN2, Properties.EXE_PATH ); 
+		propTypeMap.put(EXE_HUMANN2_JOIN_PARAMS, Properties.LIST_TYPE);
+		propTypeMap.put(EXE_HUMANN2_PARAMS, Properties.LIST_TYPE);
+		propTypeMap.put(EXE_HUMANN2_RENORM_PARAMS, Properties.LIST_TYPE);
+		propTypeMap.put(HN2_NUCL_DB, Properties.FILE_PATH);
+		propTypeMap.put(HN2_PROT_DB, Properties.FILE_PATH);
+		}
+	
+	@Override
+	protected void fillPropDescMap() {
+		propDescMap.put( EXE_HUMANN2, "" ); //description for exe's is generated in super method
+		propDescMap.put(EXE_HUMANN2_JOIN_PARAMS, EXE_HUMANN2_JOIN_PARAMS_DESC);
+		propDescMap.put(EXE_HUMANN2_PARAMS, EXE_HUMANN2_PARAMS_DESC);
+		propDescMap.put(EXE_HUMANN2_RENORM_PARAMS, EXE_HUMANN2_RENORM_PARAMS_DESC);
+		propDescMap.put(HN2_NUCL_DB, HN2_NUCL_DB_DESC);
+		propDescMap.put(HN2_PROT_DB, HN2_PROT_DB_DESC);
+	}
+	
+	@Override
+	public Boolean validatePropDirectly(String property) throws Exception{
+		return null;
+	}
 
 	private Map<File, File> pairedReads = null;
 	private int workerID = 0;
 
 	/**
-	 * {@link biolockj.Config} exe property for humnan2 executable: {@value #EXE_HUMANN2}
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property for humnan2 executable: {@value #EXE_HUMANN2}
 	 */
 	protected static final String EXE_HUMANN2 = "exe.humann2";
 
 	/**
-	 * {@link biolockj.Config} List property used to obtain the humann2_join_tables executable params
+	 * {@link biolockj.Config} {@value biolockj.Properties#LIST_TYPE} property: {@value #EXE_HUMANN2_JOIN_PARAMS}
+	 * {@value #EXE_HUMANN2_JOIN_PARAMS_DESC}
 	 */
-	protected static final String EXE_HUMANN2_JOIN_PARAMS = "exe.humann2JoinTableParams";
+	protected static final String EXE_HUMANN2_JOIN_PARAMS = "humann2.humann2JoinTableParams";
+	private static final String EXE_HUMANN2_JOIN_PARAMS_DESC = "The parameters to be used with humann2_join_tables";
 
 	/**
-	 * {@link biolockj.Config} List property used to obtain the humann2 executable params
+	 * {@link biolockj.Config} {@value biolockj.Properties#LIST_TYPE} property: {@value #EXE_HUMANN2_PARAMS}
+	 * {@value #EXE_HUMANN2_PARAMS_DESC}
 	 */
-	protected static final String EXE_HUMANN2_PARAMS = "exe.humann2Params";
+	protected static final String EXE_HUMANN2_PARAMS = "humann2.humann2Params";
+	private static final String EXE_HUMANN2_PARAMS_DESC = "The humann2 executable params";
 
 	/**
-	 * {@link biolockj.Config} List property used to obtain the humann2_renorm_table executable params
+	 * {@link biolockj.Config} {@value biolockj.Properties#LIST_TYPE} property: {@value #EXE_HUMANN2_RENORM_PARAMS}
+	 * {@value #EXE_HUMANN2_RENORM_PARAMS_DESC}
 	 */
-	protected static final String EXE_HUMANN2_RENORM_PARAMS = "exe.humann2RenormTableParams";
+	protected static final String EXE_HUMANN2_RENORM_PARAMS = "humann2.humann2RenormTableParams";
+	private static final String EXE_HUMANN2_RENORM_PARAMS_DESC = "The parameters to use with humann2_renorm_table";
 
 	/**
-	 * {@link biolockj.Config} Directory property must contain the nucleotide database: {@value #HN2_NUCL_DB}
+	 * {@link biolockj.Config} {@value biolockj.Properties#FILE_PATH} property: {@value #HN2_NUCL_DB}
+	 * {@value #HN2_NUCL_DB_DESC}
 	 */
 	protected static final String HN2_NUCL_DB = "humann2.nuclDB";
+	private static final String HN2_NUCL_DB_DESC = "Directory containing the nucleotide database";
 
 	/**
-	 * {@link biolockj.Config} Directory property must contain the protein nucleotide database: {@value #HN2_PROT_DB}
+	 * {@link biolockj.Config} {@value biolockj.Properties#FILE_PATH} property: {@value #HN2_PROT_DB}
+	 * {@value #HN2_PROT_DB_DESC}
 	 */
 	protected static final String HN2_PROT_DB = "humann2.protDB";
+	private static final String HN2_PROT_DB_DESC = "Directory containing the protein nucleotide database";
 
 	private static final String BLOCK_FOR_DB_COMMENT =
 		"# Poll every 60 seconds for DB download complete indicator file";

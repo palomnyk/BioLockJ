@@ -134,11 +134,8 @@ public class Config {
 	 * @throws Exception if errors occur
 	 */
 	public static String getExeParams( final BioModule module, final String property ) throws Exception {
-		final String property2 = property;
-		if( !property2.startsWith( Constants.EXE_PREFIX ) )
-			throw new SpecialPropertiesException( property, "Config.getExeParams() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
-		if( getString( module, property2 + Constants.PARAMS ) == null ) return "";
-		String val = getString( module, property2 + Constants.PARAMS );
+		String val = getString( module, property );
+		if( val == null ) return "";
 		if( val != null && !val.isEmpty() && !val.endsWith( " " ) ) val = val + " ";
 		return val;
 	}

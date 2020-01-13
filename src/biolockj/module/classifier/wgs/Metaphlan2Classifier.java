@@ -215,7 +215,7 @@ public class Metaphlan2Classifier extends ClassifierModuleImpl {
 	/**
 	 * {@link biolockj.Config} List property used to obtain the metaphlan2 executable params
 	 */
-	protected static final String EXE_METAPHLAN_PARAMS = "exe.metaphlan2Params";
+	protected static final String EXE_METAPHLAN_PARAMS = "metaphlan2.metaphlan2Params";
 
 	/**
 	 * {@link biolockj.Config} Directory property containing alternate database: {@value #METAPHLAN2_DB}<br>

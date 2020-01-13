@@ -49,17 +49,6 @@ public class AddPseudoCount extends TransformTaxaTables implements ApiModule {
 	}
 
 	@Override
-	public String valueType( String prop ) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getTitle() {
-		return this.getClass().getSimpleName();
-	}
-
-	@Override
 	public String getDescription() {
 		return "Add a pseudocount (+1) to each value in each taxa table.";
 	}

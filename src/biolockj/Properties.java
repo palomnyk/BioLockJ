@@ -309,6 +309,6 @@ public class Properties extends java.util.Properties {
 	public static final String BOOLEAN_TYPE = "boolean";
 	public static final String FILE_PATH = "file path";
 	public static final String EXE_PATH = "executable";
-	
+	public static final String LIST_TYPE = "list";
 	
 }

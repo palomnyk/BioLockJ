@@ -459,11 +459,6 @@ public class Constants {
 	public static final String OTU_TABLE_PREFIX = "otu_table";
 
 	/**
-	 * {@link biolockj.Config} property suffix for exe.* properties, used to set optional parameters: {@value #PARAMS}
-	 */
-	public static final String PARAMS = "Params";
-
-	/**
 	 * BioLockJ PDF file extension: {@value #PDF_EXT}
 	 */
 	public static final String PDF_EXT = ".pdf";

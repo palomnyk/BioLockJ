@@ -189,7 +189,7 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	}
 
 	private static String getExeParamName() {
-		return EXE_KRAKEN + Constants.PARAMS;
+		return KRAKEN_PARAMS;
 	}
 
 	/**
@@ -226,6 +226,8 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	 * {@value #KRAKEN_DATABASE}
 	 */
 	protected static final String KRAKEN_DATABASE = "kraken.db";
+	
+	protected static final String KRAKEN_PARAMS = "kraken.krakenParams";
 
 	/**
 	 * File suffix added by BioLockJ to kraken output files (before translation): {@value #KRAKEN_FILE}
