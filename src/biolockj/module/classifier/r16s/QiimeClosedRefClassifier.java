@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.implicit.qiime.MergeQiimeOtuTables;
 import biolockj.module.implicit.qiime.QiimeClassifier;
@@ -28,7 +29,7 @@ import biolockj.util.*;
  * 
  * @blj.web_desc QIIME Closed Reference Classifier
  */
-public class QiimeClosedRefClassifier extends QiimeClassifier {
+public class QiimeClosedRefClassifier extends QiimeClassifier implements ApiModule {
 
 	/**
 	 * Create bash script lines to split up the QIIME mapping and fasta files into batches of size
@@ -201,4 +202,25 @@ public class QiimeClosedRefClassifier extends QiimeClassifier {
 	 * Name of the bash function that prepares a batch of seqs for processing: {@value #FUNCTION_CREATE_BATCH_MAPPING}
 	 */
 	protected static final String FUNCTION_CREATE_BATCH_MAPPING = "createBatchMapping";
+
+	@Override
+	public String getDescription() {
+		return "Pick OTUs using a closed reference database and construct an OTU table via the QIIME script pick_closed_reference_otus.py";
+	}
+	
+	@Override
+	public String getDetails() {
+		return "This module picks OTUs using a closed reference database and constructs an OTU table via the QIIME script [pick_closed_reference_otus.py](http://qiime.org/scripts/pick_closed_reference_otus.html).  Taxonomy is assigned using a pre-defined taxonomy map of reference sequence OTU to taxonomy.  This is the fastest OTU picking method since samples can be processed in parallel batches.  Before the QIIME script is run, batches are prepared in the temp directory, with each batch directory containing a fasta directory with *script.batchSize* fasta files and a QIIME mapping file, created with awk, called batchMapping.tsv for the batch of samples.   Inherits from [QiimeClassifier](../../../module.implicit.qiime#QiimeClassifier).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return CITE_QIIME + System.lineSeparator() + "(needs further citation)" + System.lineSeparator() + "http://www.wernerlab.org/software/macqiime/citations";
+	}
+	
+	@Override
+	protected void fillPropDescMap() {
+		super.fillPropDescMap();
+		propDescMap.put(Constants.EXE_AWK, "");
+	}
 }

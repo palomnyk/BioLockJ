@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import biolockj.*;
+import biolockj.Properties;
 import biolockj.exception.*;
 import biolockj.module.*;
 import biolockj.module.report.r.R_Module;
@@ -412,22 +413,48 @@ public class BashScriptBuilder {
 	}
 
 	/**
+	 * Register properties with the Properties class for API access.
+	 */
+	public static void registerProps() {
+		Properties.registerProp(CLUSTER_BATCH_COMMAND, Properties.STRING_TYPE, CLUSTER_BATCH_COMMAND_DESC);
+		Properties.registerProp(CLUSTER_STATUS_COMMAND, Properties.STRING_TYPE, CLUSTER_STATUS_COMMAND_DESC);
+		Properties.registerProp(CLUSTER_MODULES, Properties.LIST_TYPE, CLUSTER_MODULES_DESC);
+		Properties.registerProp(CLUSTER_PROLOGUE, Properties.STRING_TYPE, CLUSTER_PROLOGUE_DESC);
+		Properties.registerProp(SCRIPT_JOB_HEADER, Properties.STRING_TYPE, SCRIPT_JOB_HEADER_DESC);
+	}
+	/**
+	 * Let modules see property names.
+	 */
+	public static List<String> listProps(){
+		ArrayList<String> props = new ArrayList<>();
+		props.add( CLUSTER_BATCH_COMMAND );
+		props.add( CLUSTER_STATUS_COMMAND );
+		props.add( CLUSTER_MODULES );
+		props.add( CLUSTER_PROLOGUE );
+		props.add( SCRIPT_JOB_HEADER );
+		return props;
+	}
+	
+	/**
 	 * {@link biolockj.Config} String property: {@value #CLUSTER_BATCH_COMMAND}<br>
-	 * Terminal command used to submit jobs on the cluster.
+	 * {@value #CLUSTER_BATCH_COMMAND_DESC}
 	 */
 	protected static final String CLUSTER_BATCH_COMMAND = "cluster.batchCommand";
+	private static final String CLUSTER_BATCH_COMMAND_DESC = "Terminal command used to submit jobs on the cluster";
 	
 	/**
 	 * {@link biolockj.Config} String property: {@value #CLUSTER_STATUS_COMMAND}<br>
-	 * Terminal command used to submit jobs on the cluster.
+	 * {@value #CLUSTER_STATUS_COMMAND_DESC}
 	 */
 	protected static final String CLUSTER_STATUS_COMMAND = "cluster.statusCommand";
+	private static final String CLUSTER_STATUS_COMMAND_DESC = "Terminal command used to submit jobs on the cluster";
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #CLUSTER_MODULES}<br>
-	 * List of cluster modules to load at start of worker scripts.
+	 * {@value #CLUSTER_MODULES_DESC}
 	 */
 	protected static final String CLUSTER_MODULES = "cluster.modules";
+	private static final String CLUSTER_MODULES_DESC = "List of cluster modules to load at start of worker scripts";
 
 	/**
 	 * One parameter of the {@link biolockj.Config} String property {@value #SCRIPT_JOB_HEADER} to set number of cores.
@@ -436,15 +463,17 @@ public class BashScriptBuilder {
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #CLUSTER_PROLOGUE}<br>
-	 * To run at the start of every script after loading cluster modules (if any)
+	 * {@value #CLUSTER_PROLOGUE_DESC}
 	 */
 	protected static final String CLUSTER_PROLOGUE = "cluster.prologue";
+	private static final String CLUSTER_PROLOGUE_DESC = "To run at the start of every script after loading cluster modules (if any)";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #SCRIPT_JOB_HEADER}<br>
-	 * Header written at top of worker scripts
+	 * {@value #SCRIPT_JOB_HEADER_DESC}
 	 */
 	protected static final String SCRIPT_JOB_HEADER = "cluster.jobHeader";
+	private static final String SCRIPT_JOB_HEADER_DESC = "Header written at top of worker scripts";
 
 	private static final String FUNCTION_EXECUTE_LINE = "executeLine";
 	private static final String FUNCTION_RUN_JOB = "runJob";

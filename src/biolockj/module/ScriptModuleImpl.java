@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import biolockj.Config;
 import biolockj.Constants;
+import biolockj.Properties;
 import biolockj.exception.*;
 import biolockj.module.report.r.R_Module;
 import biolockj.util.*;
@@ -190,11 +191,15 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 	 */
 	@Override
 	protected void fillPropDescMap() {
+		super.fillPropDescMap();
 		propDescMap.put(Constants.SCRIPT_DEFAULT_HEADER, Constants.SCRIPT_DEFAULT_HEADER_DESC);
 		propDescMap.put(Constants.SCRIPT_NUM_WORKERS, Constants.SCRIPT_NUM_WORKERS_DESC);
 		propDescMap.put(Constants.SCRIPT_NUM_THREADS, Constants.SCRIPT_NUM_THREADS_DESC);
 		propDescMap.put(Constants.SCRIPT_PERMISSIONS, Constants.SCRIPT_PERMISSIONS_DESC);
 		propDescMap.put(Constants.SCRIPT_TIMEOUT, Constants.SCRIPT_TIMEOUT_DESC);
+		for (String prop : BashScriptBuilder.listProps() ) {
+			propDescMap.put(prop, Properties.getDescription( prop ));
+		}
 	}
 
 	@Override

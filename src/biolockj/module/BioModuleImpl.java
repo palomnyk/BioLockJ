@@ -302,29 +302,23 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 	public String getTitle() {
 		return this.getClass().getSimpleName();
 	}
-	/**
-	 * HashMap with property name as key and the description for this property as the value.
-	 */
-	protected HashMap<String, String> propDescMap = new HashMap<>();
-	protected final void getParentProps() {
-		propDescMap.putAll( super.getPropDescMap() );
-	}
+
 	/**
 	 * Method for individual modules to add their own properties to the map of properties. 
 	 * The map already includes properties used by super modules.
 	 * Individual modules may over-write the description a parent class gave to a property to better describe how it is used.
 	 */
 	protected void fillPropDescMap() {
-		//propDescMap.put(property, value);
+		super.fillPropDescMap();
 		//propDescMap.put(property, value);
 	}
 	protected final HashMap<String, String> getPropDescMap() {
-		getParentProps();
 		fillPropDescMap();
 		return propDescMap;
 	}
 	public final String getDescription( String prop ) {
-		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX )
+						&& listProps().contains( prop ) ) {
 			return Properties.getDescription( prop ) ;
 		}
 		HashMap<String, String> descriptions = getPropDescMap();
@@ -337,28 +331,21 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 	}
 	
 	/**
-	 * HashMap with property name as key and the description for this property as the value.
-	 */
-	protected HashMap<String, String> propTypeMap = new HashMap<>();
-	protected final void getParentPropTypes() {
-		propTypeMap.putAll( super.getPropTypeMap() );
-	}
-	/**
 	 * Method for individual modules to add their own properties to the map of properties.
 	 * Modules should ONLY add to this map for properties that are newly created by this individual module.
 	 * Any property that already exists, should already be in the map, and its type should not be changed.
 	 */
 	protected void fillPropTypeMap() {
-		//propTypeMap.put(property, type);
+		super.fillPropTypeMap();
 		//propTypeMap.put(property, type);
 	}
 	protected final HashMap<String, String> getPropTypeMap() {
-		getParentPropTypes();
 		fillPropTypeMap();
 		return propTypeMap;
 	}
 	public final String getPropType( String prop ) {
-		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX )) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) 
+						&& listProps().contains( prop )) {
 			return Properties.getPropertyType(prop);
 		}
 		HashMap<String, String> types = getPropTypeMap();
@@ -366,15 +353,18 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 	}
 	
 	public final Boolean validateProp( String property ) throws Exception {
-		if ( ! listProps().contains( property ) ) return null; //property is not recognized
+		Boolean isValid = null;
 		Boolean isValidAbove = super.validateProp(property);
 		Boolean direct = validatePropDirectly(property);
-		Boolean isValid;
 		
-		if ( direct == null ) isValid = isValidAbove;
-		else if (isValidAbove == null) isValid = direct;
-		else isValid = isValidAbove && direct;
+		// default to true if it IS recognized, but not found to be a problem.
+		if ( listProps().contains( property )
+						|| isValidAbove.equals( Boolean.TRUE ) 
+						|| direct.equals( Boolean.TRUE )) {
+			isValid = true; 	
+		}
 		
+		if (isValidAbove.equals( Boolean.FALSE ) || direct.equals( Boolean.FALSE )) isValid = false;
 		return isValid;
 	}
 	/**
@@ -387,6 +377,10 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 	public Boolean validatePropDirectly(String property) throws Exception{
 		return null;
 	}	
+	
+	public String getDetails() {
+		return "";
+	}
 
 	/**
 	 * BioLockJ gzip file extension constant: {@value #GZIP_EXT}

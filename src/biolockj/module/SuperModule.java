@@ -1,16 +1,23 @@
 package biolockj.module;
 
 import java.util.HashMap;
-import biolockj.Properties;
 
 public abstract class SuperModule {
 	
-	protected HashMap<String, String> getPropDescMap() {
-		return new HashMap<String, String>();
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	protected HashMap<String, String> propDescMap = null;
+	protected void fillPropDescMap() {
+		propDescMap = new HashMap<>();
 	}
-	
-	protected HashMap<String, String> getPropTypeMap() {
-		return Properties.getPropTypeMap();
+		
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	protected HashMap<String, String> propTypeMap;
+	protected void fillPropTypeMap() {
+		propTypeMap = new HashMap<>();
 	}
 	
 	protected Boolean validateProp( String property ) throws Exception {

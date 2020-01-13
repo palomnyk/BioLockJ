@@ -452,6 +452,7 @@ public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule
 
 	@Override
 	protected void fillPropTypeMap() {
+		super.fillPropTypeMap();
 		propTypeMap.put( EXE_HUMANN2, Properties.EXE_PATH ); 
 		propTypeMap.put(EXE_HUMANN2_JOIN_PARAMS, Properties.LIST_TYPE);
 		propTypeMap.put(EXE_HUMANN2_PARAMS, Properties.LIST_TYPE);
@@ -462,6 +463,7 @@ public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule
 	
 	@Override
 	protected void fillPropDescMap() {
+		super.fillPropDescMap();
 		propDescMap.put( EXE_HUMANN2, "" ); //description for exe's is generated in super method
 		propDescMap.put(EXE_HUMANN2_JOIN_PARAMS, EXE_HUMANN2_JOIN_PARAMS_DESC);
 		propDescMap.put(EXE_HUMANN2_PARAMS, EXE_HUMANN2_PARAMS_DESC);
@@ -471,8 +473,24 @@ public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule
 	}
 	
 	@Override
-	public Boolean validatePropDirectly(String property) throws Exception{
-		return null;
+	public Boolean validatePropDirectly( String property ) throws Exception {
+		Boolean isValid = null;
+		switch(property) {
+			case EXE_HUMANN2:
+				isValid = Properties.isValidExeProp( this, EXE_HUMANN2 );
+				break;
+			case EXE_HUMANN2_JOIN_PARAMS:
+				isValid = true;
+				try {getParams( EXE_HUMANN2_JOIN_PARAMS );}
+				catch(Exception e) { isValid=false; }
+				break;
+			case EXE_HUMANN2_RENORM_PARAMS:
+				isValid = true;
+				try {getParams( EXE_HUMANN2_RENORM_PARAMS );}
+				catch(Exception e) { isValid=false; }
+				break;
+		}
+		return isValid;
 	}
 
 	private Map<File, File> pairedReads = null;

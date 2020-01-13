@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.ConfigPathException;
 import biolockj.exception.DockerVolCreationException;
@@ -29,7 +30,7 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Knead Data Sanitizer
  */
-public class KneadData extends SeqModuleImpl implements DatabaseModule {
+public class KneadData extends SeqModuleImpl implements DatabaseModule, ApiModule {
 
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
@@ -212,4 +213,39 @@ public class KneadData extends SeqModuleImpl implements DatabaseModule {
 	private static final String OUTPUT_PARAM = "-o";
 	private static final String RV_OUTPUT_SUFFIX = "_paired_2";
 	private static final String TRIMMOMATIC_PARAM = "--trimmomatic ";
+	
+	@Override
+	public String getDescription() {
+		return "Run the Biobakery [KneadData](https://bitbucket.org/biobakery/kneaddata/wiki/Home) program to remove contaminated DNA.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "https://bitbucket.org/biobakery/kneaddata/wiki/Home" + System.lineSeparator() + "Module developed by Mike Sioda";
+	}
+	
+	@Override
+	protected void fillPropDescMap() {
+		super.fillPropDescMap();
+		propDescMap.put( EXE_KNEADDATA, "" ); //description for exe's is generated in super method
+		propDescMap.put( EXE_KNEADDATA_PARAMS, "Optional parameters passed to kneaddata ");
+		propDescMap.put( KNEAD_DBS, "Path to database for KneadData program");
+	}
+	@Override
+	protected void fillPropTypeMap() {
+		super.fillPropTypeMap();
+		propTypeMap.put( EXE_KNEADDATA_PARAMS, Properties.STRING_TYPE ); 
+		propTypeMap.put( KNEAD_DBS, Properties.FILE_PATH);
+	}
+	
+	@Override
+	public Boolean validatePropDirectly( String property ) throws Exception {
+		Boolean isValid = null;
+		switch(property) {
+			case EXE_KNEADDATA:
+				isValid = Properties.isValidExeProp( this, EXE_KNEADDATA );
+				break;
+		}
+		return isValid;
+	}
 }

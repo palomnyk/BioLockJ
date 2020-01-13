@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 import biolockj.*;
+import biolockj.Properties;
 import biolockj.exception.*;
 import biolockj.module.*;
 import biolockj.module.implicit.ImportMetadata;
@@ -442,40 +443,66 @@ public class NextflowUtil {
 	}
 
 	/**
+	 * Register properties with the Properties class for API access.
+	 */
+	public static void registerProps() {
+		Properties.registerProp( AWS_COPY_DB_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_DB_TO_S3_DESC);
+		Properties.registerProp( AWS_COPY_PIPELINE_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_PIPELINE_TO_S3_DESC);
+		Properties.registerProp( AWS_COPY_REPORTS_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_REPORTS_TO_S3_DESC);
+		Properties.registerProp( AWS_PURGE_EFS_INPUTS, Properties.BOOLEAN_TYPE, AWS_PURGE_EFS_INPUTS_DESC);
+		Properties.registerProp( AWS_PURGE_EFS_OUTPUT, Properties.BOOLEAN_TYPE, AWS_PURGE_EFS_OUTPUT_DESC);
+		Properties.registerProp( AWS_RAM, Properties.STRING_TYPE, AWS_RAM_DESC );  // TODO: follow-up on type
+		Properties.registerProp( AWS_S3, Properties.STRING_TYPE, AWS_S3_DESC );
+		Properties.registerProp( EC2_ACQUISITION_STRATEGY, Properties.STRING_TYPE, EC2_ACQUISITION_STRATEGY_DESC );
+		Properties.registerProp( EC2_INSTANCE_TYPE, Properties.STRING_TYPE, EC2_INSTANCE_TYPE_DESC );
+	}
+	
+	/**
 	 * Name of the AWS S3 sub-directory used to save pipeline reports
 	 */
 	public static final String AWS_CONFIG_DIR = "config";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: If enabled save all input files to S3: {@value #AWS_COPY_DB_TO_S3}
+	 * {@link biolockj.Config} Boolean property:{@value #AWS_COPY_DB_TO_S3}<br>
+	 * {@value AWS_COPY_DB_TO_S3_DESC}
 	 */
 	public static final String AWS_COPY_DB_TO_S3 = "aws.copyDbToS3";
+	private static final String AWS_COPY_DB_TO_S3_DESC = "If true, save all input files to S3";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: If enabled save pipeline to S3: {@value #AWS_COPY_PIPELINE_TO_S3}
+	 * {@link biolockj.Config} Boolean property: {@value #AWS_COPY_PIPELINE_TO_S3}<br>
+	 * {@value #AWS_COPY_PIPELINE_TO_S3_DESC}
 	 */
 	public static final String AWS_COPY_PIPELINE_TO_S3 = "aws.copyPipelineToS3";
+	private static final String AWS_COPY_PIPELINE_TO_S3_DESC = "If enabled save pipeline to S3";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: If enabled save reports to S3: {@value #AWS_COPY_PIPELINE_TO_S3}
+	 * {@link biolockj.Config} Boolean property: {@value #AWS_COPY_PIPELINE_TO_S3}<br>
+	 * {@value #AWS_COPY_REPORTS_TO_S3_DESC}
 	 */
 	public static final String AWS_COPY_REPORTS_TO_S3 = "aws.copyReportsToS3";
+	private static final String AWS_COPY_REPORTS_TO_S3_DESC = "If enabled save reports to S3";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: If enabled delete all EFS dirs (except pipelines):
-	 * {@value #AWS_PURGE_EFS_INPUTS}
+	 * {@link biolockj.Config} Boolean property: {@value #AWS_PURGE_EFS_INPUTS}<br>
+	 * {@value #AWS_PURGE_EFS_INPUTS_DESC}
 	 */
 	public static final String AWS_PURGE_EFS_INPUTS = "aws.purgeEfsInputs";
+	private static final String AWS_PURGE_EFS_INPUTS_DESC = "If enabled delete all EFS dirs (except pipelines)";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: If enabled delete all EFS/pipelines: {@value #AWS_PURGE_EFS_OUTPUT}
+	 * {@link biolockj.Config} Boolean property: {@value #AWS_PURGE_EFS_OUTPUT}<br>
+	 * {@value #AWS_PURGE_EFS_OUTPUT_DESC}
 	 */
 	public static final String AWS_PURGE_EFS_OUTPUT = "aws.purgeEfsOutput";
+	private static final String AWS_PURGE_EFS_OUTPUT_DESC = "If enabled delete all EFS/pipelines";
 
 	/**
-	 * {@link biolockj.Config} String property: AWS memory set in Nextflow main.nf: {@value #AWS_RAM}
+	 * {@link biolockj.Config} String property: {@value #AWS_RAM}<br>
+	 * {@value #AWS_RAM_DESC}
 	 */
 	public static final String AWS_RAM = "aws.ram";
+	private static final String AWS_RAM_DESC = "AWS memory set in Nextflow main.nf";
 
 	/**
 	 * Name of the AWS S3 subdirectory used to save pipeline reports
@@ -483,22 +510,25 @@ public class NextflowUtil {
 	public static final String AWS_REPORT_DIR = "reports";
 
 	/**
-	 * {@link biolockj.Config} String property: AWS S3 pipeline output directory used by Nextflow main.nf:
-	 * {@value #AWS_S3}
+	 * {@link biolockj.Config} String property: {@value #AWS_S3}<br>
+	 * {@value #AWS_S3_DESC}
 	 */
 	public static final String AWS_S3 = "aws.s3";
+	private static final String AWS_S3_DESC = "AWS S3 pipeline output directory used by Nextflow main.nf";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #EC2_ACQUISITION_STRATEGY}<br>
-	 * The AWS acquisition strategy (SPOT or DEMAND) sets the service SLA for procuring new EC2 instances:
+	 * {@value #EC2_ACQUISITION_STRATEGY_DESC}
 	 */
 	protected static final String EC2_ACQUISITION_STRATEGY = "aws.ec2AcquisitionStrategy";
+	private static final String EC2_ACQUISITION_STRATEGY_DESC = "The AWS acquisition strategy (SPOT or DEMAND) sets the service SLA for procuring new EC2 instances";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #EC2_INSTANCE_TYPE}<br>
-	 * AWS instance type determines initial resource class (t2.micro is common)
+	 * {@value #EC2_INSTANCE_TYPE_DESC}
 	 */
 	protected static final String EC2_INSTANCE_TYPE = "aws.ec2InstanceType";
+	private static final String EC2_INSTANCE_TYPE_DESC = "AWS instance type determines initial resource class (t2.micro is common)";
 
 	/**
 	 * The Docker container will generate a nextflow.log file in the root directory, this is the file name

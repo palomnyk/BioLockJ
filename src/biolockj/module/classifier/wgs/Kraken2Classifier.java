@@ -15,6 +15,8 @@ import java.io.File;
 import java.util.*;
 import biolockj.Config;
 import biolockj.Constants;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.classifier.ClassifierModuleImpl;
 import biolockj.util.*;
@@ -26,7 +28,7 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Kraken2 Classifier
  */
-public class Kraken2Classifier extends ClassifierModuleImpl {
+public class Kraken2Classifier extends ClassifierModuleImpl implements ApiModule {
 	/**
 	 * Build bash script lines to classify unpaired WGS reads with Kraken2. The inner list contains 1 bash script line
 	 * used to classify 1 sample.
@@ -185,6 +187,34 @@ public class Kraken2Classifier extends ClassifierModuleImpl {
 	}
 
 	private String defaultSwitches = null;
+	
+	@Override
+	public String getDescription() {
+		return "Classify WGS samples with [KRAKEN 2](https://ccb.jhu.edu/software/kraken2/).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Improved metagenomic analysis with Kraken 2\r\n" + 
+			"Derrick E. Wood, Jennifer Lu, Ben Langmead\r\n" + 
+			"bioRxiv 762302; doi: https://doi.org/10.1101/762302";
+	}
+	
+	@Override
+	public void fillPropDescMap(){
+		super.fillPropDescMap();
+		propDescMap.put( EXE_KRAKEN2, "" );
+		propDescMap.put( KRAKEN_DATABASE, "file path to Kraken2 kmer database directory");
+		propDescMap.put( KRAKEN2_PARAMS, "additional parameters to use with kraken2");
+	}
+	
+	@Override
+	public void fillPropTypeMap() {
+		super.fillPropTypeMap();
+		propTypeMap.put( EXE_KRAKEN2, Properties.EXE_PATH );
+		propTypeMap.put( KRAKEN_DATABASE, Properties.FILE_PATH );
+		propTypeMap.put( KRAKEN2_PARAMS, Properties.LIST_TYPE );
+	}
 
 	/**
 	 * {@link biolockj.Config} exe property for kraken2 executable: {@value #EXE_KRAKEN2}
@@ -219,4 +249,5 @@ public class Kraken2Classifier extends ClassifierModuleImpl {
 	private static final String REPORT_PARAM = "--report ";
 	private static final String USE_MPA_PARAM = "--use-mpa-style ";
 	private static final String USE_NAMES_PARAM = "--use-names ";
+
 }

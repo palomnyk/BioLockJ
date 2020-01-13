@@ -15,8 +15,11 @@ import java.io.*;
 import java.util.*;
 import biolockj.exception.BioLockJException;
 import biolockj.exception.ConfigPathException;
+import biolockj.module.BioModule;
+import biolockj.util.BashScriptBuilder;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.DockerUtil;
+import biolockj.util.NextflowUtil;
 
 /**
  * Load properties defined in the BioLockJ configuration file, including inherited properties from project.defaultProps
@@ -233,71 +236,103 @@ public class Properties extends java.util.Properties {
 	 * HashMap with property name as key and the description for this property as the value.
 	 */
 	private static HashMap<String, String> propDescMap = new HashMap<>();
-	private static void fillPropDescMap() {
-		if (propDescMap.size() == 0) {
-			propDescMap.put( Constants.CLUSTER_HOST, Constants.CLUSTER_HOST_DESC );
-			propDescMap.put( Constants.DEFAULT_MOD_DEMUX, Constants.DEFAULT_MOD_DEMUX_DESC );
-			propDescMap.put( Constants.DEFAULT_MOD_FASTA_CONV, Constants.DEFAULT_MOD_FASTA_CONV_DESC );
-			propDescMap.put( Constants.DEFAULT_MOD_SEQ_MERGER, Constants.DEFAULT_MOD_SEQ_MERGER_DESC );
-			propDescMap.put( Constants.DEFAULT_STATS_MODULE, Constants.DEFAULT_STATS_MODULE_DESC );
-			propDescMap.put( Constants.DETACH_JAVA_MODULES, Constants.DETACH_JAVA_MODULES_DESC );
-			propDescMap.put( Constants.DISABLE_ADD_IMPLICIT_MODULES, Constants.DISABLE_ADD_IMPLICIT_MODULES_DESC );
-			propDescMap.put( Constants.DISABLE_PRE_REQ_MODULES, Constants.DISABLE_PRE_REQ_MODULES_DESC );
-			propDescMap.put( Constants.DOCKER_CONFIG_PATH, Constants.DOCKER_CONFIG_PATH_DESC);
-			propDescMap.put( Constants.DOCKER_CONTAINER_NAME, Constants.DOCKER_CONTAINER_NAME_DESC);
-		}
-	}
-	/**
-	 * Allow the API to access the list of properties and descriptions.
-	 * @return
-	 */
-	public static HashMap<String, String> getPropDescMap() {
-		fillPropDescMap();
-		return propDescMap;
-	}
-	public static String getDescription( String prop ) {
-		if (prop.startsWith( Constants.EXE_PREFIX ) ) {
-			return "Path for the \"" + prop.replaceFirst( Constants.EXE_PREFIX, "" ) + "\" executable." ;
-		}else if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
-			return "Host machine path for the \"" + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) + "\" executable." ;
-		}
-		return getPropDescMap().get( prop );
-	}
 	
 	/**
 	 * HashMap with property name as key and the type for this property as the value.
 	 */
 	private static HashMap<String, String> propTypeMap = new HashMap<>();
-	private static void fillPropTypeMap() {
-		if (propTypeMap.size() == 0) {
-			propTypeMap.put( Constants.CLUSTER_HOST, STRING_TYPE );
-			propTypeMap.put( Constants.DEFAULT_MOD_DEMUX, STRING_TYPE );
-			propTypeMap.put( Constants.DEFAULT_MOD_FASTA_CONV, STRING_TYPE );
-			propTypeMap.put( Constants.DEFAULT_MOD_SEQ_MERGER, STRING_TYPE );
-			propTypeMap.put( Constants.DEFAULT_STATS_MODULE, STRING_TYPE );
-			propTypeMap.put( Constants.DETACH_JAVA_MODULES, BOOLEAN_TYPE );
-			propTypeMap.put( Constants.DISABLE_ADD_IMPLICIT_MODULES, BOOLEAN_TYPE );
-			propTypeMap.put( Constants.DISABLE_PRE_REQ_MODULES, BOOLEAN_TYPE );
-			propTypeMap.put( Constants.DOCKER_CONFIG_PATH, FILE_PATH);
-			propTypeMap.put( Constants.DOCKER_CONTAINER_NAME, STRING_TYPE );
-		}
-		if (! getPropDescMap().keySet().containsAll( propTypeMap.keySet() ) ||
-			! propTypeMap.keySet().containsAll( getPropDescMap().keySet() )){
-			Log.warn(Properties.class, "Property list in descriptions map and type map are not identical.");
+	
+	private static void fillPropMaps() {
+		Constants.registerProps();
+		addToPropMaps( "aws.ec2InstanceID", STRING_TYPE, "ID of an existing ec2 instance to use as the head node" );//TODO: bash property descriptions
+		addToPropMaps( "aws.ec2SpotPer", "", "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.ec2TerminateHead", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.profile", FILE_PATH, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.region", STRING_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.saveCloud", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.stack", STRING_TYPE, "An existing aws cloud stack ID" );//TODO: bash property descriptions
+		addToPropMaps( "aws.walltime", "", "" ); // I don't see this used anywhere. //TODO: bash property descriptions
+		NextflowUtil.registerProps();
+		BashScriptBuilder.registerProps();
+	}
+	
+	private static void addToPropMaps(final String prop, final String type, final String desc) {
+		propTypeMap.put( prop, type);
+		propDescMap.put( prop, desc );
+	}
+	
+	/**
+	 * Allow utility classes to keep their props private but still register them with Properties for API.
+	 * @param prop a property
+	 * @param type The expected type of value for that property, must be one of the recognized types in Properties class
+	 * @param desc Human readable string for users guide and similar uses.
+	 */
+	public static void registerProp(final String prop, final String type, final String desc) {
+		if ( prop != null ) {
+			if (! Arrays.asList( KNOWN_TYPES ).contains( type )) {
+				addToPropMaps(prop, "", "[" + type + "] " + desc);
+			}
+			addToPropMaps(prop, type, desc);
 		}
 	}
+	
+	/**
+	 * Allow the API to access the list of properties and descriptions.
+	 * @return
+	 */
+	public static HashMap<String, String> getPropDescMap() {
+		if (propDescMap.size() == 0) fillPropMaps();
+		return propDescMap;
+	}
+	public static String getDescription( String prop ) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return describeSpecialProp( prop );
+		}
+		return getPropDescMap().get( prop );
+	}
+	
+	private static String describeSpecialProp(String prop) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) ) {
+			return "Path for the \"" + prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
+							+ "\" executable; if not supplied, any script that needs the "+ prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
+							+ " will assume it is on the PATH." ;
+		}else if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return "Host machine path for the \"" + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) 
+							+ "\" executable. If running a pipeline in docker, use this property in place of " 
+							+ Constants.EXE_PREFIX + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) 
+							+ " to point to an executable on the host machine rather than a path within the docker container." ;
+		}
+		return "";
+	}
+	
 	/**
 	 * Allow the API to access the list of properties and descriptions.
 	 * @return
 	 */
 	public static HashMap<String, String> getPropTypeMap() {
-		fillPropTypeMap();
+		if (propTypeMap.size() == 0) fillPropMaps();
 		return propTypeMap;
 	}
 	public static String getPropertyType( String prop ) {
 		if (prop.startsWith( Constants.EXE_PREFIX ) ) return EXE_PATH;
 		if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) return EXE_PATH;
 		return getPropTypeMap().get( prop );
+	}
+	
+	/**
+	 * Verify that a given exe property has a valid value.
+	 * @param property
+	 * @return
+	 */
+	public static boolean isValidExeProp(BioModule module, String property) {
+		boolean answer;
+		try {
+			Config.getExe( module, property );
+			answer = true;
+		}catch(Exception e) {
+			answer = false;
+		}
+		return answer;
 	}
 
 	private static List<File> configRegister = new ArrayList<>();
@@ -310,5 +345,7 @@ public class Properties extends java.util.Properties {
 	public static final String FILE_PATH = "file path";
 	public static final String EXE_PATH = "executable";
 	public static final String LIST_TYPE = "list";
-	
+	public static final String FILE_PATH_LIST = "list of file paths";
+	public static final String INTEGER_TYPE = "integer";
+	public static final String[] KNOWN_TYPES = {STRING_TYPE, BOOLEAN_TYPE, FILE_PATH, EXE_PATH, LIST_TYPE, FILE_PATH_LIST, INTEGER_TYPE};
 }

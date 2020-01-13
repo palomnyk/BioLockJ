@@ -11,10 +11,47 @@
  */
 package biolockj;
 
+import biolockj.api.API_Exception;
+
 /**
  * Single Java class to hold shared constant values referenced my multiple classes.
  */
 public class Constants {
+	
+	/**
+	 * Register properties with the Properties class for API access.
+	 * @throws API_Exception 
+	 */
+	static final void registerProps() throws API_Exception {
+		Properties.registerProp( AWS_S3_XFER_TIMEOUT, Properties.INTEGER_TYPE, AWS_S3_XFER_TIMEOUT_DESC );
+		Properties.registerProp(CLUSTER_HOST, Properties.STRING_TYPE, CLUSTER_HOST_DESC);
+		Properties.registerProp( DEFAULT_MOD_DEMUX, Properties.STRING_TYPE, DEFAULT_MOD_DEMUX_DESC );
+		Properties.registerProp( DEFAULT_MOD_FASTA_CONV, Properties.STRING_TYPE, DEFAULT_MOD_FASTA_CONV_DESC );
+		Properties.registerProp( DEFAULT_MOD_SEQ_MERGER, Properties.STRING_TYPE, DEFAULT_MOD_SEQ_MERGER_DESC );
+		Properties.registerProp( DEFAULT_STATS_MODULE, Properties.STRING_TYPE, DEFAULT_STATS_MODULE_DESC );
+		Properties.registerProp( DETACH_JAVA_MODULES, Properties.BOOLEAN_TYPE, DETACH_JAVA_MODULES_DESC );
+		Properties.registerProp( DISABLE_ADD_IMPLICIT_MODULES, Properties.BOOLEAN_TYPE, DISABLE_ADD_IMPLICIT_MODULES_DESC );
+		Properties.registerProp( DISABLE_PRE_REQ_MODULES, Properties.BOOLEAN_TYPE, DISABLE_PRE_REQ_MODULES_DESC );
+		Properties.registerProp( DOCKER_CONTAINER_NAME, Properties.STRING_TYPE, DOCKER_CONTAINER_NAME_DESC );
+		Properties.registerProp( EXE_AWK, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_DOCKER, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_GZIP, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_JAVA, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_PYTHON, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_RSCRIPT, Properties.EXE_PATH, "" );
+		Properties.registerProp( INPUT_DIRS, Properties.FILE_PATH_LIST, INPUT_DIRS_DESC );
+		Properties.registerProp( INPUT_FORWARD_READ_SUFFIX, "regex", "file suffix used to identify forward reads in" + INPUT_DIRS );
+		Properties.registerProp( INPUT_IGNORE_FILES, Properties.LIST_TYPE, INPUT_IGNORE_FILES_DESC );
+		Properties.registerProp( INPUT_REQUIRE_COMPLETE_PAIRS, Properties.BOOLEAN_TYPE, INPUT_REQUIRE_COMPLETE_PAIRS_DESC );
+		Properties.registerProp( INPUT_REVERSE_READ_SUFFIX, "regex", "file suffix used to identify reverse reads in" + INPUT_DIRS );
+		Properties.registerProp( INPUT_TRIM_PREFIX, Properties.STRING_TYPE, INPUT_TRIM_PREFIX_DESC );
+		Properties.registerProp( INPUT_TRIM_SUFFIX, Properties.STRING_TYPE, INPUT_TRIM_SUFFIX_DESC );
+		Properties.registerProp( SCRIPT_DEFAULT_HEADER, Properties.STRING_TYPE, SCRIPT_DEFAULT_HEADER_DESC);
+		Properties.registerProp( SCRIPT_NUM_WORKERS, Properties.INTEGER_TYPE, SCRIPT_NUM_WORKERS_DESC);
+		Properties.registerProp( SCRIPT_NUM_THREADS, Properties.INTEGER_TYPE, SCRIPT_NUM_THREADS_DESC);
+		Properties.registerProp( SCRIPT_PERMISSIONS, Properties.STRING_TYPE, SCRIPT_PERMISSIONS_DESC);
+		Properties.registerProp( SCRIPT_TIMEOUT, Properties.INTEGER_TYPE, SCRIPT_TIMEOUT_DESC);
+	}
 
 	/**
 	 * Captures the application start time
@@ -28,9 +65,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #AWS_S3_XFER_TIMEOUT}<br>
-	 * Set the max number of minutes to allow for S3 transfers to complete.
+	 * {@value #AWS_S3_XFER_TIMEOUT_DESC}
 	 */
 	public static final String AWS_S3_XFER_TIMEOUT = "aws.s3TransferTimeout";
+	private static final String AWS_S3_XFER_TIMEOUT_DESC = "Set the max number of minutes to allow for S3 transfers to complete.";
 
 	/**
 	 * Bash profile fo;e name: {@value #BASH_PROFILE}
@@ -80,21 +118,21 @@ public class Constants {
 	 * {@value #CLUSTER_HOST_DESC}
 	 */
 	public static final String CLUSTER_HOST = "cluster.host";
-	static final String CLUSTER_HOST_DESC = "The remote cluster host URL (used for ssh, scp, rsync, etc)";
+	private static final String CLUSTER_HOST_DESC = "The remote cluster host URL (used for ssh, scp, rsync, etc)";
 
 	/**
 	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_DEMUX}
 	 * {@value #DEFAULT_MOD_DEMUX_DESC}
 	 */
 	public static final String DEFAULT_MOD_DEMUX = "pipeline.defaultDemultiplexer";
-	static final String DEFAULT_MOD_DEMUX_DESC = "Java class name for default module used to demultiplex data";
+	private static final String DEFAULT_MOD_DEMUX_DESC = "Java class name for default module used to demultiplex data";
 
 	/**
 	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_FASTA_CONV}
 	 * {@value #DEFAULT_MOD_FASTA_CONV_DESC}
 	 */
 	 public static final String DEFAULT_MOD_FASTA_CONV = "pipeline.defaultFastaConverter";
-	 static final String DEFAULT_MOD_FASTA_CONV_DESC = "Java class name for default module used to convert files into fasta format";
+	 private static final String DEFAULT_MOD_FASTA_CONV_DESC = "Java class name for default module used to convert files into fasta format";
 
 	/**
 	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_SEQ_MERGER}
@@ -102,14 +140,14 @@ public class Constants {
 	 * 
 	 */
 	public static final String DEFAULT_MOD_SEQ_MERGER = "pipeline.defaultSeqMerger";
-	static final String DEFAULT_MOD_SEQ_MERGER_DESC = "Java class name for default module used combined paired read files";
+	private static final String DEFAULT_MOD_SEQ_MERGER_DESC = "Java class name for default module used combined paired read files";
 
 	/**
 	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_STATS_MODULE}
 	 * {@value #DEFAULT_STATS_MODULE_DESC}
 	 */
 	public static final String DEFAULT_STATS_MODULE = "pipeline.defaultStatsModule";
-	static final String DEFAULT_STATS_MODULE_DESC = "Java class name for default module used generate p-value and other stats";
+	private static final String DEFAULT_STATS_MODULE_DESC = "Java class name for default module used generate p-value and other stats";
 
 	/**
 	 * In an otu string for multiple levels, each separated by {@value #OTU_SEPARATOR}, each otu has a level prefix
@@ -122,35 +160,34 @@ public class Constants {
 	 * {@value #DETACH_JAVA_MODULES_DESC}
 	 */
 	public static final String DETACH_JAVA_MODULES = "pipeline.detachJavaModules";
-	static final String DETACH_JAVA_MODULES_DESC = "If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.";
+	private static final String DETACH_JAVA_MODULES_DESC = "If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.";
 
 	/**
 	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE} property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
 	 * {@value #DISABLE_ADD_IMPLICIT_MODULES_DESC}
 	 */
 	public static final String DISABLE_ADD_IMPLICIT_MODULES = "pipeline.disableAddImplicitModules";
-	static final String DISABLE_ADD_IMPLICIT_MODULES_DESC = "If set to true, implicit modules will not be added to the pipeline.";
+	private static final String DISABLE_ADD_IMPLICIT_MODULES_DESC = "If set to true, implicit modules will not be added to the pipeline.";
 
 	/**
 	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE } property: {@value #DISABLE_PRE_REQ_MODULES}<br>
 	 * {@value #DISABLE_PRE_REQ_MODULES_DESC}
 	 */
 	public static final String DISABLE_PRE_REQ_MODULES = "pipeline.disableAddPreReqModules";
-	static final String DISABLE_PRE_REQ_MODULES_DESC = "If set to true, prerequisite modules will not be added to the pipeline.";
+	private static final String DISABLE_PRE_REQ_MODULES_DESC = "If set to true, prerequisite modules will not be added to the pipeline.";
 
 	/**
 	 * {@link biolockj.Config} {@value biolockj.Properties#FILE_PATH } property: {@value #DOCKER_CONFIG_PATH}
-	 * {@value #DOCKER_CONFIG_PATH_DESC}
+	 * Default path for an additional configuration file used for any pipeline run in docker.
 	 */
 	public static final String DOCKER_CONFIG_PATH = "${BLJ}/resources/config/default/docker.properties";
-	static final String DOCKER_CONFIG_PATH_DESC = "Default path for an additional configuration file used for any pipeline run in docker.";
 
 	/**
 	 * {@link biolockj.Config} {@value biolockj.Properties#STRING_TYPE} property: {@value #DOCKER_CONTAINER_NAME}
 	 * {@value #DOCKER_CONTAINER_NAME_DESC}
 	 */
 	public static final String DOCKER_CONTAINER_NAME = "genMod.dockerContainerName";
-	static final String DOCKER_CONTAINER_NAME_DESC = "Name of the docker container to use when executing an instance of the GenMod module.";
+	private static final String DOCKER_CONTAINER_NAME_DESC = "Name of the docker container to use when executing an instance of the GenMod module.";
 
 	/**
 	 * {@link biolockj.Config} option for {@value #REPORT_TAXONOMY_LEVELS}: {@value #DOMAIN}
@@ -190,6 +227,11 @@ public class Constants {
 	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_PYTHON}
 	 */
 	public static final String EXE_PYTHON = "exe.python";
+	
+	/**
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_RSCRIPT}
+	 */
+	public static final String EXE_RSCRIPT = "exe.Rscript";
 
 	/**
 	 * Boolean {@link biolockj.Config} property value option: {@value #FALSE}
@@ -281,9 +323,11 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #INPUT_DIRS}<br>
-	 * Set sequence file directories
+	 * {@value #INPUT_DIRS_DESC}
 	 */
 	public static final String INPUT_DIRS = "input.dirPaths";
+	private static final String INPUT_DIRS_DESC = "List of one or more directories containing the pipeline input data.";
+	
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_FORWARD_READ_SUFFIX}<br>
 	 * Set file suffix used to identify forward reads in {@value #INPUT_DIRS}
@@ -292,27 +336,30 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #INPUT_IGNORE_FILES}<br>
-	 * Set file names to ignore if found in {@value #INPUT_DIRS}
+	 * {@value #INPUT_IGNORE_FILES_DESC}
 	 */
 	public static final String INPUT_IGNORE_FILES = "input.ignoreFiles";
+	private static final String INPUT_IGNORE_FILES_DESC = "file names to ignore if found in input directories";
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #INPUT_REQUIRE_COMPLETE_PAIRS}<br>
-	 * Require 100% sequence input files are matching paired reads
+	 * {@value #INPUT_REQUIRE_COMPLETE_PAIRS_DESC}
 	 */
 	public static final String INPUT_REQUIRE_COMPLETE_PAIRS = "input.requireCompletePairs";
+	static final String INPUT_REQUIRE_COMPLETE_PAIRS_DESC = "Require all sequence input files have matching paired reads";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_REVERSE_READ_SUFFIX}<br>
-	 * Set file suffix used to identify forward reads in {@value #INPUT_DIRS}
+	 * Set file suffix used to identify reverse reads in {@value #INPUT_DIRS}
 	 */
 	public static final String INPUT_REVERSE_READ_SUFFIX = "input.suffixRv";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_TRIM_PREFIX}<br>
-	 * Set value of prefix to trim from sequence file names or headers to obtain Sample ID.
+	 * {@value #INPUT_TRIM_PREFIX_DESC}
 	 */
 	public static final String INPUT_TRIM_PREFIX = "input.trimPrefix";
+	private static final String INPUT_TRIM_PREFIX_DESC = "prefix to trim from sequence file names or headers to obtain Sample ID";
 
 	/**
 	 * {@link biolockj.Config} property {@value #INPUT_TRIM_SEQ_FILE} defines the file path to the file that defines the
@@ -322,9 +369,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_TRIM_SUFFIX}<br>
-	 * Set value of suffix to trim from sequence file names or headers to obtain Sample ID.
+	 * {@value #INPUT_TRIM_SUFFIX_DESC}
 	 */
 	public static final String INPUT_TRIM_SUFFIX = "input.trimSuffix";
+	private static final String INPUT_TRIM_SUFFIX_DESC = "suffix to trim from sequence file names or headers to obtain Sample ID";
 	
 	/**
 	 * Any {@link biolockj.Config} property that starts with the {@value INTERNAL_PREFIX}

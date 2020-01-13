@@ -55,6 +55,8 @@ public interface ApiModule extends BioModule {
 	 */
 	public String getDescription(String prop);
 	
+	public String getDetails();
+	
 	/**
 	 * Get the type for a given property.
 	 * @return

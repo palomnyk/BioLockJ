@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 import biolockj.*;
+import biolockj.Properties;
 import biolockj.exception.*;
 import biolockj.module.BioModule;
 import biolockj.module.classifier.ClassifierModuleImpl;
@@ -467,6 +468,32 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	}
 
 	private String switches = null;
+	
+	
+
+	@Override
+	protected void fillPropTypeMap() {
+		super.fillPropTypeMap();
+		propTypeMap.put( EXE_VSEARCH, Properties.EXE_PATH ); 
+		propTypeMap.put(EXE_VSEARCH_PARAMS, Properties.LIST_TYPE);
+		propTypeMap.put(QIIME_PARAMS, Properties.LIST_TYPE);
+		propTypeMap.put(QIIME_PYNAST_ALIGN_DB, Properties.FILE_PATH);
+		propTypeMap.put(QIIME_REF_SEQ_DB, Properties.FILE_PATH);
+		propTypeMap.put(QIIME_REMOVE_CHIMERAS, Properties.BOOLEAN_TYPE);
+		propTypeMap.put(QIIME_TAXA_DB, Properties.FILE_PATH);
+		}
+	
+	@Override
+	protected void fillPropDescMap() {
+		super.fillPropDescMap();
+		propDescMap.put( EXE_VSEARCH, "" ); //description for exe's is generated in super method
+		propDescMap.put(EXE_VSEARCH_PARAMS, "Parameters for vsearch");
+		propDescMap.put(QIIME_PARAMS, "Parameters for qiime");
+		propDescMap.put(QIIME_PYNAST_ALIGN_DB, "path to define ~/.qiime_config pynast_template_alignment_fp");
+		propDescMap.put(QIIME_REF_SEQ_DB, "path to define ~/.qiime_config pick_otus_reference_seqs_fp and assign_taxonomy_reference_seqs_fp");
+		propDescMap.put(QIIME_REMOVE_CHIMERAS, "if vsearch is needed for chimera removal");
+		propDescMap.put(QIIME_TAXA_DB, "path to define ~/.qiime_config assign_taxonomy_id_to_taxonomy_fp");
+	}
 
 	/**
 	 * Value output by {@value #SCRIPT_CALC_ALPHA_DIVERSITY} for null values: {@value #ALPHA_DIV_NULL_VALUE}
@@ -581,6 +608,9 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	 * BioLockJ parsers expect clear text files in the module output directory, so the biom files must be excluded.
 	 */
 	protected static final String SUMMARIZE_TAXA_SUPPRESS_BIOM = "suppress_biom_table_output";
+	
+	protected static final String CITE_QIIME = "QIIME allows analysis of high-throughput community sequencing data\n" + 
+		"J Gregory Caporaso, Justin Kuczynski, Jesse Stombaugh, Kyle Bittinger, Frederic D Bushman, Elizabeth K Costello, Noah Fierer, Antonio Gonzalez Pena, Julia K Goodrich, Jeffrey I Gordon, Gavin A Huttley, Scott T Kelley, Dan Knights, Jeremy E Koenig, Ruth E Ley, Catherine A Lozupone, Daniel McDonald, Brian D Muegge, Meg Pirrung, Jens Reeder, Joel R Sevinsky, Peter J Turnbaugh, William A Walters, Jeremy Widmann, Tanya Yatsunenko, Jesse Zaneveld and Rob Knight; Nature Methods, 2010; doi:10.1038/nmeth.f.303";
 
 	// OTHER SCRIPT THAT MAY BE ADDED IN THE FUTURE
 	// public static final String VALIDATED_MAPPING = "_corrected.txt";
