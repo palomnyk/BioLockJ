@@ -5,7 +5,7 @@
 ##                                                               ##
 ###################################################################
 . "${BLJ_SCRIPT}/docker_config"
-. "${BLJ_LIB}"
+. ${BLJ_SCRIPT}/blj_functions
 
 alias bljb="build_blj_only"
 alias bljd="build_blj_only; clearDock; push_blj_only"
@@ -125,7 +125,6 @@ get_cmd() {
 	if [ "${1}" == "build" ]; then
 		bjm="${1} --build-arg BLJ_DATE=$(date +%s) --build-arg VER=$(biolockj -v)"
 		cmd="${1}" && target="${target} $(docker_dir) -f $(docker_dir)/${2}.Dockerfile" 
-		[ "${2}" == "biolockj_controller" ] && cmd="${bjm} --build-arg DOCKER_CLIENT=$DOCKER_VER"
 		[ "${2}" == "java_module" ] && cmd="${bjm}"
 		cmd="${cmd} -t"
 	fi
@@ -140,11 +139,6 @@ goDock() {
 	docker exec -ti ${id} /bin/bash
 }
 
-# Retruns 0 (TRUE) if running in a Docker container (in which /.dockerenv exists)
-in_docker_env() {
-	[ -f "/.dockerenv" ]
-}
-
 # Deploy only Docker images that contain $BLJ/dist/BioLockJ.jar
 push_blj_only() {
 	$(get_cmd push java_module)
@@ -156,19 +150,4 @@ push_blj_only() {
 run_docker_clone() {
 	$(in_docker_env) && export DOCKER_CLONE_SCRIPT="${BLJ_HOST_HOME}/$(basename $DOCKER_CLONE_SCRIPT)"
 	[ -x "${DOCKER_CLONE_SCRIPT}" ] && bash "${DOCKER_CLONE_SCRIPT}"
-}
-
-# Call with source $BLJ/script/docker_functions; verifyHostDir ${path}
-verifyHostDir(){
- 	cmd="-d tmpTest/$(basename $1)"
- 	docker run --rm --mount type=bind,source=$(dirname $1),target=/tmpTest ubuntu [ ${cmd} ] \
- 		&& echo "yes" || echo "no"
- 	
- }
- 
-# Call with: source ${BLJ}/script docker_functions; verifyHostFile ${path}
-verifyHostFile(){
- 	cmd="-f tmpTest/$(basename $1)"
- 	docker run --rm --mount type=bind,source=$(dirname $1),target=/tmpTest ubuntu [ ${cmd} ] \
- 		&& echo "yes" || echo "no"
 }

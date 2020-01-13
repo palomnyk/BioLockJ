@@ -1,0 +1,5 @@
+# requirements file for python
+# This file allows the readthedocs system to create the python environment
+# in which to run mkdocs and render the documentation.
+Markdown>=3.0
+python-markdown-math >= 0.6

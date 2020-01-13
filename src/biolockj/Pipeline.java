@@ -13,10 +13,12 @@ package biolockj;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import biolockj.exception.DirectModuleException;
 import biolockj.module.*;
 import biolockj.module.report.Email;
 import biolockj.module.report.r.R_Module;
@@ -92,8 +94,6 @@ public class Pipeline {
 		Log.info( Pipeline.class, "Initialize " + ( BioLockJUtil.isDirectMode() ? "DIRECT module ":
 			DockerUtil.inAwsEnv() ? "AWS ": DockerUtil.inDockerEnv() ? "DOCKER ": "" ) + "pipeline" );
 		bioModules = BioModuleFactory.buildPipeline();
-		if( !BioLockJUtil.isDirectMode() )
-			Config.setConfigProperty( Constants.INTERNAL_ALL_MODULES, BioLockJUtil.getClassNames( bioModules ) );
 		initializeModules();
 	}
 
@@ -120,6 +120,7 @@ public class Pipeline {
 				module.getClass().getSimpleName(), ex );
 			module.moduleFailed();
 			SummaryUtil.reportFailure( ex );
+			throw ex; //ultimately let FatalExceptionHandler handle this.
 		}
 	}
 
@@ -129,11 +130,13 @@ public class Pipeline {
 	 * @throws Exception if any fatal error occurs during execution
 	 */
 	public static void runPipeline() throws Exception {
+		BioLockJUtil.markStatus( Constants.BLJ_STARTED );
 		try {
 			executeModules();
 			SummaryUtil.reportSuccess( null );
 		} catch( final Exception ex ) {
 			try {
+				BioLockJUtil.markStatus( currentModule, Constants.BLJ_FAILED );
 				Log.error( Pipeline.class, "Pipeline failed! " + ex.getMessage(), ex );
 				pipelineException = ex;
 				SummaryUtil.reportFailure( ex );
@@ -220,6 +223,7 @@ public class Pipeline {
 			info( "Check dependencies for: " + module.getClass().getName() );
 			module.checkDependencies();
 			ValidationUtil.checkDependencies( module );
+			DockerUtil.checkDependencies( module );
 
 			if( ModuleUtil.isComplete( module ) ) {
 				module.cleanUp();
@@ -248,6 +252,7 @@ public class Pipeline {
 	 */
 	protected static boolean poll( final ScriptModule module ) throws Exception {
 		final Collection<File> scriptFiles = getWorkerScripts( module );
+		final File mainStarted = getMainStartedFlag(module);
 		final int numScripts = scriptFiles.size();
 		int numSuccess = 0;
 		int numStarted = 0;
@@ -257,6 +262,15 @@ public class Pipeline {
 			final File testStarted = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_STARTED );
 			final File testSuccess = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_SUCCESS );
 			final File testFailure = new File( f.getAbsolutePath() + "_" + Constants.SCRIPT_FAILURES );
+			if ( DockerUtil.inDockerEnv() 
+							&& testStarted.isFile() 
+							&& !testFailure.isFile()
+							&& DockerUtil.workerContainerStopped(mainStarted, f) 
+							&& !testSuccess.isFile() ) {
+				Log.info(Pipeline.class, "Worker script [" + f.getName() + "] is not complete, and its container is not running."); 
+				Log.info(Pipeline.class, "Marking worker script [" + f.getName() + "] as failed.");
+				testFailure.createNewFile();
+			}
 			numStarted = numStarted + ( testStarted.isFile() ? 1: 0 );
 			numSuccess = numSuccess + ( testSuccess.isFile() ? 1: 0 );
 			numFailed = numFailed + ( testFailure.isFile() ? 1: 0 );
@@ -273,8 +287,14 @@ public class Pipeline {
 		} else if( ++pollCount % 10 == 0 ) Log.info( Pipeline.class, logMsg );
 
 		if( numFailed > 0 ) {
-			final String failMsg = "SCRIPT FAILED: " + BioLockJUtil.getCollectionAsString( module.getScriptErrors() );
-			throw new Exception( failMsg );
+			String scriptMsgs = BioLockJUtil.getCollectionAsString( module.getScriptErrors() );
+			if (scriptMsgs != null && !scriptMsgs.isEmpty()) {
+				throw new DirectModuleException( "SCRIPT FAILED: " + scriptMsgs );
+			}else if( module instanceof JavaModuleImpl ) {
+				// this creates a default message; hopefully the module is able to produce a more informative one.
+				throw new DirectModuleException( "Java module failed before the module instance of BioLockJ could establish error logging." );
+			}
+			throw new DirectModuleException();
 		}
 
 		return numScripts > 0 && numSuccess + numFailed == numScripts;
@@ -317,6 +337,15 @@ public class Pipeline {
 
 		return scriptFiles;
 	}
+	
+	private static File getMainStartedFlag ( final ScriptModule module ) throws Exception {
+		File mainScriptStarted = null;
+		if ( module.getMainScript() != null ) {
+			mainScriptStarted = new File(module.getMainScript().getAbsolutePath() + "_" + Constants.SCRIPT_STARTED);
+		}
+		if ( mainScriptStarted != null && mainScriptStarted.exists()) return mainScriptStarted;
+		return null;
+	}
 
 	private static void info( final String msg ) {
 		if( !BioLockJUtil.isDirectMode() ) Log.info( Pipeline.class, msg );
@@ -352,14 +381,21 @@ public class Pipeline {
 	private static void waitForModuleScripts() throws Exception {
 		final ScriptModule module = (ScriptModule) exeModule();
 		logScriptTimeOutMsg( module );
-		int numMinutes = 0;
+		long startTime = (new Date()).getTime();
+		long millisWaiting;
+		long delayMillis;
 		boolean finished = false;
 		while( !finished ) {
 			finished = poll( module );
 			if( !finished ) {
-				if( module.getTimeout() != null && module.getTimeout() > 0 && numMinutes++ >= module.getTimeout() )
-					throw new Exception( module.getClass().getName() + " timed out after " + numMinutes + " minutes." );
-				Thread.sleep( BioLockJUtil.minutesToMillis( 1 ) );
+				millisWaiting = (new Date()).getTime() - startTime;
+				if( module.getTimeout() != null && module.getTimeout() > 0 
+								&& millisWaiting >= BioLockJUtil.minutesToMillis(module.getTimeout() ))
+					throw new Exception( module.getClass().getName() + " timed out after " + BioLockJUtil.millisToMinutes( millisWaiting ) + " minutes." );
+				if ( BioLockJUtil.millisToMinutes(millisWaiting) < 1 ) { delayMillis = 2 * 1000;
+				}else if ( BioLockJUtil.millisToMinutes(millisWaiting) < 5 ) { delayMillis = 10 * 1000;
+				}else {delayMillis = BioLockJUtil.minutesToMillis(1);}
+				Thread.sleep( delayMillis );
 			}
 		}
 	}

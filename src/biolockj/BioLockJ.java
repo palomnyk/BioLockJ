@@ -14,6 +14,7 @@ package biolockj;
 import java.io.File;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
+import biolockj.exception.DockerVolCreationException;
 import biolockj.exception.FatalExceptionHandler;
 import biolockj.module.BioModule;
 import biolockj.module.report.Email;
@@ -27,6 +28,8 @@ import biolockj.util.*;
  * indicator file in the pipeline root directory.<br>
  */
 public class BioLockJ {
+	
+	private BioLockJ() {}
 
 	/**
 	 * Copy file to pipeline root directory.
@@ -84,7 +87,7 @@ public class BioLockJ {
 	 */
 	public static void main( final String[] args ) {
 		BioLockJUtil.showInfo( args );
-		System.out.println( "Starting BioLockj..." + Constants.APP_START_TIME );
+		System.out.println( "Starting BioLockj...");
 		try {
 			initBioLockJ( args );
 			runPipeline();
@@ -107,7 +110,10 @@ public class BioLockJ {
 		// since copy will take place as S3 xFer.
 		if( DockerUtil.inAwsEnv() && Config.getBoolean( null, Constants.PIPELINE_COPY_FILES ) &&
 			!Config.getBoolean( null, NextflowUtil.AWS_COPY_PIPELINE_TO_S3 ) ) {
-			NextflowUtil.awsSyncS3( DockerUtil.DOCKER_INPUT_DIR, false );
+			//NextflowUtil.awsSyncS3( DockerUtil.DOCKER_INPUT_DIR, false );
+			for ( File f : BioLockJUtil.getInputDirs() ) {
+				NextflowUtil.awsSyncS3( f.getAbsolutePath(), false );
+			}
 			return;
 		}
 		final File inputDir = BioLockJUtil.pipelineInternalInputDir();
@@ -136,8 +142,9 @@ public class BioLockJ {
 	 * </ul>
 	 *
 	 * @return Pipeline root directory
+	 * @throws DockerVolCreationException 
 	 */
-	protected static File createPipelineDirectory() {
+	protected static File createPipelineDirectory() throws DockerVolCreationException {
 		final String year = String.valueOf( new GregorianCalendar().get( Calendar.YEAR ) );
 		final String month = new GregorianCalendar().getDisplayName( Calendar.MONTH, Calendar.SHORT, Locale.ENGLISH );
 		final String day = BioLockJUtil.formatDigits( new GregorianCalendar().get( Calendar.DATE ), 2 );
@@ -169,9 +176,11 @@ public class BioLockJ {
 	 * @throws Exception if errors occur
 	 */
 	protected static void initBioLockJ( final String[] args ) throws Exception {
+		Log.debug( BioLockJ.class, "APP_START_TIME (millis): " + Constants.APP_START_TIME );
 		MemoryUtil.reportMemoryUsage( "INTIAL MEMORY STATS" );
 		RuntimeParamUtil.registerRuntimeParameters( args );
 		Config.initialize();
+		ValidationUtil.hasStrictValidation(true);
 		if( isPipelineComplete() ) throw new Exception( "Pipeline Cancelled!  Pipeline already contains status file: " +
 			Constants.BLJ_COMPLETE + " --> Check directory: " + Config.pipelinePath() );
 
@@ -216,12 +225,12 @@ public class BioLockJ {
 		if( DownloadUtil.getDownloadListFile().isFile() ) DownloadUtil.getDownloadListFile().delete();
 		if( ValidationUtil.getValidationDir().exists() ) ValidationUtil.getValidationDir().delete();
 		if( NextflowUtil.getMainNf().isFile() ) NextflowUtil.getMainNf().delete();
+		//if( DockerUtil.getInfoFile().exists() ) DockerUtil.getInfoFile().delete();
 
-		final File f = new File( Config.pipelinePath() + File.separator + Constants.BLJ_FAILED );
-		if( f.isFile() ) f.delete();
+		BioLockJUtil.markStatus( Constants.BLJ_STARTED );
 	}
 
-	protected static void pipelineShutDown() {
+	private static void pipelineShutDown() {
 
 		setPipelineSecurity();
 
@@ -270,12 +279,12 @@ public class BioLockJ {
 		if( RuntimeParamUtil.doChangePassword() ) {
 			Log.info( BioLockJ.class, "Save encrypted password to: " + Config.getConfigFilePath() );
 			Email.encryptAndStoreEmailPassword();
-			BioLockJUtil.createFile( Config.pipelinePath() + File.separator + Constants.BLJ_COMPLETE );
+			BioLockJUtil.markStatus( Constants.BLJ_COMPLETE );
 			return;
 		}
 
 		Pipeline.initializePipeline();
-
+		
 		if( BioLockJUtil.isDirectMode() )
 			Pipeline.runDirectModule( getDirectModuleID( RuntimeParamUtil.getDirectModuleDir() ) );
 		else {
@@ -290,17 +299,21 @@ public class BioLockJ {
 				else throw new Exception( "Pipeline completed successfully, EFS data failed to transfer to S3!" );
 			}
 
-			BioLockJUtil.createFile( Config.pipelinePath() + File.separator + Constants.BLJ_COMPLETE );
+			BioLockJUtil.markStatus( Constants.BLJ_COMPLETE );
 			if( Config.getBoolean( null, Constants.RM_TEMP_FILES ) ) removeTempFiles();
 		}
 	}
 
-	protected static void setPipelineSecurity() {
-		try {
-			Processor.setFilePermissions( Config.pipelinePath(), Config.getString( null, Constants.PIPELINE_PRIVS ) );
-		} catch( final Exception ex ) {
-			System.out.println( "Unable to set pipeline filesystem privileges" );
-			ex.printStackTrace();
+	private static void setPipelineSecurity() {
+		String desiredPrivs = Config.getString( null, Constants.PIPELINE_PRIVS );
+		String pipelineRoot = Config.pipelinePath();
+		if( desiredPrivs != null && !desiredPrivs.isEmpty() && pipelineRoot != null && !pipelineRoot.isEmpty() ) {
+			try {
+				Processor.setFilePermissions( pipelineRoot, desiredPrivs );
+			} catch( final Exception ex ) {
+				System.out.println( "BioLockJ was unable to set pipeline filesystem privileges." );
+				ex.printStackTrace();
+			}
 		}
 	}
 

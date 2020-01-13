@@ -12,8 +12,10 @@
 package biolockj.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import biolockj.*;
+import biolockj.exception.BioLockJStatusException;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.module.BioModule;
@@ -41,6 +43,22 @@ public class ModuleUtil {
 	 */
 	public static String displayID( final BioModule module ) {
 		return BioLockJUtil.formatDigits( module.getID(), 2 );
+	}
+	
+	/**
+	 * Return the name of the module (or an alias if it has one).
+	 * 
+	 * @param module BioModule
+	 * @return ID display value
+	 */
+	public static String displayName( final BioModule module ) {
+		String alias = module.getAlias();
+		if (alias != null) return alias;
+		return module.getClass().getSimpleName();
+	}
+	
+	public static String displaySignature( final BioModule module ) {
+		return displayID( module ) + "_" + displayName( module );
 	}
 
 	/**
@@ -138,13 +156,24 @@ public class ModuleUtil {
 	}
 
 	/**
-	 * Construct a BioModule based on its className.
+	 * Construct a BioModule based on its className for temporary use.
 	 * 
 	 * @param className BioModule class name
 	 * @return BioModule module
 	 * @throws Exception if errors occur
 	 */
-	public static BioModule getModule( final String className ) throws Exception {
+	public static BioModule getTempModule( final String className ) throws Exception {
+		return (BioModule) Class.forName( className ).newInstance();
+	}
+	
+	/**
+	 * Construct a BioModule based on its className to add it to the pipeline.
+	 * 
+	 * @param className BioModule class name
+	 * @return BioModule module
+	 * @throws Exception if errors occur
+	 */
+	public static BioModule createModuleInstance( final String className ) throws Exception {
 		return (BioModule) Class.forName( className ).newInstance();
 	}
 
@@ -293,8 +322,9 @@ public class ModuleUtil {
 	 * @return TRUE if module started execution but is not complete
 	 */
 	public static boolean isIncomplete( final BioModule module ) {
-		final File f = new File( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_STARTED );
-		return f.isFile();
+		final File s = new File( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_STARTED );
+		final File f = new File( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_FAILED );
+		return s.isFile() || f.isFile();
 	}
 
 	/**
@@ -319,16 +349,15 @@ public class ModuleUtil {
 	 * has completed successfully. Also clean up by removing file {@value biolockj.Constants#BLJ_STARTED}.
 	 *
 	 * @param module BioModule
+	 * @throws IOException 
+	 * @throws BioLockJStatusException 
 	 * @throws Exception if unable to create {@value biolockj.Constants#BLJ_COMPLETE} file
 	 */
-	public static void markComplete( final BioModule module ) throws Exception {
-		BioLockJUtil.createFile( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_COMPLETE );
-		final File startFile =
-			new File( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_STARTED );
-		startFile.delete();
+	public static void markComplete( final BioModule module ) throws BioLockJStatusException, IOException{
+		BioLockJUtil.markStatus( module, Constants.BLJ_COMPLETE );
 		Log.info( ModuleUtil.class, Constants.LOG_SPACER );
 		Log.info( ModuleUtil.class,
-			"FINISHED [ " + ModuleUtil.displayID( module ) + " ] " + module.getClass().getName() );
+			"FINISHED [ " + ModuleUtil.displaySignature( module ) + " ] " );
 		Log.info( ModuleUtil.class, Constants.LOG_SPACER );
 	}
 
@@ -338,13 +367,15 @@ public class ModuleUtil {
 	 * check later if it ran during this pipeline execution (as opposed to a previous failed run).
 	 *
 	 * @param module module
+	 * @throws IOException 
+	 * @throws BioLockJStatusException 
 	 * @throws Exception if unable to create {@value biolockj.Constants#BLJ_STARTED} file
 	 */
-	public static void markStarted( final BioModule module ) throws Exception {
-		BioLockJUtil.createFile( module.getModuleDir().getAbsolutePath() + File.separator + Constants.BLJ_STARTED );
+	public static void markStarted( final BioModule module ) throws BioLockJStatusException, IOException{
+		BioLockJUtil.markStatus( module, Constants.BLJ_STARTED );
 		Log.info( ModuleUtil.class, Constants.LOG_SPACER );
 		Log.info( ModuleUtil.class,
-			"STARTING [ " + ModuleUtil.displayID( module ) + " ] " + module.getClass().getName() );
+			"STARTING [ " + ModuleUtil.displaySignature( module ) + " ] " );
 		Log.info( ModuleUtil.class, Constants.LOG_SPACER );
 	}
 

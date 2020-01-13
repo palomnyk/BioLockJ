@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.*;
 import biolockj.Config;
 import biolockj.Constants;
+import biolockj.Log;
 import biolockj.exception.*;
 import biolockj.module.classifier.ClassifierModuleImpl;
 import biolockj.util.*;
@@ -109,7 +110,7 @@ public class Metaphlan2Classifier extends ClassifierModuleImpl {
 	}
 
 	@Override
-	public File getDB() throws ConfigPathException, ConfigNotFoundException {
+	public File getDB() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		final String path = Config.getString( this, METAPHLAN2_DB );
 		if( path == null ) return null;
 		if( DockerUtil.inDockerEnv() ) return new File( path );
@@ -171,9 +172,14 @@ public class Metaphlan2Classifier extends ClassifierModuleImpl {
 	}
 
 	private File getMpaDB() throws ConfigPathException, ConfigNotFoundException {
-		if( getDB() == null ) return null;
-		if( DockerUtil.inDockerEnv() ) return DockerUtil.getDockerDB( this, null );
-		return getDB();
+		File db = null;
+		try { 
+			db = getDB();
+			if( DockerUtil.inDockerEnv() ) return DockerUtil.getDockerDB( this, null );
+			}catch( DockerVolCreationException ex ) {
+				Log.info(this.getClass(), "A DockerVolCreationException occurred while trying to getDB(). ");
+			}
+		return db;
 	}
 
 	private File getMpaPkl() throws Exception {

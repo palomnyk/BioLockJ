@@ -1,6 +1,10 @@
-# Deployment path: $DOCKER_DIR/kraken2_classifier_dbfree.Dockerfile
+# suggested build command:
+# name=kraken2_classifier_dbfree
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-FROM biolockj/blj_basic
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/blj_basic
   
 #1.) Install Kraken
 ENV KRAKEN_VER=2.0.7-beta

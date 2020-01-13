@@ -1,0 +1,280 @@
+#!/bin/bash
+###############################################################################
+##  Script launches BioLockJ via Docker + creates $DOCKER_CLONE_SCRIPT       ##
+##  Bash env must include pipeline base directory: ${BLJ_PROJ}               ##
+##                                                                           ##
+##  Required Parameters (If gui arg passed, no other args required)          ##
+##  Config file path:          <file_path>                                   ##
+##  OR                                                                       ##
+##  Restart dir                                                              ##
+##                                                                           ##
+##  Optional Parameters:                                                     ##
+##  Aws flag:                  aws                                           ##
+##  Use local BLJ flag:        blj                                           ##
+##  Run GUI flag:              gui                                           ##
+##  New email password:        pass    <new_password>                        ##
+##  Restart flag:              restart <dir_path>                            ##
+###############################################################################
+
+main(){
+	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && printf "\n ---------> Execute CMD [  launch_docker $(echo ${@})  ]\n"
+	
+	take_standard_biolockj_args "$@"
+	
+	assign_main_arg
+	
+	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && echo "args used: ${argsFromUser[@]}" && echo "configFile = $configFile" && echo "restartDir = $restartDir"
+	
+	scan_script_and_env_args
+	! ifArgUsed $GUI_ARG && ! in_docker_env && verify_inputs
+	
+	restartDir_has_status_flag && ${BLJ}/script/blj_reset $restartDir
+
+	GUI_PORT=8080
+	CMD="docker run $(docker_args) -e \"BLJ_OPTIONS=$(blj_options)\" $(get_volumes) $(args_for_gui) $(get_docker_img) $(cmd_for_gui)"
+		
+	build_clone_script "${CMD}"
+	
+	before_docker_start
+	
+	if ifArgUsed $FG_ARG ; then
+		echo " ---------> Docker CMD [  $CMD  ]"
+		continue_after_command $CMD
+	else
+		containerId=$(continue_after_command $CMD)
+		echo "Docker container id: $containerId"
+		# We capture the output of continue_after_command, so we have to pass along the test scenario
+		[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && echo $containerId && exit
+		confirm_biolockj_start
+		print_info
+	fi
+	
+	ifArgUsed $GUI_ARG && startBrowser # if the gui has its own docker container, this CMD would be defined there
+}
+
+. ${BLJ_SCRIPT}/blj_user_arg_lib
+
+# Read script args and bash env vars
+# Param 1 - Array of launch_docker script args
+scan_script_and_env_args() {
+	ifArgUsed $PASSWORD_ARG && newPass=$(get_arg_value $PASSWORD_ARG)
+	ifArgUsed $EXT_MODS_ARG && extMods=$(get_arg_value $EXT_MODS_ARG)
+	ifArgUsed $GUI_ARG && echo "Starting BioLockJ GUI..."
+}
+
+# Verify paths are valid
+# Paths provided by config file are verified as they are collected, not here.
+verify_inputs() {
+	verify_dir $BLJ_PROJ
+	ifDefined $restartDir && verify_dir $restartDir
+	ifDefined $configFile && verify_file $configFile
+}
+
+# Verify host directory exists, if launch_docker is not deployed inside a Docker container
+# Param 1 - System path
+verify_dir() {
+ 	[ ! -d "${1}" ] && exit_script "Error [ launch_docker.verify_dir ]: Parameter \"${1}\" not found"
+}
+
+# Verify host file exists, if launch_docker is not deployed inside a Docker container
+# Param 1 - System path
+verify_file() {
+	[ ! -f "${1}" ] && exit_script "Error [ launch_docker.verify_file ]: Parameter \"${1}\" not found"
+}
+
+docker_args(){
+	local dockArgs=$(flags_for_run)
+	if ifArgUsed $ENV_ARG ; then
+		envVars=$(get_arg_value $ENV_ARG)
+		vars=${envVars//,/" "}
+		for v in ${vars[@]}; do
+			dockArgs="${dockArgs} -e $v"
+		done
+	fi
+	echo $dockArgs
+}
+flags_for_run(){
+	if ifArgUsed $FG_ARG ; then
+		echo "--rm"
+	else
+		echo "--rm -d"
+	fi
+}
+
+# Populate docker run env variable $BLJ_OPTIONS 
+# Always include vars to map Host paths: Config, $BLJ_PROJ, and $HOME.
+# In AWS mode, add a indicator, otherwise include the Host path for pipeline input. 
+# These paths are used by biolockj_controller to map Docker volumes for java_module containers
+blj_options() {
+	if in_docker_env && [ ${#BLJ_OPTIONS} -gt 0 ]; then # in docker container 
+		options="${BLJ_OPTIONS}"
+	else # on host machine
+		options="-homeDir ${HOME} -projectDir ${BLJ_PROJ} -hostname $(hostname)"
+		ifArgUsed $GUI_ARG && echo "${options}" && return
+	fi	
+	ifDefined $restartDir && options="${options} -restartDir $restartDir"
+	ifArgUsed $PASSWORD_ARG && options="${options} -password $newPass"
+	ifArgUsed $AWS_ARG && options="${options} -aws"
+	ifDefined $configFile && options="${options} -config $(to_abs_path ${configFile})"
+	echo "${options}"
+}
+
+# Get mapped  Docker volumes
+# TODO - this method assumes that $configFile path is given in terms of the host machine
+# TODO use mount instead of volumes
+get_volumes() {
+	vols="-v ${DOCK_SOCK}:${DOCK_SOCK}"
+	vols="${vols} -v ${HOME}:${BLJ_HOST_HOME}:delegated" #TODO - DO NOT map home directory
+	ifArgUsed $BLJ_ARG && vols="${vols} -v ${BLJ}:/app/biolockj:ro"
+	ifArgUsed $EXT_MODS_ARG && vols="${vols} -v ${extMods}:/app/external_modules:ro"
+	if ifArgUsed $AWS_ARG ; then
+		#TODO - replace this; docker mounts will done the same way on aws or local machine
+		vols="${vols} -v ${EFS}:${EFS}:delegated" 
+	else
+		vols="${vols} -v ${BLJ_PROJ}:${EFS_PROJ}:delegated"
+		if ifArgUsed $GUI_ARG; then 
+			# TODO - use aws cli in container, don't map in user's
+			vols="${vols} -v ${BLJ}/resources/config/gui:${BLJ_CONFIG}:delegated"
+			[ -f "$(which aws)" ] && [ -d "$(dirname $(which aws))" ] && vols="${vols} -v $(dirname $(which aws)):${APP_BIN}"
+		else 
+			local i=1
+			readableConfig=$(get_readable_config)
+			configuredDirs=$(${BLJ}/script/read_config.sh $readableConfig "mount")
+			for dir in ${configuredDirs[@]}; do
+				vols="${vols} -v ${dir}:${EFS}/vol_${i}:ro" 
+				i=$(( i + 1 ))
+			done
+		fi
+	fi
+	echo "${vols}"
+}
+
+get_readable_config(){
+	if ifArgUsed $RESTART_ARG && ! ifDefined $configFile ; then
+		echo $(ls ${restartDir}/MASTER*properties )
+	elif ifDefined $configFile; then
+		echo $configFile
+	else
+		exit_with_message "Could not get a readable config file."
+	fi
+}
+
+args_for_gui(){
+	ifArgUsed $GUI_ARG && echo "-p ${GUI_PORT}:3000 --expose ${GUI_PORT} -w /app/biolockj/web_app"
+}
+
+get_docker_img() {
+	echo "${DOCKER_ID}/biolockj_controller"
+}
+
+cmd_for_gui(){
+	ifArgUsed $GUI_ARG && echo "npm start"
+}
+
+# Build a script that can be used to launch an interactive clone of the docker container
+# Param 1 - Full Docker run command
+build_clone_script() {
+	cmd="$@"
+	
+	img=$(get_docker_img)
+	cmd=${cmd//$img*/-it $img /bin/bash} # be interactive
+	cmd=${cmd//"--rm -d "/"--rm "} # run in the foreground
+	$(in_docker_env) && DOCKER_CLONE_SCRIPT="${BLJ_HOST_HOME}/$(basename $DOCKER_CLONE_SCRIPT)"
+	
+	echo "#!/bin/bash"                       > "${DOCKER_CLONE_SCRIPT}"
+	echo "# This script launches a clone of the last biolockj_controller (same env vars + volumes)" >> "${DOCKER_CLONE_SCRIPT}"
+	echo "${cmd}"                           >> "${DOCKER_CLONE_SCRIPT}"
+	
+	chmod 777 "${DOCKER_CLONE_SCRIPT}"
+	echo "Created \"${DOCKER_CLONE_SCRIPT}\" "
+	echo "This script will launch another instance of this docker image," 
+	echo "with the same env vars + volumes, but in interactive mode."
+	echo ""
+}
+
+# Start the local browswer
+startBrowser() {
+	sleep 2 # See also: https://stackoverflow.com/questions/3124556/clean-way-to-launch-the-web-browser-from-shell-script#3124750
+	if which xdg-open > /dev/null; then
+		xdg-open http://localhost:${GUI_PORT}
+	elif which gnome-open > /dev/null; then
+		gnome-open http://localhost:${GUI_PORT}
+	elif which python > /dev/null; then
+		python -mwebbrowser http://localhost:${GUI_PORT}
+	else
+		echo "Web browser not found on localhost!"
+	fi
+}
+
+before_docker_start(){
+	initDir="$(most_recent_pipeline)"
+	pipeDir="${initDir}"
+	verifiedDockerLaunch="false"
+}
+
+confirm_biolockj_start(){
+	printf "Initializing BioLockJ"
+	i=0
+	maxtime=25
+	while [ $i -lt $maxtime ] || ifArgUsed $WAIT_ARG \
+		&& [ "${initDir}" == "${pipeDir}" ] \
+		&& is_container_running \
+		&& ! restartDir_has_status_flag ; do
+		printf "."
+		i=$((i+1))
+		pipeDir="$(most_recent_pipeline)"
+		numJava=$(ps | grep -c java)
+		if [ $i -eq 10 ]; then
+			printf "waiting for java to start"
+		fi
+		if [ $i -eq $maxtime ]; then
+			if ifArgUsed $WAIT_ARG ; then
+				echo "The normal timeout has been disabled."
+			else
+				echo "Reached max wait time: $maxtime seconds."
+			fi
+		fi
+		sleep 1
+	done
+	sleep 1
+	echo "."
+	pipeDir="$(most_recent_pipeline)" # could lag slightly after program start
+}
+
+is_container_running(){
+	numWords=$(echo $containerId | wc -w )
+	if [ $numWords -eq 1 ]; then
+		containerRunning=$(docker inspect -f '{{.State.Running}}' $containerId 2>/dev/null)
+	else
+		echo $containerId
+		exit_with_message "Did not retreive a valid container id from the docker program."
+	fi
+	if [ ${#containerRunning} -eq 0 ] || [ $(echo $containerRunning | wc -w ) -gt 1 ]; then
+		containerRunning="false"  
+	fi
+	[ ${containerRunning} == "true" ] && verifiedDockerLaunch="true"
+	[ ${containerRunning} == "true" ] 
+}
+
+print_info(){
+	if ! is_container_running && ! restartDir_has_status_flag && [ "${initDir}" == "${pipeDir}" ] ; then
+		if [ $verifiedDockerLaunch == "true" ]; then
+			echo "Docker started; but the pipeline did not."
+		else
+			echo "Failed to start docker container."
+		fi
+	elif restartDir_has_status_flag; then 
+		echo "Restarting pipeline:  ${pipeDir}"
+		print_action_options
+		print_pipeline_status_and_exit ${pipeDir} 15
+	elif [ "${initDir}" != "${pipeDir}" ] ; then 
+		echo "Building pipeline:  ${pipeDir}"
+		print_action_options
+		print_pipeline_status_and_exit ${pipeDir} 15
+	else
+		echo "Pipeline may have failed to launch - check $BLJ_PROJ for new pipeline"
+		print_action_options
+	fi
+}
+
+main $@

@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import biolockj.*;
 import biolockj.exception.*;
+import biolockj.module.BioModule;
 import biolockj.module.report.r.R_CalculateStats;
 
 /**
@@ -79,23 +80,42 @@ public class BioLockJUtil {
 		return Config.getBoolean( null, Constants.PIPELINE_COPY_FILES ) || hasMixedInputs;
 	}
 
+	public static void clearStatus(String dirPath) {
+		String [] allFlags = {Constants.BLJ_STARTED, Constants.BLJ_FAILED, Constants.BLJ_COMPLETE};
+		for (String flag : allFlags) {
+			File ff = new File(dirPath + File.separator + flag);
+			if ( ff.exists() ) ff.delete();
+		}
+	}
+	
 	/**
 	 * Used to save status files for modules and the pipeline.
 	 * 
 	 * @param path Target dir path
 	 * @return File Created file
+	 * @throws BioLockJStatusException 
+	 * @throws IOException 
 	 * @throws Exception if errors occur attempting to save the file
 	 */
-	public static File createFile( final String path ) throws Exception {
+	public static File createFile( final String path ) throws BioLockJStatusException, IOException {
 		final File f = new File( path );
 		final FileWriter writer = new FileWriter( f );
 		writer.close();
-		if( !f.isFile() ) throw new Exception( "Unable to create status file: " + f.getAbsolutePath() );
+		if( !f.isFile() ) throw new BioLockJStatusException( "Unable to create status file: " + f.getAbsolutePath() );
 		return f;
 	}
-
 	
-
+	public static File markStatus( final BioModule module, final String statusFlag) throws BioLockJStatusException, IOException {
+		return( markStatus(module.getModuleDir().getAbsolutePath(), statusFlag) );
+	}
+	public static File markStatus( final String statusFlag) throws BioLockJStatusException, IOException {
+		return( markStatus(Config.pipelinePath(), statusFlag) );
+	}
+	public static File markStatus( final String dirPath, final String statusFlag) throws BioLockJStatusException, IOException {
+		clearStatus(dirPath);
+		return( createFile( dirPath + File.separator + statusFlag ) );
+	}
+	
 	/**
 	 * Return the file extension - but ignore {@value biolockj.Constants#GZIP_EXT}.
 	 * 
@@ -183,26 +203,6 @@ public class BioLockJUtil {
 	}
 
 	/**
-	 * Return default ${BLJ_SUP} dir
-	 * 
-	 * @return blj_support dir
-	 * @throws ConfigPathException if $BLJ_SUP directory path is configured, but invalid
-	 */
-	public static File getBljSupDir() throws ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) return new File( DockerUtil.CONTAINER_BLJ_SUP_DIR );
-		File f = null;
-		try {
-			f = new File( getBljDir().getParentFile().getAbsolutePath() + File.separator + BLJ_SUPPORT );
-			if( f.isDirectory() ) return f;
-		} catch( final Exception ex ) {
-			throw new ConfigPathException( f, "Unable to decode ${BLJ_SUP} environment variable: " + ex.getMessage() );
-		}
-
-		return null;
-
-	}
-
-	/**
 	 * Return an ordered list of the class names from the input collection.
 	 * 
 	 * @param objs Objects
@@ -283,15 +283,9 @@ public class BioLockJUtil {
 	 * @return List of system directory file paths
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system "N" value
+	 * @throws DockerVolCreationException 
 	 */
-	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException {
-		if( DockerUtil.inDockerEnv() ) {
-			final File dir = DockerUtil.getDockerVolumeDir( Constants.INPUT_DIRS, DockerUtil.DOCKER_INPUT_DIR );
-			Log.debug( BioLockJUtil.class, "Docker input dir --> " + dir.getAbsolutePath() );
-			final List<File> dirs = new ArrayList<>();
-			dirs.add( dir );
-			return dirs;
-		}
+	public static List<File> getInputDirs() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		return Config.requireExistingDirs( null, Constants.INPUT_DIRS );
 	}
 
@@ -391,9 +385,10 @@ public class BioLockJUtil {
 	 * @throws ConfigNotFoundException if a required property is undefined
 	 * @throws ConfigPathException if configured directory does not exist on the file-system
 	 * @throws ConfigViolationException if input directories contain duplicate file names
+	 * @throws DockerVolCreationException 
 	 */
 	public static void initPipelineInput()
-		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException {
+		throws ConfigNotFoundException, ConfigPathException, ConfigViolationException, DockerVolCreationException {
 		Collection<File> files = new HashSet<>();
 		for( final File dir: getInputDirs() ) {
 			Log.info( BioLockJUtil.class, "Found pipeline input dir " + dir.getAbsolutePath() );
@@ -563,19 +558,22 @@ public class BioLockJUtil {
 
 	/**
 	 * Print basic version or help info if requested.<br>
-	 * Cally by 1st line BioLockJ.java main() method
+	 * Called by 1st line BioLockJ.java main() method
 	 * 
 	 * @param args BioLockJ.java main() runtime args
 	 */
-	public static void showInfo( final String[] args ) {
-		for( final String arg: args ) {
-			String argX = arg;
-			while( argX.startsWith( "-" ) )
-				argX = argX.replaceAll( "^-", "" ).toLowerCase();
-			if( argX.equals( Constants.VERSION ) ) System.out.println( "BioLockJ " + BioLockJUtil.getVersion( true ) );
-			else if( argX.equals( Constants.HELP ) ) BioLockJUtil.printHelp();
-			else continue;
-			System.exit( 0 );
+	public static void showInfo( String[] args )
+	{
+		for (String arg : args) {
+			String lowerArg = arg.replaceAll( "^--", "-" ).toLowerCase();
+			if (lowerArg.equals( Constants.VERSION ) ) {
+				System.out.println("BioLockJ " + BioLockJUtil.getVersion( true ) );
+				System.exit( 0 );
+			}
+			if (lowerArg.equals( Constants.HELP ) ) {
+				BioLockJUtil.printHelp();
+				System.exit( 0 );
+			}
 		}
 	}
 
@@ -658,14 +656,11 @@ public class BioLockJUtil {
 	private static void printHelp() {
 		System.err.println( RETURN + "BioLockJ " + getVersion() + " java help menu:" );
 		System.err.println( "The BioLockJ.jar file is not intended to be called directly," + RETURN +
-			"it should be called through the biolockj command." );
-		System.err
-			.println( RETURN + "Developers: When calling java directly, the following parameters are recognized: " );
-		System.err.println( "Stand alone arguments:" + RETURN + Constants.HELP + Constants.TAB_DELIM +
-			"print this help menu" + RETURN + Constants.VERSION + Constants.TAB_DELIM + "print version number" );
+			"it should be called through the biolockj shell command." );
+		System.err.println( RETURN + "Developers: " );
 		RuntimeParamUtil.printArgsDescriptions();
-		System.err.println( RETURN + "Users: please use the biolockj command." );
-		System.err.println( "See: \"biolockj --" + Constants.HELP + "\" " );
+		System.err.println( RETURN + "Users:" + RETURN + "please use the biolockj command." );
+		System.err.println( "See: \"biolockj --help\" " );
 	}
 
 	private static void setPipelineInputFileTypes() {
@@ -797,7 +792,6 @@ public class BioLockJUtil {
 	 */
 	public static final String RETURN = Constants.RETURN;
 
-	private static final String BLJ_SUPPORT = "blj_support";
 	private static final String DEFAULT_PROFILE_CMD = "get_default_profile";
 	private static List<File> inputFiles = new ArrayList<>();
 	private static File userProfile = null;

@@ -1,0 +1,78 @@
+This document contains copy-paste-able code chunks.
+
+Render the user guide .md files into html and pdf using mkdocs.
+
+You may need to set up the following software:
+# mkdocs 
+# See https://www.mkdocs.org/#installation
+pip install mkdocs
+
+# may also need this extention:
+pip install python-markdown-math
+# I used this:
+# pip install https://github.com/mitya57/python-markdown-math/archive/master.zip
+
+# To render the docs, 
+cd $BLJ/mkdocs/user-guide
+mkdocs build
+
+# Make sure it all looks good before publishing to github.
+# The site is published to $BLJ/mkdocs/user-guid/site, which is ignored by git.
+# When editing, use `mkdocs serve` to preview the rendered html.
+# The serve command must be called from the directory that has the mkdocs.yml file.
+mkdocs serve
+# then open http://127.0.0.1:8000 in your browser.
+
+# To render the docs to publish a release, 
+cd $BLJ/resources
+ant userguide
+
+
+####################
+
+
+That should be enough.  EVENTUALLY we may want to export a pdf, and for that we would need an extra pluggin.
+
+
+# mkdocs-pdf-export-plugin (pluggin to export pdfs)
+# See https://github.com/zhaoterryy/mkdocs-pdf-export-plugin 
+pip install mkdocs-pdf-export-plugin
+# material theme (make the htlm and pdf both look slick)
+# See https://squidfunk.github.io/mkdocs-material/
+pip install mkdocs-material
+
+# mkdocs-pdf-export-plugin has some additional dependences
+# I installed them using brew, if you don't already have homebrew then run:
+# ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+brew install cairo
+brew install pango
+brew install gdk-pixbuf
+
+# The readthedocs theme is really good, and we may use it in the future.
+# But the material theme plays nice with the pdf export.
+
+# render documentation
+cd $BLJ/mkdocs/user-guide
+export ENABLE_PDF_EXPORT=1 # change this variable to 0 to skip making the pdf
+mkdocs build
+
+
+
+
+An odd thing that I haven't figured out....
+In Building-Modules.md, line 79, the text "addParsedSample(sample)" had to be changed to "addParsedSample( sample )"
+or to "addParsedSample(foo)", otherwise, the pdf exported would hit an error in which "IndexError: tuple index out of range".
+
+Similarly... in Validation.md, lines 3-5,
+This is NOT ok:
+"""
+[**Description:**](https://msioda.github.io/BioLockJ/docs/biolockj/util/ValidationUtil.html "view javadoc") Validation checks whether the output files of a pipeline match the [**_expectation_**](../wiki/Validation#expectations). 
+
+[**Options:**](../wiki/Configuration#validation "view option descriptions")
+"""
+But this is fine:
+"""
+**Description:** Validation checks whether the output files of a pipeline match the [expectation](#expectations). 
+
+**Options:**
+"""

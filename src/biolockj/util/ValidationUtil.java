@@ -12,9 +12,12 @@
 package biolockj.util;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import org.apache.commons.io.FilenameUtils;
 import biolockj.*;
 import biolockj.exception.*;
 import biolockj.module.BioModule;
@@ -43,14 +46,14 @@ public class ValidationUtil {
 
 	private static class FileSummary {
 
-		public FileSummary( final File inFile ) {
+		public FileSummary( final File inFile, final File outputDir ) {
 			this.file = inFile;
-			this.name = this.file.getName();
+			this.name = outputDir.toURI().relativize( this.file.toURI() ).toString();
 			this.size = this.file.length();
 		}
 
 		public FileSummary( final String fileName ) {
-			this.name = fileName;
+			this.name = FilenameUtils.separatorsToSystem( fileName );
 		}
 
 		public int compareToExpected( final FileSummary other, final Collection<String> comparisons,
@@ -121,7 +124,7 @@ public class ValidationUtil {
 			this.md5 = md5sum;
 		}
 
-		protected String getAtt( final String col ) {
+		protected String getAtt( final String col ) throws DockerVolCreationException {
 			switch( col ) {
 				case NAME:
 					return fileNameToKey( getName() );
@@ -228,13 +231,16 @@ public class ValidationUtil {
 				final BufferedWriter writer = new BufferedWriter( new FileWriter( getOutputFile( module ) ) );
 				writeRow( writer, getReportSet( module ) );
 
-				final File[] outputs = module.getOutputDir().listFiles();
-				Arrays.sort( outputs );
-				Log.debug( ValidationUtil.class, "Found [" + outputs.length + "] files in output dir of module [" +
+				final ArrayList<File> outputs = new ArrayList<>();
+				Files.walk( Paths.get( module.getOutputDir().toURI() ) )
+								.filter( Files::isRegularFile )
+								.sorted()
+								.forEach( p -> outputs.add( p.toFile() ) );
+				Log.debug( ValidationUtil.class, "Found [" + outputs.size() + "] files in output dir of module [" +
 					module.getModuleDir().getName() + "]." );
 				int passingFiles = 0;
 				for( final File f: outputs ) {
-					final FileSummary fs = new FileSummary( f );
+					final FileSummary fs = new FileSummary( f, module.getOutputDir() );
 					if( getReportSet( module ).contains( MD5 ) ||
 						hasExp( module ) && getCompareSet( module ).contains( MD5 ) ) fs.calcMd5();
 					if( hasExp( module ) ) {
@@ -257,13 +263,13 @@ public class ValidationUtil {
 						Log.warn( ValidationUtil.class, prevOutput.get( oldFileName ).toString() );
 					if( canHaltPipeline( module ) ) throw new ValidationException( module );
 				}
-				if( hasExp( module ) && canHaltPipeline( module ) && passingFiles < outputs.length ) {
+				if( hasExp( module ) && canHaltPipeline( module ) && passingFiles < outputs.size() ) {
 					Log.warn( ValidationUtil.class, "passingFiles: " + passingFiles );
-					Log.warn( ValidationUtil.class, "outputs to validate: " + outputs.length );
+					Log.warn( ValidationUtil.class, "outputs to validate: " + outputs.size() );
 					if( canHaltPipeline( module ) ) throw new ValidationException( module );
 				}
 			} else Log.debug( ValidationUtil.class, "Validation is turned off for module: " +
-				ModuleUtil.displayID( module ) + "_" + module.getClass().getSimpleName() );
+				ModuleUtil.displaySignature( module ) );
 		} catch( final BioLockJException bljEx ) {
 			throw bljEx;
 		} catch( final Exception ex ) {
@@ -285,12 +291,20 @@ public class ValidationUtil {
 	 * 
 	 * @param fileName
 	 * @return
+	 * @throws DockerVolCreationException 
 	 */
-	private static String fileNameToKey( final String fileName ) {
-		final String pipePrifix = RuntimeParamUtil.getProjectName();
-		String key = fileName.replaceAll( pipePrifix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
-		if( key.equals( fileName ) )
-			key = fileName.replaceAll( pipePrifix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", "PIPELINE_DATE" );
+	private static String fileNameToKey( final String fileName ) throws DockerVolCreationException {
+		final String pipePrefix = RuntimeParamUtil.getProjectName();
+		final String PIPE_DATE = "PIPELINE_DATE";
+		String key;
+		if( BioLockJUtil.isDirectMode() ) {
+			key = fileName.replaceAll( pipePrefix, PIPE_DATE );
+		} else {
+			key = fileName.replaceAll( pipePrefix + "_[0-9]+_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+			if( key.equals( fileName ) )
+				key = fileName.replaceAll( pipePrefix + "_[0-9]{4}[A-Za-z]{3}[0-9]{2}", PIPE_DATE );
+		}
+		
 		Log.debug( ValidationUtil.class, "Using [" + key + "] as the key based on [" + fileName + "]." );
 		return key;
 	}
@@ -319,15 +333,17 @@ public class ValidationUtil {
 		return compareFeatures;
 	}
 
-	private static File getExpectationFile( final BioModule module ) throws ConfigException {
+	private static File getExpectationFile( final BioModule module ) throws ConfigException, DockerVolCreationException {
 		File expectationFile = null;
-		final String expectationFilePath = Config.getString( module, EXPECTATION_FILE );
+		String expectationFilePath = Config.getString( module, EXPECTATION_FILE );
 		if( expectationFilePath != null && !expectationFilePath.isEmpty() ) {
+			if ( DockerUtil.inDockerEnv() ) expectationFilePath = DockerUtil.containerizePath( expectationFilePath );
 			expectationFile = new File( expectationFilePath );
 			if( !expectationFile.exists() ) throw new ConfigPathException( expectationFile );
+			System.out.println("expectation file path: " + expectationFilePath );
 			if( expectationFile.isDirectory() ) {
 				expectationFile = new File(
-					Config.getString( module, EXPECTATION_FILE ) + File.separator + getOutputFileName( module ) );
+					expectationFilePath + File.separator + getOutputFileName( module ) );
 				if( !expectationFile.exists() )
 					throw new ConfigPathException( expectationFile, "Could not find file: " +
 						getOutputFileName( module ) + " in directory " + Config.getString( module, EXPECTATION_FILE ) );
@@ -360,7 +376,7 @@ public class ValidationUtil {
 	}
 
 	private static String getOutputFileName( final BioModule module ) {
-		return ModuleUtil.displayID( module ) + "_" + module.getClass().getSimpleName() + OUTPUT_FILE_SUFFIX;
+		return ModuleUtil.displaySignature( module ) + OUTPUT_FILE_SUFFIX;
 	}
 
 	private static HashMap<String, FileSummary> getPrevSummaries( final BioModule module ) throws BioLockJException {
@@ -384,8 +400,7 @@ public class ValidationUtil {
 
 			rowNum++;
 		}
-		if( prevOutput.isEmpty() ) Log.info( ValidationUtil.class, "Module " + ModuleUtil.displayID( module ) + "_" +
-			module.getClass().getSimpleName() + " is expected to have not output." );
+		if( prevOutput.isEmpty() ) Log.info( ValidationUtil.class, "Module " + ModuleUtil.displaySignature( module ) + " is expected to have no output." );
 		return prevOutput;
 	}
 
@@ -459,6 +474,28 @@ public class ValidationUtil {
 			writer.close();
 			throw e;
 		}
+	}
+	
+	/**
+	 * Print a message (and return boolean) to indicate that this pipeline has validation enabled.
+	 * This makes a biolockj_complete much more meaningful, because we know the pipeline met some 
+	 * expectation regarding the output it produced.
+	 * @sheepdog_testing_suite
+	 * @param printStdOut
+	 * @return
+	 */
+	public static boolean hasStrictValidation(boolean printStdOut) {
+		try {
+			if (Config.getBoolean( null, "validation.stopPipeline" )
+							&& !Config.getBoolean( null, "validation.disableValidation" )
+							&& Config.getString( null, "validation.expectationFile" ) != null ) {
+				if (printStdOut) System.out.println(Constants.VALIDATION_ENABLED);
+				return( true );
+			}
+		} catch( ConfigFormatException e ) {
+			e.printStackTrace();
+		}
+		return( false );
 	}
 
 	/**

@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 import biolockj.*;
+import biolockj.exception.BioLockJException;
 
 /**
  * Simple utility containing String manipulation and formatting functions.
@@ -32,6 +33,32 @@ public class MasterConfigUtil {
 			configName = configName.replaceAll( Constants.MASTER_PREFIX, "" );
 		return new File(
 			Config.pipelinePath() + File.separator + Constants.MASTER_PREFIX + configName + Constants.PROPS_EXT );
+	}
+	
+	/**
+	 * Find the MASTER config file in an existing pipeline.
+	 * 
+	 * @return MASTER config
+	 * @throws BioLockJException 
+	 */
+	public static File getExistingMasterConfig(File pipelineRoot) throws BioLockJException {
+		File masterConfig = null;
+		File[] possibleMasters = pipelineRoot.listFiles( new FilenameFilter() {
+			@Override
+			public boolean accept( File dir, String name ) {
+				return name.startsWith( Constants.MASTER_PREFIX ) && name.endsWith( Constants.PROPS_EXT );
+			}
+		} );
+		if (possibleMasters.length == 1 ) {
+			masterConfig = possibleMasters[0];
+			Log.info(MasterConfigUtil.class, "Pipeline dir [" + pipelineRoot.getName() 
+				+ "] contains master config file: " + masterConfig.getAbsolutePath());
+		}else if (possibleMasters.length > 1) {
+			throw new BioLockJException("Could not determine which file to use as master config file.");
+		}else if (possibleMasters.length < 1) {
+			throw new BioLockJException("Could not find any file to use as master config file.");
+		}
+		return masterConfig;
 	}
 
 	/**
@@ -93,12 +120,13 @@ public class MasterConfigUtil {
 
 			usedProps.remove( Constants.INTERNAL_BLJ_MODULE );
 			usedProps.remove( Constants.PIPELINE_DEFAULT_PROPS );
+			usedProps.remove( Constants.PROJECT_DEFAULT_PROPS);
 
 			for( final String key: usedProps.keySet() ) {
 				final String val = usedProps.get( key );
 				if( val == null || val.trim().isEmpty() ) Log.debug( MasterConfigUtil.class,
 					"Remove unused property from sanatized MASTER Config: " + key + "=" + val );
-				else if( !key.startsWith( INTERNAL_PREFIX ) ) props.put( key, val );
+				else if( !Config.isInternalProperty(key) ) props.put( key, val );
 			}
 
 			Log.info( MasterConfigUtil.class, "The original version of project Config contained: " +
@@ -218,7 +246,7 @@ public class MasterConfigUtil {
 			final TreeSet<String> keys = new TreeSet<>( props.keySet() );
 			for( final String key: keys ) {
 				final String val = props.get( key );
-				if( key.startsWith( INTERNAL_PREFIX ) && val != null && !val.isEmpty() )
+				if( Config.isInternalProperty(key) && val != null && !val.isEmpty() )
 					writer.write( "###     " + key + "=" + props.get( key ) + RETURN );
 			}
 			writer.write( "###" + RETURN );
@@ -246,7 +274,6 @@ public class MasterConfigUtil {
 	}
 
 	private static final String DEFAULT_CONFIG_FLAG = "# ----> Default Config: ";
-	private static final String INTERNAL_PREFIX = "internal.";
 	private static final String PROJ_CONFIG_FLAG = "# ----> Project Config: ";
 	private static final String RETURN = Constants.RETURN;
 	private static final String TEMP_PREFIX = ".TEMP_";

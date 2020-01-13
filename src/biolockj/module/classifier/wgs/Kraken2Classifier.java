@@ -109,7 +109,7 @@ public class Kraken2Classifier extends ClassifierModuleImpl {
 	}
 
 	@Override
-	public File getDB() throws ConfigNotFoundException, ConfigPathException {
+	public File getDB() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
 		if( DockerUtil.inDockerEnv() ) return new File( Config.requireString( this, KRAKEN_DATABASE ) );
 		return Config.requireExistingDir( this, KRAKEN_DATABASE );
 	}
@@ -129,7 +129,7 @@ public class Kraken2Classifier extends ClassifierModuleImpl {
 		return lines;
 	}
 
-	private File getKrakenDB() throws ConfigPathException, ConfigNotFoundException {
+	private File getKrakenDB() throws ConfigPathException, ConfigNotFoundException, DockerVolCreationException {
 		if( DockerUtil.inDockerEnv() ) return DockerUtil.getDockerDB( this, getDB().getAbsolutePath() );
 		return getDB();
 	}

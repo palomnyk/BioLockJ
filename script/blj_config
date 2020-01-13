@@ -8,32 +8,28 @@
 ##   2. Add env. variable $BLJ_SCRIPT = $BLJ/script                    ##
 ##   3. Add env. variable $BLJ_PROJ = $BLJ/pipelines                   ##
 ##   4. Add env. variable $BLJ_META = $HOME/metadata if undefined      ##
-##   5. Add env. variable $BLJ_SUP = blj_support directory             ##
-##   6. Source $DOCKER_LIB - which is also included in $AWS_LIB        ##
-##   7. Source $AWS_LIB if /.dockerenv exists or $HOME == $EC2_HOME    ##
-##   8. Add $BLJ_SCRIPT to your $PATH                                  ##
+##   5. Source $DOCKER_LIB - which is also included in $AWS_LIB        ##
+##   6. Source $AWS_LIB if /.dockerenv exists or $HOME == $EC2_HOME    ##
+##   7. Add $BLJ_SCRIPT to your $PATH                                  ##
 ##                                                                     ##
 #########################################################################
 export BLJ_SCRIPT="$( cd "$( dirname ${BASH_SOURCE[0]} )" && pwd )"
 export BLJ="$(dirname $BLJ_SCRIPT)"
 export BLJ_PROJ="${BLJ}/pipelines"
-export BLJ_LIB="${BLJ_SCRIPT}/blj_functions"
-export DOCKER_LIB="${BLJ_SCRIPT}/docker_functions"
-export AWS_LIB="${BLJ_SCRIPT}/aws_functions"
 export EC2_USER="ec2-user"
 export EC2_HOME="/home/${EC2_USER}"
 export TMP="${HOME}/.temp_config.txt"
 
-alias load_blj=". ${BLJ_LIB}"
-alias load_docker=". ${DOCKER_LIB}"
-alias load_aws=". ${AWS_LIB}"
+alias load_blj=". ${BLJ_SCRIPT}/blj_functions"
+alias load_docker=". ${BLJ_SCRIPT}/docker_functions"
+alias load_aws=". ${BLJ_SCRIPT}/aws_functions"
 
 if [ -f "/.dockerenv" ] || [ "${HOME}" == "${EC2_HOME}" ]; then 
-	. "${AWS_LIB}"
+	. ${BLJ_SCRIPT}/aws_functions
 else
-	. "${DOCKER_LIB}"
+	. ${BLJ_SCRIPT}/docker_functions
 fi
 
 [ "${PATH/$BLJ_SCRIPT}" == "${PATH}" ] && export PATH="${BLJ_SCRIPT}:$PATH"
 [ ! -d "${BLJ_META}" ] && export BLJ_META="${HOME}/metadata"
-[ ! -d "${BLJ_SUP}" ] && [ -d "$(dirname $BLJ)/blj_support" ] && export BLJ_SUP="$(dirname $BLJ)/blj_support"
+[ -f "${BLJ_SCRIPT}/blj_user_lib" ] && . ${BLJ_SCRIPT}/blj_user_lib

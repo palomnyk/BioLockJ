@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ivory Blakley">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Failure Recovery - BioLockJ User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Failure Recovery";
+    var mkdocs_page_input_path = "Failure-Recovery.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> BioLockJ User Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Installation/">Installation</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Getting-Started/">Getting Started</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Commands/">Commands</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Pipeline Componenets</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Built-in-modules/">Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../The-Metadata-File/">Metadata</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Dependencies/">Dependencies</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href="./">Failure Recovery</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#failed-pipelines">Failed Pipelines</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Validation/">Validation</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Building-Modules/">Building Modules</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Example-Pipeline/">Example Pipeline</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../FAQ/">FAQ</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">BioLockJ User Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Features &raquo;</li>
+        
+      
+    
+    <li>Failure Recovery</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="failed-pipelines">Failed Pipelines</h3>
+<ul>
+<li>Failed pipelines can be restarted to save the progress made by successfully completed modules.  To restart a failed pipeline, add -r parameter:</li>
+</ul>
+<p><code>biolockj -r &lt;pipeline root&gt;</code></p>
+<ul>
+<li>Check the BioLockJ execution summary after any failure occurs via the blj_summary command. </li>
+</ul>
+<p><code>blj_summary</code></p>
+<ul>
+<li>
+<p>Review the BioLockJ log file in your pipeline root directory.  This is the most complete source of information on pipeline execution and may contain useful error messages that help resolve the root cause of the failure.</p>
+</li>
+<li>
+<p>If your pipeline directory is not created, you likely have invalid file paths or missing/invalid properties</p>
+</li>
+<li>
+<p>Check the FATAL_ERROR file your $HOME directory.  This is where BioLockJ saves error messages for failures occurring prior to the creation of your pipeline root directory.</p>
+</li>
+</ul>
+<p><code>cat "$HOME/biolockj_FATAL_ERROR_*"</code></p>
+<ul>
+<li>The most common culprits are:  <ul>
+<li><em>pipeline.defaultProps</em></li>
+<li>Missing/invalid $BLJ_PROJ directory set by the <a href="https://github.com/msioda/BioLockJ/blob/master/install?raw=true">install</a> script</li>
+</ul>
+</li>
+</ul>
+<p><code>echo $BLJ_PROJ</code></p>
+<ul>
+<li>
+<p>Failures that occur in a module/script are not logged to the Java log file since these run outside of the Java application.  The failed module directory may have an indicator file that gives either the sample ID or bash script line that failed.</p>
+</li>
+<li>
+<p>If the failed module was running a bash script on the cluster, check the module/qsub directory for the cluster job output and error files which may contain additional information. </p>
+</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Validation/" class="btn btn-neutral float-right" title="Validation">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Dependencies/" class="btn btn-neutral" title="Dependencies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>2019 Fodor Lab</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Dependencies/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Validation/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>

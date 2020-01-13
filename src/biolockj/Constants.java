@@ -20,6 +20,11 @@ public class Constants {
 	 * Captures the application start time
 	 */
 	public static final long APP_START_TIME = System.currentTimeMillis();
+	
+	/**
+	 * The key string to define an alias for an individual module: {@value 
+	 */
+	public static final String ASSIGN_ALIAS = " AS ";
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #AWS_S3_XFER_TIMEOUT}<br>
@@ -141,6 +146,15 @@ public class Constants {
 	public static final String DOMAIN = "domain";
 
 	/**
+	 * Prefix used in several {@link biolockj.Config} String properties. {@value #EXE_PREFIX}<br>
+	 * These properties are used to give the path to executables. Unlike most file path properties, they are not
+	 * converted from host-path style when using a docker container; thus, an "{@value #EXE_PREFIX}" property can be
+	 * used to specify an executable within a docker container.
+	 * In contrast, the "hostExe." prefix is used the same way, but it is translated to allow an in-container script to use the host file path specified.
+	 */
+	public static final String EXE_PREFIX = "exe.";
+	
+	/**
 	 * {@link biolockj.Config} String property: {@value #EXE_AWK}<br>
 	 * Set command line executable awk.
 	 */
@@ -201,6 +215,12 @@ public class Constants {
 	 * Argument to print help menu: {@value #HELP}
 	 */
 	public static final String HELP = "-help";
+	
+	/**
+	 * Prefix used in several {@link biolockj.Config} String properties. {@value #HOST_EXE_PREFIX}<br>
+	 * @see #EXE_PREFIX
+	 */
+	public static final String HOST_EXE_PREFIX = "hostExe.";
 
 	/**
 	 * {@link biolockj.Config} Boolean property to disable HumanN2 Gene Family report:
@@ -296,6 +316,12 @@ public class Constants {
 	 * Set value of suffix to trim from sequence file names or headers to obtain Sample ID.
 	 */
 	public static final String INPUT_TRIM_SUFFIX = "input.trimSuffix";
+	
+	/**
+	 * Any {@link biolockj.Config} property that starts with the {@value INTERNAL_PREFIX}
+	 * prefix will not be included in the final MASTER properties file.
+	 */
+	public static final String INTERNAL_PREFIX = "internal.";
 
 	/**
 	 * Internal {@link biolockj.Config} List property: {@value #INTERNAL_ALL_MODULES}<br>
@@ -480,6 +506,12 @@ public class Constants {
 	 * Used to indicate running on a local machine (laptop, etc): {@value #PIPELINE_ENV_LOCAL}
 	 */
 	public static final String PIPELINE_ENV_LOCAL = "local";
+	
+	/**
+	 * Indicator for related programs (bash code, sheepdog_testing_suite) of the pipelines path: {@value #PIPELINE_LOCATION_KEY}
+	 * @sheepdog_testing_suite
+	 */
+	public static final String PIPELINE_LOCATION_KEY = "Pipeline root directory: ";
 
 	/**
 	 * {@link biolockj.Config} property to assign a name to a pipeline: {@value #PIPELINE_NAME} TODO: needs to be
@@ -492,6 +524,13 @@ public class Constants {
 	 */
 	public static final String PROCESSED = "_reported" + Constants.TSV_EXT;
 
+	/**
+	 * {@link biolockj.Config} String property: {@value #PROJECT_DEFAULT_PROPS}<br>
+	 * Set file path of default property file. Nested default properties are supported (so the default property file can
+	 * also have a default, and so on).
+	 */
+	public static final String PROJECT_DEFAULT_PROPS = "project.defaultProps";
+	
 	/**
 	 * {@link biolockj.Config} property to assign a free-hand to a project: {@value #PROJECT_DESC} TODO: needs to be
 	 * implemented.
@@ -744,7 +783,12 @@ public class Constants {
 	/**
 	 * BioLockJ main() runtime arg used to print version info: {@value #VERSION}
 	 */
-	public static final String VERSION = "version";
+	public static final String VERSION = "-version";
+	
+	/**
+	 * String used by sheepdog_testing_suite to assert that validation is enabled: {@value #VALIDATION_ENABLED}.
+	 */
+	public static final String VALIDATION_ENABLED = "This pipeline has validation enabled.";
 
 	/**
 	 * {@link biolockj.Config} property to define permission settings when running chmod on pipeline root dir:

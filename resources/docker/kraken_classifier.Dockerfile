@@ -1,6 +1,10 @@
-# Deployment path:  $DOCKER_DIR/kraken_classifier.Dockerfile
+# suggested build command:
+# name=kraken_classifier
+# cd ${BLJ}
+# docker build --build-arg DOCKER_HUB_USER=biolockjdevteam -t biolockjdevteam/${name} . -f resources/docker/${name}.Dockerfile 
 
-FROM biolockj/kraken_classifier_dbfree
+ARG DOCKER_HUB_USER=biolockj
+FROM ${DOCKER_HUB_USER}/kraken_classifier_dbfree
 
 #1.) Download 8GB Dustmasked miniKraken DB
 RUN cd "${BLJ_DEFAULT_DB}" && \
