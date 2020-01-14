@@ -154,17 +154,6 @@ public class ModuleUtil {
 
 		return null;
 	}
-
-	/**
-	 * Construct a BioModule based on its className for temporary use.
-	 * 
-	 * @param className BioModule class name
-	 * @return BioModule module
-	 * @throws Exception if errors occur
-	 */
-	public static BioModule getTempModule( final String className ) throws Exception {
-		return (BioModule) Class.forName( className ).newInstance();
-	}
 	
 	/**
 	 * Construct a BioModule based on its className to add it to the pipeline.

@@ -473,8 +473,8 @@ public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule
 	}
 	
 	@Override
-	public Boolean validatePropDirectly( String property ) throws Exception {
-		Boolean isValid = null;
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = super.isValidProp( property );
 		switch(property) {
 			case EXE_HUMANN2:
 				isValid = Properties.isValidExeProp( this, EXE_HUMANN2 );

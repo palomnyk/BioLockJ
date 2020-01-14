@@ -13,6 +13,7 @@ package biolockj;
 
 import java.io.*;
 import java.util.*;
+import biolockj.api.API_Exception;
 import biolockj.exception.BioLockJException;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.BioModule;
@@ -242,7 +243,7 @@ public class Properties extends java.util.Properties {
 	 */
 	private static HashMap<String, String> propTypeMap = new HashMap<>();
 	
-	private static void fillPropMaps() {
+	private static void fillPropMaps() throws API_Exception {
 		Constants.registerProps();
 		addToPropMaps( "aws.ec2InstanceID", STRING_TYPE, "ID of an existing ec2 instance to use as the head node" );//TODO: bash property descriptions
 		addToPropMaps( "aws.ec2SpotPer", "", "" );//TODO: bash property descriptions
@@ -254,6 +255,7 @@ public class Properties extends java.util.Properties {
 		addToPropMaps( "aws.walltime", "", "" ); // I don't see this used anywhere. //TODO: bash property descriptions
 		NextflowUtil.registerProps();
 		BashScriptBuilder.registerProps();
+		DockerUtil.registerProps();
 	}
 	
 	private static void addToPropMaps(final String prop, final String type, final String desc) {
@@ -266,25 +268,37 @@ public class Properties extends java.util.Properties {
 	 * @param prop a property
 	 * @param type The expected type of value for that property, must be one of the recognized types in Properties class
 	 * @param desc Human readable string for users guide and similar uses.
+	 * @throws API_Exception 
 	 */
-	public static void registerProp(final String prop, final String type, final String desc) {
+	public static void registerProp(final String prop, final String type, final String desc) throws API_Exception {
 		if ( prop != null ) {
+			testPropName(prop);
 			if (! Arrays.asList( KNOWN_TYPES ).contains( type )) {
 				addToPropMaps(prop, "", "[" + type + "] " + desc);
 			}
 			addToPropMaps(prop, type, desc);
+		}else {
+			throw new API_Exception( "Cannot register a null property" );
 		}
+	}
+	
+	//TODO: at least the 2nd test is not working
+	private static void testPropName(String prop) throws API_Exception {
+		if (! prop.contains( "." )) throw new API_Exception( "Bad property [" + prop + "], no \'.\', property names should contain exactly one \'.\' ." );
+		if ( prop.indexOf( "." ) != prop.lastIndexOf( "." ) ) throw new API_Exception( "Bad property [" + prop + "], too many \'.\'s, property names should contain exactly one \'.\' ." );
+		if (! prop.startsWith( prop.substring( 0, 1 ).toLowerCase() )) throw new API_Exception( "Bad property [" + prop + "], property names shoudl start with a lower case letter." );
 	}
 	
 	/**
 	 * Allow the API to access the list of properties and descriptions.
 	 * @return
+	 * @throws API_Exception 
 	 */
-	public static HashMap<String, String> getPropDescMap() {
+	public static HashMap<String, String> getPropDescMap() throws API_Exception {
 		if (propDescMap.size() == 0) fillPropMaps();
 		return propDescMap;
 	}
-	public static String getDescription( String prop ) {
+	public static String getDescription( String prop ) throws API_Exception {
 		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
 			return describeSpecialProp( prop );
 		}
@@ -295,7 +309,7 @@ public class Properties extends java.util.Properties {
 		if (prop.startsWith( Constants.EXE_PREFIX ) ) {
 			return "Path for the \"" + prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
 							+ "\" executable; if not supplied, any script that needs the "+ prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
-							+ " will assume it is on the PATH." ;
+							+ " command will assume it is on the PATH." ;
 		}else if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
 			return "Host machine path for the \"" + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) 
 							+ "\" executable. If running a pipeline in docker, use this property in place of " 
@@ -308,12 +322,13 @@ public class Properties extends java.util.Properties {
 	/**
 	 * Allow the API to access the list of properties and descriptions.
 	 * @return
+	 * @throws API_Exception 
 	 */
-	public static HashMap<String, String> getPropTypeMap() {
+	public static HashMap<String, String> getPropTypeMap() throws API_Exception {
 		if (propTypeMap.size() == 0) fillPropMaps();
 		return propTypeMap;
 	}
-	public static String getPropertyType( String prop ) {
+	public static String getPropertyType( String prop ) throws API_Exception {
 		if (prop.startsWith( Constants.EXE_PREFIX ) ) return EXE_PATH;
 		if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) return EXE_PATH;
 		return getPropTypeMap().get( prop );

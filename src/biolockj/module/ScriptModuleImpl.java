@@ -51,11 +51,11 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 	 */
 	@Override
 	public void checkDependencies() throws Exception {
-		validatePropDirectly( Constants.SCRIPT_PERMISSIONS);
-		validatePropDirectly( Constants.SCRIPT_PERMISSIONS );
-		validatePropDirectly( Constants.SCRIPT_NUM_WORKERS );
-		validatePropDirectly( Constants.SCRIPT_NUM_THREADS );
-		validatePropDirectly( Constants.SCRIPT_TIMEOUT );
+		isValidProp( Constants.SCRIPT_PERMISSIONS);
+		isValidProp( Constants.SCRIPT_PERMISSIONS );
+		isValidProp( Constants.SCRIPT_NUM_WORKERS );
+		isValidProp( Constants.SCRIPT_NUM_THREADS );
+		isValidProp( Constants.SCRIPT_TIMEOUT );
 	}
 
 	/**
@@ -197,14 +197,19 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 		propDescMap.put(Constants.SCRIPT_NUM_THREADS, Constants.SCRIPT_NUM_THREADS_DESC);
 		propDescMap.put(Constants.SCRIPT_PERMISSIONS, Constants.SCRIPT_PERMISSIONS_DESC);
 		propDescMap.put(Constants.SCRIPT_TIMEOUT, Constants.SCRIPT_TIMEOUT_DESC);
-		for (String prop : BashScriptBuilder.listProps() ) {
-			propDescMap.put(prop, Properties.getDescription( prop ));
+		
+		List<String> generalProps = BashScriptBuilder.listProps();
+		generalProps.addAll( DockerUtil.listProps() );
+		for (String prop : generalProps ) {
+			try {
+				propDescMap.put(prop, Properties.getDescription( prop ));
+			}catch(Exception e) {}
 		}
 	}
 
 	@Override
-	public Boolean validatePropDirectly( String property ) throws Exception {
-		Boolean isValid = null;
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = super.isValidProp( property );
 		switch(property) {
 			case Constants.SCRIPT_DEFAULT_HEADER:
 				isValid = true;

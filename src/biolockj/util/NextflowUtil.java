@@ -16,6 +16,7 @@ import java.util.*;
 import org.apache.commons.io.FileUtils;
 import biolockj.*;
 import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.*;
 import biolockj.module.*;
 import biolockj.module.implicit.ImportMetadata;
@@ -444,8 +445,9 @@ public class NextflowUtil {
 
 	/**
 	 * Register properties with the Properties class for API access.
+	 * @throws API_Exception 
 	 */
-	public static void registerProps() {
+	public static void registerProps() throws API_Exception {
 		Properties.registerProp( AWS_COPY_DB_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_DB_TO_S3_DESC);
 		Properties.registerProp( AWS_COPY_PIPELINE_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_PIPELINE_TO_S3_DESC);
 		Properties.registerProp( AWS_COPY_REPORTS_TO_S3, Properties.BOOLEAN_TYPE, AWS_COPY_REPORTS_TO_S3_DESC);

@@ -24,7 +24,7 @@ public class Constants {
 	 */
 	static final void registerProps() throws API_Exception {
 		Properties.registerProp( AWS_S3_XFER_TIMEOUT, Properties.INTEGER_TYPE, AWS_S3_XFER_TIMEOUT_DESC );
-		Properties.registerProp(CLUSTER_HOST, Properties.STRING_TYPE, CLUSTER_HOST_DESC);
+		Properties.registerProp( CLUSTER_HOST, Properties.STRING_TYPE, CLUSTER_HOST_DESC);
 		Properties.registerProp( DEFAULT_MOD_DEMUX, Properties.STRING_TYPE, DEFAULT_MOD_DEMUX_DESC );
 		Properties.registerProp( DEFAULT_MOD_FASTA_CONV, Properties.STRING_TYPE, DEFAULT_MOD_FASTA_CONV_DESC );
 		Properties.registerProp( DEFAULT_MOD_SEQ_MERGER, Properties.STRING_TYPE, DEFAULT_MOD_SEQ_MERGER_DESC );
@@ -39,6 +39,9 @@ public class Constants {
 		Properties.registerProp( EXE_JAVA, Properties.EXE_PATH, "" );
 		Properties.registerProp( EXE_PYTHON, Properties.EXE_PATH, "" );
 		Properties.registerProp( EXE_RSCRIPT, Properties.EXE_PATH, "" );
+		Properties.registerProp( HN2_DISABLE_GENE_FAMILIES, Properties.BOOLEAN_TYPE, HN2_DISABLE_GENE_FAMILIES_DESC );
+		Properties.registerProp( HN2_DISABLE_PATH_ABUNDANCE, Properties.BOOLEAN_TYPE, HN2_DISABLE_PATH_ABUNDANCE_DESC );
+		Properties.registerProp( HN2_DISABLE_PATH_COVERAGE, Properties.BOOLEAN_TYPE, HN2_DISABLE_PATH_COVERAGE_DESC );
 		Properties.registerProp( INPUT_DIRS, Properties.FILE_PATH_LIST, INPUT_DIRS_DESC );
 		Properties.registerProp( INPUT_FORWARD_READ_SUFFIX, "regex", "file suffix used to identify forward reads in" + INPUT_DIRS );
 		Properties.registerProp( INPUT_IGNORE_FILES, Properties.LIST_TYPE, INPUT_IGNORE_FILES_DESC );
@@ -274,22 +277,25 @@ public class Constants {
 	public static final String HOST_EXE_PREFIX = "hostExe.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Gene Family report:
-	 * {@value #HN2_DISABLE_GENE_FAMILIES}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_GENE_FAMILIES}<br>
+	 * {@value #HN2_DISABLE_GENE_FAMILIES_DESC}
 	 */
 	public static final String HN2_DISABLE_GENE_FAMILIES = "humann2.disableGeneFamilies";
+	private static final String HN2_DISABLE_GENE_FAMILIES_DESC = "disable HumanN2 Gene Family report";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Pathway Abundance report:
-	 * {@value #HN2_DISABLE_PATH_ABUNDANCE}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_PATH_ABUNDANCE}<br>
+	 * {@value HN2_DISABLE_PATH_ABUNDANCE_DESC}
 	 */
 	public static final String HN2_DISABLE_PATH_ABUNDANCE = "humann2.disablePathAbundance";
+	private static final String HN2_DISABLE_PATH_ABUNDANCE_DESC = "disable HumanN2 Pathway Abundance report";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Pathway Coverage report:
-	 * {@value #HN2_DISABLE_PATH_COVERAGE}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_PATH_COVERAGE}
+	 * {@value HN2_DISABLE_PATH_COVERAGE_DESC}
 	 */
 	public static final String HN2_DISABLE_PATH_COVERAGE = "humann2.disablePathCoverage";
+	private static final String HN2_DISABLE_PATH_COVERAGE_DESC = "disable HumanN2 Pathway Coverage report";
 
 	/**
 	 * HumanN2 file suffix identifier for Gene Family Summary report: {@value #HN2_GENE_FAM_SUM}

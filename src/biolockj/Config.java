@@ -399,6 +399,10 @@ public class Config {
 	public static void initBlankProps() throws Exception {
 		props = new Properties();
 	}
+	
+	public static void partiallyInitialize(File config) throws Exception {
+		props = replaceEnvVars( Properties.loadProperties( config ) );
+	}
 
 	/**
 	 * Check if running on cluster

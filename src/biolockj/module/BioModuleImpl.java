@@ -18,6 +18,7 @@ import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import biolockj.*;
 import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.PipelineFormationException;
@@ -316,7 +317,7 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		fillPropDescMap();
 		return propDescMap;
 	}
-	public final String getDescription( String prop ) {
+	public final String getDescription( String prop ) throws API_Exception {
 		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX )
 						&& listProps().contains( prop ) ) {
 			return Properties.getDescription( prop ) ;
@@ -343,7 +344,7 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		fillPropTypeMap();
 		return propTypeMap;
 	}
-	public final String getPropType( String prop ) {
+	public final String getPropType( String prop ) throws API_Exception {
 		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) 
 						&& listProps().contains( prop )) {
 			return Properties.getPropertyType(prop);
@@ -352,30 +353,10 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		return types.get( prop );
 	}
 	
-	public final Boolean validateProp( String property ) throws Exception {
+	public Boolean isValidProp( String property ) throws Exception {
 		Boolean isValid = null;
-		Boolean isValidAbove = super.validateProp(property);
-		Boolean direct = validatePropDirectly(property);
-		
-		// default to true if it IS recognized, but not found to be a problem.
-		if ( listProps().contains( property )
-						|| isValidAbove.equals( Boolean.TRUE ) 
-						|| direct.equals( Boolean.TRUE )) {
-			isValid = true; 	
-		}
-		
-		if (isValidAbove.equals( Boolean.FALSE ) || direct.equals( Boolean.FALSE )) isValid = false;
+		if ( listProps().contains( property ) ) isValid = true;
 		return isValid;
-	}
-	/**
-	 * This is the method for modules to override.
-	 * @param property
-	 * @param value
-	 * @return
-	 * @throws Exception
-	 */
-	public Boolean validatePropDirectly(String property) throws Exception{
-		return null;
 	}	
 	
 	public String getDetails() {

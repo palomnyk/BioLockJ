@@ -239,8 +239,8 @@ public class KneadData extends SeqModuleImpl implements DatabaseModule, ApiModul
 	}
 	
 	@Override
-	public Boolean validatePropDirectly( String property ) throws Exception {
-		Boolean isValid = null;
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = super.isValidProp( property );
 		switch(property) {
 			case EXE_KNEADDATA:
 				isValid = Properties.isValidExeProp( this, EXE_KNEADDATA );

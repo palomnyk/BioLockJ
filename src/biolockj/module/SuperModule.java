@@ -20,7 +20,7 @@ public abstract class SuperModule {
 		propTypeMap = new HashMap<>();
 	}
 	
-	protected Boolean validateProp( String property ) throws Exception {
+	protected Boolean isValidProp( String property ) throws Exception {
 		return null;
 	}
 

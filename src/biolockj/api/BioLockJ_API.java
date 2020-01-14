@@ -1,5 +1,7 @@
 package biolockj.api;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -53,7 +55,7 @@ public class BioLockJ_API {
 					Set<String> allProps = new HashSet<>();
 					allProps.addAll(ListProps( ));
 					for (String mod : listApiModules()) {
-						ApiModule tmp = (ApiModule) ModuleUtil.getTempModule( mod );
+						ApiModule tmp = (ApiModule) ModuleUtil.createModuleInstance( mod );
 						allProps.addAll( tmp.listProps() );
 					}
 					ArrayList<String> allPropsOrderd = new ArrayList<>(allProps);
@@ -84,7 +86,10 @@ public class BioLockJ_API {
 					else throw new API_Exception( "The query [" + PROP_DESC + "] requires one or two arguments." );
 					break;
 				case PROP_VALUE:
-					reply = propValue( args );
+					if (args.length < 2) throw new API_Exception( "The query [" + PROP_VALUE + "] requires one or two arguments." );
+					if (args.length == 2) initConfig();
+					else if (args.length == 3) initConfig(args[2]);
+					reply = propValue( args[1] );
 					break;
 				case MODULE_INFO:
 					reply = moduleInfo( );
@@ -128,11 +133,11 @@ public class BioLockJ_API {
 	public static List<String> listModules() throws Exception {
 		List<String> allBioModules = new ArrayList<>();
 		
-		Reflections reflections = new Reflections("[a-z]*.module");
+		Reflections reflections = new Reflections("[a-z]*biolockj");
 		Set<Class<? extends BioModule>> subTypes = reflections.getSubTypesOf( BioModule.class );
 		for (Class<? extends BioModule> st : subTypes ) {
 			try {
-				BioModule tmp = ModuleUtil.getTempModule( st.getName() );
+				BioModule tmp = ModuleUtil.createModuleInstance( st.getName() );
 				allBioModules.add( tmp.getClass().getName() );
 			}catch(InstantiationException | ExceptionInInitializerError ex) {
 				//System.err.println("The class [" + st.getName() + "] is in scope, but cannot be instantiated.");
@@ -152,7 +157,7 @@ public class BioLockJ_API {
 		List<String> allBioModules = listModules();
 		List<String> apiModules = new ArrayList<>();
 		for (String mod : allBioModules ) {
-			BioModule tmp = ModuleUtil.getTempModule( mod );
+			BioModule tmp = ModuleUtil.createModuleInstance( mod );
 			if (tmp instanceof ApiModule) {
 				apiModules.add( tmp.getClass().getName() );
 			}
@@ -161,7 +166,7 @@ public class BioLockJ_API {
 	}
 	
 	
-	public static List<String> ListProps(){
+	public static List<String> ListProps() throws API_Exception{
 		List<String> allProps = new ArrayList<>();
 		allProps.addAll( Properties.getPropTypeMap().keySet() );
 		Collections.sort(allProps);
@@ -169,7 +174,7 @@ public class BioLockJ_API {
 	}
 	public static List<String> listModuleProps(String mod) throws Exception {
 		List<String> allProps = new ArrayList<>();
-		BioModule tmp = ModuleUtil.getTempModule( mod );
+		BioModule tmp = ModuleUtil.createModuleInstance( mod );
 		if (tmp instanceof ApiModule) {
 			allProps.addAll( ( (ApiModule) tmp ).listProps() );
 		}
@@ -210,11 +215,11 @@ public class BioLockJ_API {
 		//TODO - ask each module
 		if (modules.length > 0) {
 			for (String mod : modules) {
-				BioModule tmp = ModuleUtil.getTempModule( mod );
+				BioModule tmp = ModuleUtil.createModuleInstance( mod );
 				if (tmp instanceof ApiModule) {
 					Boolean modVote;
 					try {
-						modVote = ( (ApiModule) tmp).validateProp( prop );
+						modVote = ( (ApiModule) tmp).isValidProp( prop );
 					}catch(ConfigException e) {
 						modVote = false;
 					}
@@ -238,7 +243,7 @@ public class BioLockJ_API {
 	public static String propTypeModule(String prop, String module) throws API_Exception {
 		String type = "";
 		try {
-			BioModule tmp = ModuleUtil.getTempModule( module );
+			BioModule tmp = ModuleUtil.createModuleInstance( module );
 			if (tmp instanceof ApiModule) {
 				type = ( (ApiModule) tmp ).getPropType( prop );
 			}
@@ -253,7 +258,7 @@ public class BioLockJ_API {
 	public static String propDescModule(String prop, String module) throws API_Exception {
 		String desc = "";
 		try {
-			BioModule tmp = ModuleUtil.getTempModule( module );
+			BioModule tmp = ModuleUtil.createModuleInstance( module );
 			if (tmp instanceof ApiModule) {
 				desc = ( (ApiModule) tmp ).getDescription( prop );
 			}
@@ -272,21 +277,19 @@ public class BioLockJ_API {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String propValue(String[] args) throws Exception {
-//		String property = args[0];
-//		if (args.length > 1) {
-//			Config.partiallyInitialize(new File(args[1]));
-//// 			//TODO: if a third arg is given, assume that to be the module of interest.
-////			if (args.length == 3) {
-////				BioModule targetModule = ModuleUtil.getTempModule( args[2] );
-////			}
-//		}else{
-//			File tempConfig = File.createTempFile( "tempconfig", "properties" );
-//			Config.partiallyInitialize(tempConfig);
-//			tempConfig.delete();
-//		}
-//		return Config.getString( null, property );
-		return null;
+	public static String propValue(String property) throws Exception {
+		return Config.getString( null, property );
+	}
+
+	private static void initConfig(String path) throws Exception {
+		File config = new File(path);
+		if (!config.exists()) throw new API_Exception( "Cannot find configuration file: " + path );
+		Config.partiallyInitialize(config);
+	}
+	private static void initConfig() throws Exception {
+		File tempConfig = File.createTempFile( "tempconfig", "properties" );
+		Config.partiallyInitialize(tempConfig);
+		tempConfig.delete();
 	}
 	
 	/**

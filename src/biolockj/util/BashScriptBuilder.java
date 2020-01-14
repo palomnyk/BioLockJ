@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import biolockj.*;
 import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.*;
 import biolockj.module.*;
 import biolockj.module.report.r.R_Module;
@@ -414,8 +415,9 @@ public class BashScriptBuilder {
 
 	/**
 	 * Register properties with the Properties class for API access.
+	 * @throws API_Exception 
 	 */
-	public static void registerProps() {
+	public static void registerProps() throws API_Exception {
 		Properties.registerProp(CLUSTER_BATCH_COMMAND, Properties.STRING_TYPE, CLUSTER_BATCH_COMMAND_DESC);
 		Properties.registerProp(CLUSTER_STATUS_COMMAND, Properties.STRING_TYPE, CLUSTER_STATUS_COMMAND_DESC);
 		Properties.registerProp(CLUSTER_MODULES, Properties.LIST_TYPE, CLUSTER_MODULES_DESC);

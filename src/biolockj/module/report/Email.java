@@ -21,6 +21,7 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.mail.*;
 import javax.mail.internet.*;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.module.BioModuleImpl;
 import biolockj.util.*;
 
@@ -30,7 +31,7 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Email
  */
-public class Email extends BioModuleImpl {
+public class Email extends BioModuleImpl implements ApiModule {
 
 	/**
 	 * Verify required email {@link biolockj.Config} properties exist and are properly formatted.
@@ -239,23 +240,60 @@ public class Email extends BioModuleImpl {
 		return multipart;
 	}
 
+	@Override
+	public String getDescription() {
+		return "Send user an email containing the pipeline summary when the pipeline either completes or fails.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda." + System.lineSeparator() + "BioLockJ " + BioLockJUtil.getVersion();
+	}
+	
+
+	@Override
+	protected void fillPropDescMap() {
+		super.fillPropDescMap();
+		propDescMap.put(EMAIL_ENCRYPTED_PASSWORD, EMAIL_ENCRYPTED_PASSWORD_DESC);
+		propDescMap.put(EMAIL_FROM, EMAIL_FROM_DESC);
+		propDescMap.put(EMAIL_HOST, EMAIL_HOST_DESC);
+		propDescMap.put(EMAIL_PORT, "");
+		propDescMap.put(EMAIL_SMTP_AUTH,"");
+		propDescMap.put(EMAIL_START_TLS_ENABLE,"");
+		propDescMap.put(EMAIL_TO,"");
+	}
+	@Override
+	protected void fillPropTypeMap() {
+		super.fillPropDescMap();
+		propTypeMap.put(EMAIL_ENCRYPTED_PASSWORD, biolockj.Properties.STRING_TYPE);
+		propTypeMap.put(EMAIL_FROM, biolockj.Properties.STRING_TYPE);
+		propTypeMap.put(EMAIL_HOST, biolockj.Properties.STRING_TYPE);
+		propTypeMap.put(EMAIL_PORT, biolockj.Properties.INTEGER_TYPE);
+		propTypeMap.put(EMAIL_SMTP_AUTH, biolockj.Properties.STRING_TYPE);
+		propTypeMap.put(EMAIL_START_TLS_ENABLE, biolockj.Properties.BOOLEAN_TYPE);
+		propTypeMap.put(EMAIL_TO, biolockj.Properties.STRING_TYPE);
+	}
+	
 	/**
 	 * {@link biolockj.Config} String property: {@value #EMAIL_ENCRYPTED_PASSWORD}<br>
-	 * The Base 64 encrypted password is stored in the Config file using this property.
+	 * {@value #EMAIL_ENCRYPTED_PASSWORD_DESC}
 	 */
 	protected static final String EMAIL_ENCRYPTED_PASSWORD = "mail.encryptedPassword";
+	private static final String EMAIL_ENCRYPTED_PASSWORD_DESC = "The Base 64 encrypted password is stored in the Config file using this property.";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #EMAIL_FROM}<br>
-	 * Admin email address used to send user pipeline notifications.
+	 * {@value #EMAIL_FROM_DESC}
 	 */
 	protected static final String EMAIL_FROM = "mail.from";
+	private static final String EMAIL_FROM_DESC = "Admin email address used to send user pipeline notifications";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #EMAIL_HOST}<br>
 	 * {@link javax.mail.Session} SMTP host
 	 */
 	protected static final String EMAIL_HOST = "mail.smtp.host";
+	private static final String EMAIL_HOST_DESC = "javax.mail.Session SMTP host";
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #EMAIL_PORT}<br>
@@ -287,4 +325,5 @@ public class Email extends BioModuleImpl {
 	private static final byte[] SALT =
 		{ (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12, (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12, };
 	private static boolean successful = false;
+
 }

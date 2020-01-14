@@ -18,17 +18,8 @@ public interface ApiModule extends BioModule {
 	 * @return true if value is recognized and good, false if it is recognized and invalid, null if prop is not recognized.
 	 * @throws Exception
 	 */
-	public Boolean validateProp(String property) throws Exception;
+	public Boolean isValidProp(String property) throws Exception;
 	
-	/**
-	 * Tests if the value val is valid for property prop--but does not call any methods from super class.
-	 * @param property
-	 * @param value
-	 * @return true if value is recognized and good, false if it is recognized and invalid, null if prop is not recognized.
-	 * @throws Exception
-	 */
-	public Boolean validatePropDirectly(String property) throws Exception;
-
 	/**
 	 * List properties that this module uses, including those called by any super class.
 	 * @return
@@ -53,7 +44,7 @@ public interface ApiModule extends BioModule {
 	 * Describe a given property / how it is used (including how it is used by a super class)
 	 * @return
 	 */
-	public String getDescription(String prop);
+	public String getDescription(String prop) throws API_Exception;
 	
 	public String getDetails();
 	
@@ -61,7 +52,7 @@ public interface ApiModule extends BioModule {
 	 * Get the type for a given property.
 	 * @return
 	 */
-	public String getPropType(String prop);
+	public String getPropType(String prop) throws API_Exception;
 	
 	/**
 	 *  At a minimum, this should return the name and/or url for the wrapped tool.

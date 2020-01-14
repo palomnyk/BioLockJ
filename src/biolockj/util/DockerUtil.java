@@ -23,6 +23,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.*;
 import biolockj.module.*;
 import biolockj.module.classifier.r16s.RdpClassifier;
@@ -480,6 +482,26 @@ public class DockerUtil {
 	}
 
 	/**
+	 * Register properties with the Properties class for API access.
+	 * @throws API_Exception 
+	 */
+	public static void registerProps() throws API_Exception {
+		Properties.registerProp( DOCKER_IMG_VERSION, Properties.STRING_TYPE, DOCKER_IMG_VERSION_DESC );
+		Properties.registerProp( SAVE_CONTAINER_ON_EXIT, Properties.BOOLEAN_TYPE, SAVE_CONTAINER_ON_EXIT_DESC );
+		Properties.registerProp( DOCKER_HUB_USER, Properties.STRING_TYPE, DOCKER_HUB_USER_DESC );
+	}
+	/**
+	 * Let modules see property names.
+	 */
+	public static ArrayList<String> listProps(){
+		ArrayList<String> props = new ArrayList<>();
+		props.add( DOCKER_IMG_VERSION );
+		props.add( SAVE_CONTAINER_ON_EXIT );
+		props.add( DOCKER_HUB_USER );
+		return props;
+	}
+	
+	/**
 	 * Docker container dir to map HOST $HOME to save logs + find Config values using $HOME: {@value #AWS_EC2_HOME} Need
 	 * to name this dir = "/home/ec2-user" so Nextflow config is same inside + outside of container
 	 */
@@ -521,15 +543,18 @@ public class DockerUtil {
 	static final String CONTAINER_BLJ_DIR = "/app/biolockj";
 
 	/**
-	 * {@link biolockj.Config} String property used to run specific version of Docker images:
-	 * {@value #DOCKER_IMG_VERSION}
+	 * {@link biolockj.Config} String property: {@value #DOCKER_IMG_VERSION}
+	 * {@value #DOCKER_IMG_VERSION_DESC}
 	 */
 	static final String DOCKER_IMG_VERSION = "docker.imgVersion";
+	private static final String DOCKER_IMG_VERSION_DESC = "indicate specific version of Docker images";
 
 	/**
-	 * {@link biolockj.Config} Boolean property - enable to avoid docker run --rm flag: {@value #SAVE_CONTAINER_ON_EXIT}
+	 * {@link biolockj.Config} Boolean property: {@value #SAVE_CONTAINER_ON_EXIT}<br>
+	 * {@value #SAVE_CONTAINER_ON_EXIT_DESC}
 	 */
 	static final String SAVE_CONTAINER_ON_EXIT = "docker.saveContainerOnExit";
+	private static final String SAVE_CONTAINER_ON_EXIT_DESC = "if ture, docker run command will NOT include the --rm flag";
 
 	/**
 	 * Name of the bash script function used to generate a new Docker container: {@value #SPAWN_DOCKER_CONTAINER}
@@ -537,12 +562,14 @@ public class DockerUtil {
 	static final String SPAWN_DOCKER_CONTAINER = "spawnDockerContainer";
 
 	/**
-	 * {@link biolockj.Config} name of the Docker Hub user with the BioLockJ containers: {@value #DOCKER_HUB_USER}<br>
+	 * {@link biolockj.Config} String property: {@value #DOCKER_HUB_USER}<br>
+	 * {@value #DOCKER_HUB_USER_DESC}<br>
 	 * Docker Hub URL: <a href="https://hub.docker.com" target="_top">https://hub.docker.com</a><br>
 	 * By default the "biolockj" user is used to pull the standard modules, but advanced users can deploy their own
 	 * versions of these modules and add new modules in their own Docker Hub account.
 	 */
 	protected static final String DOCKER_HUB_USER = "docker.user";
+	private static final String DOCKER_HUB_USER_DESC = "name of the Docker Hub user for getting docker containers";
 
 	private static final String BLJ_BASH = "blj_bash";
 	private static final String DB_FREE = "_dbfree";
