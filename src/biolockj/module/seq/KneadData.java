@@ -32,6 +32,13 @@ import biolockj.util.*;
  */
 public class KneadData extends SeqModuleImpl implements DatabaseModule, ApiModule {
 
+	public KneadData() {
+		super();
+		addNewProperty( EXE_KNEADDATA, "", "" );
+		addNewProperty( EXE_KNEADDATA_PARAMS, Properties.STRING_TYPE, "Optional parameters passed to kneaddata" );
+		addNewProperty( KNEAD_DBS, Properties.FILE_PATH, "Path to database for KneadData program" );
+	}
+
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
 		final List<List<String>> data = new ArrayList<>();
@@ -222,20 +229,6 @@ public class KneadData extends SeqModuleImpl implements DatabaseModule, ApiModul
 	@Override
 	public String getCitationString() {
 		return "https://bitbucket.org/biobakery/kneaddata/wiki/Home" + System.lineSeparator() + "Module developed by Mike Sioda";
-	}
-	
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put( EXE_KNEADDATA, "" ); //description for exe's is generated in super method
-		propDescMap.put( EXE_KNEADDATA_PARAMS, "Optional parameters passed to kneaddata ");
-		propDescMap.put( KNEAD_DBS, "Path to database for KneadData program");
-	}
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_KNEADDATA_PARAMS, Properties.STRING_TYPE ); 
-		propTypeMap.put( KNEAD_DBS, Properties.FILE_PATH);
 	}
 	
 	@Override

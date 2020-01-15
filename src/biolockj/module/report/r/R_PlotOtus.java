@@ -13,6 +13,9 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
+import biolockj.util.BioLockJUtil;
 
 /**
  * This BioModule is used to build the R script used to generate OTU-metadata box-plots and scatter-plots for each
@@ -20,7 +23,19 @@ import biolockj.Config;
  * 
  * @blj.web_desc R Plot OTUs
  */
-public class R_PlotOtus extends R_Module {
+public class R_PlotOtus extends R_Module implements ApiModule {
+	
+	public R_PlotOtus() {
+		super();
+		addNewProperty( R_PVAL_FORMAT, Properties.STRING_TYPE, "Sets the format used in R sprintf() function" );
+		addGeneralProperty( R_RARE_OTU_THRESHOLD );
+		addGeneralProperty( R_COLOR_BASE );
+		addGeneralProperty( R_COLOR_HIGHLIGHT );
+		addGeneralProperty( R_COLOR_PALETTE );
+		addGeneralProperty( R_COLOR_POINT );
+		addGeneralProperty( R_PCH );
+	}
+
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
@@ -42,4 +57,14 @@ public class R_PlotOtus extends R_Module {
 	}
 
 	private static final String R_PVAL_FORMAT = "r.pValFormat";
+
+	@Override
+	public String getDescription() {
+		return "Generate OTU-metadata box-plots and scatter-plots for each reportable metadata field and each *report.taxonomyLevel* configured";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 }

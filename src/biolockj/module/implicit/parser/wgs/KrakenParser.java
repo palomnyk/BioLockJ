@@ -14,6 +14,7 @@ package biolockj.module.implicit.parser.wgs;
 import java.io.BufferedReader;
 import java.io.File;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.module.implicit.parser.ParserModuleImpl;
 import biolockj.node.*;
 import biolockj.node.wgs.KrakenNode;
@@ -24,7 +25,12 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Kraken Parser
  */
-public class KrakenParser extends ParserModuleImpl {
+public class KrakenParser extends ParserModuleImpl implements ApiModule {
+	
+	public KrakenParser() {
+		super();
+		addGeneralProperty( Constants.REPORT_UNCLASSIFIED_TAXA );
+	}
 
 	@Override
 	public void addOtuNode( final OtuNode node ) throws Exception {
@@ -87,5 +93,15 @@ public class KrakenParser extends ParserModuleImpl {
 		} finally {
 			if( reader != null ) reader.close();
 		}
+	}
+
+	@Override
+	public String getDescription() {
+		return "Build OTU tables from [KRAKEN](http://ccb.jhu.edu/software/kraken/) mpa-format reports.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
 	}
 }

@@ -14,6 +14,8 @@ package biolockj.module.report.otu;
 import java.io.*;
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigFormatException;
 import biolockj.module.implicit.parser.ParserModuleImpl;
 import biolockj.util.*;
@@ -29,7 +31,15 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Rarefy OTU Counts
  */
-public class RarefyOtuCounts extends OtuCountModule {
+public class RarefyOtuCounts extends OtuCountModule implements ApiModule {
+
+	public RarefyOtuCounts() {
+		super();
+		addNewProperty( LOW_ABUNDANT_CUTOFF, Properties.NUMERTIC_TYPE, "(positive double) minimum percentage of samples that must contain an OTU." );
+		addNewProperty( NUM_ITERATIONS, Properties.INTEGER_TYPE, "(positive integer) the number of iterations to randomly select the rarefyOtuCounts.quantile of OTUs" );
+		addNewProperty( QUANTILE, Properties.NUMERTIC_TYPE, "Quantile for rarefication. The number of OTUs/sample are ordered, all samples with more OTUs than the quantile sample are subselected without replacement until they have the same number of OTUs as the quantile sample" );
+		addNewProperty( REMOVE_LOW_ABUNDANT_SAMPLES, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, all samples below the rarefyOtuCounts.quantile quantile sample are removed" );
+	}
 
 	@Override
 	public void checkDependencies() throws Exception {
@@ -270,6 +280,16 @@ public class RarefyOtuCounts extends OtuCountModule {
 	private Map<String, String> hitsPerSample = new HashMap<>();
 	private final Set<String> sampleIds = new HashSet<>();
 
+	@Override
+	public String getDescription() {
+		return "Applies a mean iterative post-OTU classification rarefication algorithm so that each output sample will have approximately the same number of OTUs.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
+	
 	/**
 	 * {@link biolockj.Config} Posivite Double property to define minimum percentage of samples that must contain an
 	 * OTU. Low abundance OTUs will be removed: {@value #LOW_ABUNDANT_CUTOFF}
@@ -295,4 +315,5 @@ public class RarefyOtuCounts extends OtuCountModule {
 	 * quantile sample are removed.
 	 */
 	protected static final String REMOVE_LOW_ABUNDANT_SAMPLES = "rarefyOtuCounts.rmLowSamples";
+
 }

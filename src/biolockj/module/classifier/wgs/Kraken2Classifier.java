@@ -29,6 +29,14 @@ import biolockj.util.*;
  * @blj.web_desc Kraken2 Classifier
  */
 public class Kraken2Classifier extends ClassifierModuleImpl implements ApiModule {
+	
+	public Kraken2Classifier() {
+		super();
+		addNewProperty( EXE_KRAKEN2, Properties.EXE_PATH, "" );
+		addNewProperty( KRAKEN_DATABASE, Properties.FILE_PATH, "file path to Kraken2 kmer database directory" );
+		addNewProperty( KRAKEN2_PARAMS, Properties.LIST_TYPE, "additional parameters to use with kraken2" );
+	}
+
 	/**
 	 * Build bash script lines to classify unpaired WGS reads with Kraken2. The inner list contains 1 bash script line
 	 * used to classify 1 sample.
@@ -198,22 +206,6 @@ public class Kraken2Classifier extends ClassifierModuleImpl implements ApiModule
 		return "Improved metagenomic analysis with Kraken 2\r\n" + 
 			"Derrick E. Wood, Jennifer Lu, Ben Langmead\r\n" + 
 			"bioRxiv 762302; doi: https://doi.org/10.1101/762302";
-	}
-	
-	@Override
-	public void fillPropDescMap(){
-		super.fillPropDescMap();
-		propDescMap.put( EXE_KRAKEN2, "" );
-		propDescMap.put( KRAKEN_DATABASE, "file path to Kraken2 kmer database directory");
-		propDescMap.put( KRAKEN2_PARAMS, "additional parameters to use with kraken2");
-	}
-	
-	@Override
-	public void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_KRAKEN2, Properties.EXE_PATH );
-		propTypeMap.put( KRAKEN_DATABASE, Properties.FILE_PATH );
-		propTypeMap.put( KRAKEN2_PARAMS, Properties.LIST_TYPE );
 	}
 
 	/**

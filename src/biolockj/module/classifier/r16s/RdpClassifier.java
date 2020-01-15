@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.classifier.ClassifierModuleImpl;
 import biolockj.util.*;
@@ -24,7 +25,15 @@ import biolockj.util.*;
  * 
  * @blj.web_desc RDP Classifier
  */
-public class RdpClassifier extends ClassifierModuleImpl {
+public class RdpClassifier extends ClassifierModuleImpl implements ApiModule {
+	
+	public RdpClassifier() {
+		super();
+		addNewProperty( RDP_DB, Properties.FILE_PATH, "File path used to define an alternate RDP database" );
+		addNewProperty( RDP_JAR, Properties.FILE_PATH, "File path for RDP java executable JAR" );
+		addNewProperty( RDP_PARAMS, Properties.LIST_TYPE, "parameters to use when running rdp. (must include \"-f fixrank\")" );
+		addNewProperty( JAVA_PARAMS, Properties.LIST_TYPE, "the parameters to java when running rdp." );
+	}
 
 	/**
 	 * Build bash script lines to classify unpaired reads with RDP. The inner list contains the bash script lines
@@ -156,4 +165,13 @@ public class RdpClassifier extends ClassifierModuleImpl {
 
 	private static final String DB_PARAM = "-t";
 	private static final String OUTPUT_PARAM = "-o";
+	@Override
+	public String getDescription() {
+		return "Classify 16s samples with [RDP](http://rdp.cme.msu.edu/classifier/classifier.jsp).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 }

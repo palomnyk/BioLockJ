@@ -30,6 +30,13 @@ import biolockj.util.*;
  * @blj.web_desc Merge Reads with PEAR
  */
 public class PearMergeReads extends SeqModuleImpl implements ApiModule {
+	
+	public PearMergeReads() {
+		super();
+		addNewProperty( EXE_PEAR, Properties.EXE_PATH, "" );
+		addNewProperty( EXE_PEAR_PARAMS, Properties.STRING_TYPE, "optionally pass additional parameters to pear." );
+	}
+
 	/**
 	 * Build the script lines for each sample as a nested list. PAIR program will be called once for each pair of files
 	 * to output a single merged read.
@@ -185,17 +192,4 @@ public class PearMergeReads extends SeqModuleImpl implements ApiModule {
 						+ System.lineSeparator() + "Module developed by Mike Sioda";
 	}
 	
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put( EXE_PEAR, "" ); //description for exe's is generated in super method, but adding it here adds it to the propList
-		propDescMap.put( EXE_PEAR_PARAMS, "optionally pass additional parameters to pear.");
-	}
-	
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_PEAR, Properties.EXE_PATH ); //type for exe's is generated in super method
-		propTypeMap.put( EXE_PEAR_PARAMS, "optionally pass additional parameters to pear.");
-	}
 }

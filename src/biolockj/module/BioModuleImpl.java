@@ -28,8 +28,46 @@ import biolockj.util.*;
  * Superclass for standard BioModules (classifiers, parsers, etc). Sets standard behavior for many of the BioModule
  * interface methods.
  */
-public abstract class BioModuleImpl extends SuperModule implements BioModule, Comparable<BioModule> {
+public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> {
 
+	public BioModuleImpl() {
+		propDescMap = new HashMap<>();
+		propTypeMap = new HashMap<>();
+	}
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private final HashMap<String, String> propDescMap;
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private final HashMap<String, String> propTypeMap;
+	
+	protected final void addNewProperty(String prop, String type, String desc) {
+		propDescMap.put(prop, desc);
+		propTypeMap.put(prop, type);
+	}
+	
+	protected final void addGeneralProperty(String prop) {
+		try {
+			addGeneralProperty(prop, Properties.getDescription( prop ));
+		}catch(API_Exception ex) {
+			addNewProperty(prop, "", "");
+		}
+	}
+	protected final void addGeneralProperty(String prop, String desc) {
+		try {
+			addGeneralProperty(prop, Properties.getPropertyType( prop ), desc);
+		}catch(API_Exception ex) {
+			addNewProperty(prop, "", desc);
+		}
+	}
+	protected final void addGeneralProperty(String prop, String type, String desc) {
+		addNewProperty(prop, type, desc);
+	}
+	
 	/**
 	 * If restarting or running a direct pipeline execute the cleanup for completed modules.
 	 */
@@ -304,17 +342,8 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		return this.getClass().getSimpleName();
 	}
 
-	/**
-	 * Method for individual modules to add their own properties to the map of properties. 
-	 * The map already includes properties used by super modules.
-	 * Individual modules may over-write the description a parent class gave to a property to better describe how it is used.
-	 */
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		//propDescMap.put(property, value);
-	}
+
 	protected final HashMap<String, String> getPropDescMap() {
-		fillPropDescMap();
 		return propDescMap;
 	}
 	public final String getDescription( String prop ) throws API_Exception {
@@ -331,17 +360,7 @@ public abstract class BioModuleImpl extends SuperModule implements BioModule, Co
 		return props;
 	}
 	
-	/**
-	 * Method for individual modules to add their own properties to the map of properties.
-	 * Modules should ONLY add to this map for properties that are newly created by this individual module.
-	 * Any property that already exists, should already be in the map, and its type should not be changed.
-	 */
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		//propTypeMap.put(property, type);
-	}
 	protected final HashMap<String, String> getPropTypeMap() {
-		fillPropTypeMap();
 		return propTypeMap;
 	}
 	public final String getPropType( String prop ) throws API_Exception {

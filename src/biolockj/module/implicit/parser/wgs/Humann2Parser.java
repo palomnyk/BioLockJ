@@ -30,6 +30,13 @@ import biolockj.util.*;
  * @blj.web_desc HumanN2 Parser
  */
 public class Humann2Parser extends ParserModuleImpl implements ApiModule {
+	
+	public Humann2Parser() {
+		super();
+		addNewProperty( HN2_KEEP_UNINTEGRATED, Properties.BOOLEAN_TYPE, HN2_KEEP_UNINTEGRATED_DESC );
+		addNewProperty( HN2_KEEP_UNMAPPED, Properties.BOOLEAN_TYPE, HN2_KEEP_UNMAPPED_DESC );
+	}
+
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
@@ -178,19 +185,6 @@ public class Humann2Parser extends ParserModuleImpl implements ApiModule {
 	@Override
 	public String getCitationString() {
 		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockJ " + BioLockJUtil.getVersion( );
-	}
-	
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put(HN2_KEEP_UNINTEGRATED, Properties.BOOLEAN_TYPE);
-		propTypeMap.put(HN2_KEEP_UNMAPPED, Properties.BOOLEAN_TYPE);
-	}	
-	
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put(HN2_KEEP_UNINTEGRATED, HN2_KEEP_UNINTEGRATED_DESC);
-		propDescMap.put(HN2_KEEP_UNMAPPED, HN2_KEEP_UNMAPPED_DESC);
 	}
 	
 	@Override

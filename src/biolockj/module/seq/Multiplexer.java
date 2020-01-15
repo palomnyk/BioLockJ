@@ -15,6 +15,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.GZIPOutputStream;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.SequnceFormatException;
 import biolockj.module.*;
 import biolockj.module.classifier.ClassifierModule;
@@ -28,7 +30,13 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Multiplexer
  */
-public class Multiplexer extends JavaModuleImpl implements SeqModule {
+public class Multiplexer extends JavaModuleImpl implements SeqModule, ApiModule {
+
+	public Multiplexer() {
+		super();
+		addNewProperty( DO_GZIP, Properties.BOOLEAN_TYPE, "if enabled the multiplexed output will be gzipped" );
+		addGeneralProperty( MetaUtil.META_BARCODE_COLUMN );
+	}
 
 	/**
 	 * Validate module dependencies:
@@ -263,9 +271,19 @@ public class Multiplexer extends JavaModuleImpl implements SeqModule {
 	private long totalNumFwReads = 0L;
 	private long totalNumRvReads = 0L;
 	/**
-	 * {@link biolockj.Config} boolean property that if enabled will gzip the multiplexed output: {@value #DO_GZIP}:
+	 * {@link biolockj.Config} boolean property: {@value #DO_GZIP}:
 	 */
 	protected static final String DO_GZIP = "multiplexer.gzip";
+	
+	@Override
+	public String getDescription() {
+		return "Multiplex samples into a single file, or two files (one with forward reads, one with reverse reads) if multiplexing paired reads.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 
 	// private static final String FUNCTION_GZIP = "gZip";
 }

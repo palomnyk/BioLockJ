@@ -32,6 +32,18 @@ import biolockj.util.*;
  * @blj.web_desc
  */
 public class QiimeClassifier extends ClassifierModuleImpl {
+	
+	public QiimeClassifier() {
+		super();
+		addNewProperty( EXE_VSEARCH, Properties.EXE_PATH, "" );
+		addNewProperty( EXE_VSEARCH_PARAMS, Properties.LIST_TYPE, "Parameters for vsearch" );
+		addNewProperty( QIIME_PARAMS, Properties.LIST_TYPE, "Parameters for qiime" );
+		addNewProperty( QIIME_PYNAST_ALIGN_DB, Properties.FILE_PATH, "path to define ~/.qiime_config pynast_template_alignment_fp" );
+		addNewProperty( QIIME_REF_SEQ_DB, Properties.FILE_PATH, "path to define ~/.qiime_config pick_otus_reference_seqs_fp and assign_taxonomy_reference_seqs_fp" );
+		addNewProperty( QIIME_REMOVE_CHIMERAS, Properties.BOOLEAN_TYPE, "if vsearch is needed for chimera removal" );
+		addNewProperty( QIIME_TAXA_DB, Properties.FILE_PATH, "path to define ~/.qiime_config assign_taxonomy_id_to_taxonomy_fp" );
+	}
+
 	/**
 	 * Generate bash script lines to summarize QIIME results, build taxonomy reports, and add alpha diversity metrics.
 	 * <p>
@@ -469,32 +481,6 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 
 	private String switches = null;
 	
-	
-
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_VSEARCH, Properties.EXE_PATH ); 
-		propTypeMap.put(EXE_VSEARCH_PARAMS, Properties.LIST_TYPE);
-		propTypeMap.put(QIIME_PARAMS, Properties.LIST_TYPE);
-		propTypeMap.put(QIIME_PYNAST_ALIGN_DB, Properties.FILE_PATH);
-		propTypeMap.put(QIIME_REF_SEQ_DB, Properties.FILE_PATH);
-		propTypeMap.put(QIIME_REMOVE_CHIMERAS, Properties.BOOLEAN_TYPE);
-		propTypeMap.put(QIIME_TAXA_DB, Properties.FILE_PATH);
-		}
-	
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put( EXE_VSEARCH, "" ); //description for exe's is generated in super method
-		propDescMap.put(EXE_VSEARCH_PARAMS, "Parameters for vsearch");
-		propDescMap.put(QIIME_PARAMS, "Parameters for qiime");
-		propDescMap.put(QIIME_PYNAST_ALIGN_DB, "path to define ~/.qiime_config pynast_template_alignment_fp");
-		propDescMap.put(QIIME_REF_SEQ_DB, "path to define ~/.qiime_config pick_otus_reference_seqs_fp and assign_taxonomy_reference_seqs_fp");
-		propDescMap.put(QIIME_REMOVE_CHIMERAS, "if vsearch is needed for chimera removal");
-		propDescMap.put(QIIME_TAXA_DB, "path to define ~/.qiime_config assign_taxonomy_id_to_taxonomy_fp");
-	}
-
 	/**
 	 * Value output by {@value #SCRIPT_CALC_ALPHA_DIVERSITY} for null values: {@value #ALPHA_DIV_NULL_VALUE}
 	 */

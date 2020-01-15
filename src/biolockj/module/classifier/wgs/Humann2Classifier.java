@@ -35,6 +35,16 @@ import biolockj.util.*;
  */
 public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule {
 
+	public Humann2Classifier() {
+		super();
+		addNewProperty( EXE_HUMANN2, Properties.EXE_PATH, "" );//description for exe's is generated in super method
+		addNewProperty( EXE_HUMANN2_JOIN_PARAMS, Properties.LIST_TYPE, EXE_HUMANN2_JOIN_PARAMS_DESC );
+		addNewProperty( EXE_HUMANN2_PARAMS, Properties.LIST_TYPE, EXE_HUMANN2_PARAMS_DESC );
+		addNewProperty( EXE_HUMANN2_RENORM_PARAMS, Properties.LIST_TYPE, EXE_HUMANN2_RENORM_PARAMS_DESC );
+		addNewProperty( HN2_NUCL_DB, Properties.FILE_PATH, HN2_NUCL_DB_DESC );
+		addNewProperty( HN2_PROT_DB, Properties.FILE_PATH, HN2_PROT_DB_DESC );
+	}
+
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
 		final List<List<String>> data = new ArrayList<>();
@@ -448,28 +458,6 @@ public class Humann2Classifier extends ClassifierModuleImpl implements ApiModule
 						+ System.lineSeparator() + "Species-level functional profiling of metagenomes and metatranscriptomes. Nat Methods 15: 962-968 (2018)."
 						+ System.lineSeparator() + "http://huttenhower.sph.harvard.edu/humann2"
 						+ System.lineSeparator() + "BioLockJ module developed by Mike Siota";
-	}
-
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_HUMANN2, Properties.EXE_PATH ); 
-		propTypeMap.put(EXE_HUMANN2_JOIN_PARAMS, Properties.LIST_TYPE);
-		propTypeMap.put(EXE_HUMANN2_PARAMS, Properties.LIST_TYPE);
-		propTypeMap.put(EXE_HUMANN2_RENORM_PARAMS, Properties.LIST_TYPE);
-		propTypeMap.put(HN2_NUCL_DB, Properties.FILE_PATH);
-		propTypeMap.put(HN2_PROT_DB, Properties.FILE_PATH);
-		}
-	
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put( EXE_HUMANN2, "" ); //description for exe's is generated in super method
-		propDescMap.put(EXE_HUMANN2_JOIN_PARAMS, EXE_HUMANN2_JOIN_PARAMS_DESC);
-		propDescMap.put(EXE_HUMANN2_PARAMS, EXE_HUMANN2_PARAMS_DESC);
-		propDescMap.put(EXE_HUMANN2_RENORM_PARAMS, EXE_HUMANN2_RENORM_PARAMS_DESC);
-		propDescMap.put(HN2_NUCL_DB, HN2_NUCL_DB_DESC);
-		propDescMap.put(HN2_PROT_DB, HN2_PROT_DB_DESC);
 	}
 	
 	@Override

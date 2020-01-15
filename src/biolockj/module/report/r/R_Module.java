@@ -17,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigPathException;
 import biolockj.exception.ConfigViolationException;
 import biolockj.exception.DockerVolCreationException;
@@ -30,6 +32,16 @@ import biolockj.util.*;
  * This BioModule is the superclass for R script generating modules.
  */
 public abstract class R_Module extends ScriptModuleImpl {
+	
+	public R_Module() {
+		super();
+		addGeneralProperty( Constants.EXE_RSCRIPT );
+		addGeneralProperty( R_TIMEOUT );
+		addGeneralProperty( R_DEBUG );
+		addGeneralProperty( R_SAVE_R_DATA );
+		addGeneralProperty( R_COLOR_FILE );
+	}
+	
 	/**
 	 * Run R script in docker.
 	 * 
@@ -54,7 +66,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
-		Config.getExe( this, EXE_RSCRIPT );
+		Config.getExe( this, Constants.EXE_RSCRIPT );
 		Config.getPositiveInteger( this, R_TIMEOUT );
 		Config.getBoolean( this, R_DEBUG );
 		Config.getBoolean( this, R_SAVE_R_DATA );
@@ -194,7 +206,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 	public List<String> getWorkerScriptFunctions() throws Exception {
 		final List<String> lines = super.getWorkerScriptFunctions();
 		lines.add( "function " + FUNCTION_RUN_R + "() {" );
-		lines.add( Config.getExe( this, EXE_RSCRIPT ) + " $1" );
+		lines.add( Config.getExe( this, Constants.EXE_RSCRIPT ) + " $1" );
 		lines.add( "}" + RETURN );
 		return lines;
 	}
@@ -264,9 +276,9 @@ public abstract class R_Module extends ScriptModuleImpl {
 
 	private String getRscriptCmd() {
 		try {
-			return Config.getExe( this, EXE_RSCRIPT );
+			return Config.getExe( this, Constants.EXE_RSCRIPT );
 		} catch( final SpecialPropertiesException ex ) {
-			Log.error( getClass(), EXE_RSCRIPT + " property misconfigured", ex );
+			Log.error( getClass(), Constants.EXE_RSCRIPT + " property misconfigured", ex );
 		}
 		return Constants.RSCRIPT;
 	}
@@ -355,11 +367,21 @@ public abstract class R_Module extends ScriptModuleImpl {
 
 		return rFile;
 	}
-
-	/**
-	 * {@link biolockj.Config} property {@value #EXE_RSCRIPT} defines the command line executable to call RScript
-	 */
-	public static final String EXE_RSCRIPT = "exe.Rscript";
+	
+	public static void registerProps() throws API_Exception {
+		Properties.registerProp( P_VAL_CUTOFF, Properties.NUMERTIC_TYPE, "p-value cutoff used to assign label _r.colorHighlight_" );
+		Properties.registerProp( R_COLOR_BASE, Properties.STRING_TYPE, "base color used for labels & headings in the PDF report; Must be a valid color in R." );
+		Properties.registerProp( R_COLOR_FILE, Properties.FILE_PATH, "path to a tab-delimited file giving the color to use for each value of each metadata field plotted." );
+		Properties.registerProp( R_COLOR_HIGHLIGHT, Properties.STRING_TYPE, "color is used to highlight significant OTUs in plot" );
+		Properties.registerProp( R_COLOR_PALETTE, Properties.STRING_TYPE, "palette argument passed to [get_palette {ggpubr}](https://www.rdocumentation.org/packages/ggpubr/versions/0.2/topics/get_palette) to select colors for some output visualiztions" );
+		Properties.registerProp( R_COLOR_POINT, Properties.STRING_TYPE, "default color of scatterplot and strip-chart plot points" );
+		Properties.registerProp( R_DEBUG, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, will generate R Script log files" );
+		Properties.registerProp( R_PCH, Properties.INTEGER_TYPE, "Sets R plot pch parameter for PDF report" );
+		Properties.registerProp( R_RARE_OTU_THRESHOLD, Properties.NUMERTIC_TYPE, "If >=1, R will filter OTUs found in fewer than this many samples. If <1, R will interperate the value as a percentage and discard OTUs not found in at least that percentage of samples" );
+		Properties.registerProp( R_SAVE_R_DATA, Properties.BOOLEAN_TYPE, "If Y, all R script generating BioModules will save R Session data to the module output directory to a file using the extension \".RData\"" );
+		Properties.registerProp( R_TIMEOUT, Properties.INTEGER_TYPE, "the # minutes before R Script will time out and fail; If undefined, no timeout is used." );
+		Properties.registerProp( R_USE_UINQUE_COLORS, Properties.BOOLEAN_TYPE, "force to use a unique color for every value in every field plotted; only recommended for low numbers of metadata columns/values." );
+	}
 
 	/**
 	 * {@link biolockj.Config} property {@value #P_VAL_CUTOFF} defines the p-value cutoff for significance
@@ -367,7 +389,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 	protected static final String P_VAL_CUTOFF = "r.pvalCutoff";
 
 	/**
-	 * {@link biolockj.Config} property {@value #R_COLOR_BASE} defines the base label color
+	 * {@link biolockj.Config} property {@value #R_COLOR_BASE} 
 	 */
 	protected static final String R_COLOR_BASE = "r.colorBase";
 
@@ -422,6 +444,8 @@ public abstract class R_Module extends ScriptModuleImpl {
 	 * {@link biolockj.Config} boolean property {@value #R_SAVE_R_DATA} enables the .RData file to save.
 	 */
 	protected static final String R_SAVE_R_DATA = "r.saveRData";
+	
+	protected static final String R_USE_UINQUE_COLORS = "r.useUniqueColors";
 
 	/**
 	 * {@link biolockj.Config} property {@value #R_TIMEOUT} defines the number of minutes before R script fails due to

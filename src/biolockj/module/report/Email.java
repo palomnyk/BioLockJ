@@ -32,6 +32,17 @@ import biolockj.util.*;
  * @blj.web_desc Email
  */
 public class Email extends BioModuleImpl implements ApiModule {
+	
+	public Email() {
+		super();
+		addNewProperty( EMAIL_ENCRYPTED_PASSWORD, biolockj.Properties.STRING_TYPE, EMAIL_ENCRYPTED_PASSWORD_DESC );
+		addNewProperty( EMAIL_FROM, biolockj.Properties.STRING_TYPE, EMAIL_FROM_DESC );
+		addNewProperty( EMAIL_HOST, biolockj.Properties.STRING_TYPE, EMAIL_HOST_DESC );
+		addNewProperty( EMAIL_PORT, biolockj.Properties.INTEGER_TYPE, "" );
+		addNewProperty( EMAIL_SMTP_AUTH, biolockj.Properties.STRING_TYPE, "" );
+		addNewProperty( EMAIL_START_TLS_ENABLE, biolockj.Properties.BOOLEAN_TYPE, "" );
+		addNewProperty( EMAIL_TO, biolockj.Properties.STRING_TYPE, "" );
+	}
 
 	/**
 	 * Verify required email {@link biolockj.Config} properties exist and are properly formatted.
@@ -249,31 +260,7 @@ public class Email extends BioModuleImpl implements ApiModule {
 	public String getCitationString() {
 		return "Module developed by Mike Sioda." + System.lineSeparator() + "BioLockJ " + BioLockJUtil.getVersion();
 	}
-	
-
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put(EMAIL_ENCRYPTED_PASSWORD, EMAIL_ENCRYPTED_PASSWORD_DESC);
-		propDescMap.put(EMAIL_FROM, EMAIL_FROM_DESC);
-		propDescMap.put(EMAIL_HOST, EMAIL_HOST_DESC);
-		propDescMap.put(EMAIL_PORT, "");
-		propDescMap.put(EMAIL_SMTP_AUTH,"");
-		propDescMap.put(EMAIL_START_TLS_ENABLE,"");
-		propDescMap.put(EMAIL_TO,"");
-	}
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropDescMap();
-		propTypeMap.put(EMAIL_ENCRYPTED_PASSWORD, biolockj.Properties.STRING_TYPE);
-		propTypeMap.put(EMAIL_FROM, biolockj.Properties.STRING_TYPE);
-		propTypeMap.put(EMAIL_HOST, biolockj.Properties.STRING_TYPE);
-		propTypeMap.put(EMAIL_PORT, biolockj.Properties.INTEGER_TYPE);
-		propTypeMap.put(EMAIL_SMTP_AUTH, biolockj.Properties.STRING_TYPE);
-		propTypeMap.put(EMAIL_START_TLS_ENABLE, biolockj.Properties.BOOLEAN_TYPE);
-		propTypeMap.put(EMAIL_TO, biolockj.Properties.STRING_TYPE);
-	}
-	
+		
 	/**
 	 * {@link biolockj.Config} String property: {@value #EMAIL_ENCRYPTED_PASSWORD}<br>
 	 * {@value #EMAIL_ENCRYPTED_PASSWORD_DESC}

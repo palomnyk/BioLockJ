@@ -14,6 +14,8 @@ package biolockj.util;
 import java.io.*;
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.ConfigPathException;
 import biolockj.exception.DockerVolCreationException;
@@ -562,54 +564,73 @@ public class MetaUtil {
 			Log.error( MetaUtil.class, "Failed to log MetaUtil reprot", ex );
 		}
 	}
+	
+	public static void registerProps() throws API_Exception {
+		Properties.registerProp( META_BARCODE_COLUMN, Properties.STRING_TYPE, META_BARCODE_COLUMN_DESC );
+		Properties.registerProp( META_COLUMN_DELIM, Properties.STRING_TYPE, META_COLUMN_DELIM_DESC );
+		Properties.registerProp( META_COMMENT_CHAR, Properties.STRING_TYPE, META_COMMENT_CHAR_DESC );
+		Properties.registerProp( META_FILE_PATH, Properties.STRING_TYPE, META_FILE_PATH_DESC );
+		Properties.registerProp( META_FILENAME_COLUMN, Properties.STRING_TYPE, META_FILENAME_COLUMN_DESC );
+		Properties.registerProp( META_NULL_VALUE, Properties.STRING_TYPE, META_NULL_VALUE_DESC );
+		Properties.registerProp( META_REQUIRED, Properties.BOOLEAN_TYPE, META_REQUIRED_DESC );
+		Properties.registerProp( USE_EVERY_ROW, Properties.BOOLEAN_TYPE, USE_EVERY_ROW_DESC );
+	}
 
 	/**
-	 * {@link biolockj.Config} property {@value #META_BARCODE_COLUMN} defines metadata column with identifying barcode
+	 * {@link biolockj.Config} property {@value #META_BARCODE_COLUMN}
+	 * {@value #META_BARCODE_COLUMN_DESC} 
 	 */
 	public static final String META_BARCODE_COLUMN = "metadata.barcodeColumn";
+	private static final String META_BARCODE_COLUMN_DESC = "metadata column with identifying barcodes";
 
 	/**
-	 * {@link biolockj.Config} property that defines how metadata columns are separated: {@value #META_COLUMN_DELIM}
-	 * Typically files are tab or comma separated.
+	 * {@link biolockj.Config} property: {@value #META_COLUMN_DELIM}<br>
+	 * {@value #META_COLUMN_DELIM_DESC}
 	 */
 	public static final String META_COLUMN_DELIM = "metadata.columnDelim";
+	private static final String META_COLUMN_DELIM_DESC = "defines how metadata columns are separated; Typically files are tab or comma separated.";
 
 	/**
-	 * {@link biolockj.Config} property to set metadata file comment indicator: {@value #META_COMMENT_CHAR}<br>
-	 * Empty string is a valid option indicating no comments in metadata file
+	 * {@link biolockj.Config} property: {@value #META_COMMENT_CHAR}<br>
+	 * {@value #META_COMMENT_CHAR_DESC}
 	 */
 	public static final String META_COMMENT_CHAR = "metadata.commentChar";
+	private static final String META_COMMENT_CHAR_DESC = "metadata file comment indicator; Empty string is a valid option indicating no comments in metadata file.";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #META_FILE_PATH}<br>
-	 * If absolute file path, use file as metadata.<br>
-	 * If directory path, must find exactly 1 file within, to use as metadata.
+	 * {@value #META_FILE_PATH_DESC}
 	 */
 	public static final String META_FILE_PATH = "metadata.filePath";
+	private static final String META_FILE_PATH_DESC = "If absolute file path, use file as metadata.<br>If directory path, must find exactly 1 file within, to use as metadata.";
 
 	/**
-	 * {@link biolockj.Config} property {@value #META_FILENAME_COLUMN} defines metadata column with input file names
+	 * {@link biolockj.Config} property {@value #META_FILENAME_COLUMN}<br>
+	 * {@value #META_FILENAME_COLUMN_DESC}
 	 */
 	public static final String META_FILENAME_COLUMN = "metadata.fileNameColumn";
+	private static final String META_FILENAME_COLUMN_DESC = "name of the metadata column with input file names";
 
 	/**
-	 * {@link biolockj.Config} property to set metadata file empty cell: {@value #META_NULL_VALUE}
+	 * {@link biolockj.Config} property: {@value #META_NULL_VALUE}<br>
+	 * {@value #META_NULL_VALUE_DESC}
 	 */
 	public static final String META_NULL_VALUE = "metadata.nullValue";
+	private static final String META_NULL_VALUE_DESC = "metadata cells with this value will be treated as empty";
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #META_REQUIRED}<br>
-	 * If Y, require metadata row for each sample with sequence data in {@value biolockj.Constants#INPUT_DIRS}.<br>
-	 * If N, samples without metadata are ignored.
+	 * {@value #META_REQUIRED_DESC}
 	 */
 	public static final String META_REQUIRED = "metadata.required";
+	private static final String META_REQUIRED_DESC = "If Y, require metadata row for each sample with sequence data in input dirs; If N, samples without metadata are ignored.";
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #USE_EVERY_ROW}<br>
-	 * If Y, require a sequence file for every SampleID (every row) in {@value #META_FILE_PATH}.<br>
-	 * If N, metadata can include extraneous SampleIDs.
+	 * {@value #USE_EVERY_ROW_DESC}
 	 */
 	public static final String USE_EVERY_ROW = "metadata.useEveryRow";
+	private static final String USE_EVERY_ROW_DESC = "If Y, require a sequence file for every SampleID (every row) in metadata file; If N, metadata can include extraneous SampleIDs.";
 
 	/**
 	 * Default column delimiter = tab character

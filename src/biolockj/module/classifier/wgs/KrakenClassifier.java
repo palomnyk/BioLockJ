@@ -30,6 +30,13 @@ import biolockj.util.*;
  */
 public class KrakenClassifier extends ClassifierModuleImpl implements ApiModule {
 
+	public KrakenClassifier() {
+		super();
+		addNewProperty( EXE_KRAKEN, Properties.EXE_PATH, "" );
+		addNewProperty( KRAKEN_DATABASE, Properties.FILE_PATH, "file path to Kraken kmer database directory" );
+		addNewProperty( KRAKEN_PARAMS, Properties.LIST_TYPE, "additional parameters to use with kraken" );
+	}
+
 	/**
 	 * Build bash script lines to classify unpaired WGS reads with Kraken. The inner list contains 2 bash script lines
 	 * used to classify 1 sample.
@@ -220,22 +227,6 @@ public class KrakenClassifier extends ClassifierModuleImpl implements ApiModule 
 	@Override
 	public String getCitationString() {
 		return "Wood DE, Salzberg SL: Kraken: ultrafast metagenomic sequence classification using exact alignments. Genome Biology 2014, 15:R46.";
-	}
-	
-	@Override
-	public void fillPropDescMap(){
-		super.fillPropDescMap();
-		propDescMap.put( EXE_KRAKEN, "" );
-		propDescMap.put( KRAKEN_DATABASE, "file path to Kraken kmer database directory");
-		propDescMap.put( KRAKEN_PARAMS, "additional parameters to use with kraken");
-	}
-	
-	@Override
-	public void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_KRAKEN, Properties.EXE_PATH );
-		propTypeMap.put( KRAKEN_DATABASE, Properties.FILE_PATH );
-		propTypeMap.put( KRAKEN_PARAMS, Properties.LIST_TYPE );
 	}
 
 	/**

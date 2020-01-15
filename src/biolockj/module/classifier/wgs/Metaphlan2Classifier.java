@@ -28,6 +28,14 @@ import biolockj.util.*;
  * @blj.web_desc MetaPhlAn2 Classifier
  */
 public class Metaphlan2Classifier extends ClassifierModuleImpl implements ApiModule {
+	public Metaphlan2Classifier() {
+		super();
+		addNewProperty( EXE_METAPHLAN, Properties.EXE_PATH, "" );
+		addNewProperty( EXE_METAPHLAN_PARAMS, Properties.LIST_TYPE, "additional parameters to use with metaphlan2" );
+		addNewProperty( METAPHLAN2_DB, Properties.FILE_PATH, "Directory containing alternate database. Must always be paired with " + METAPHLAN2_MPA_PKL );
+		addNewProperty( METAPHLAN2_MPA_PKL, Properties.FILE_PATH, "path to the mpa_pkl file used to reference an alternate DB. Must always be paired with " + METAPHLAN2_DB );
+	}
+
 	/**
 	 * Build bash script lines to classify unpaired WGS reads with Metaphlan. The inner list contains 1 bash script line
 	 * per sample.
@@ -217,25 +225,6 @@ public class Metaphlan2Classifier extends ClassifierModuleImpl implements ApiMod
 	@Override
 	public String getCitationString() {
 		return "MetaPhlAn2 for enhanced metagenomic taxonomic profiling. Duy Tin Truong, Eric A Franzosa, Timothy L Tickle, Matthias Scholz, George Weingart, Edoardo Pasolli, Adrian Tett, Curtis Huttenhower & Nicola Segata. Nature Methods 12, 902-903 (2015)";
-	}
-
-	@Override
-	public void fillPropDescMap(){
-		super.fillPropDescMap();
-		propDescMap.put( EXE_METAPHLAN, "" );
-		propDescMap.put( EXE_METAPHLAN_PARAMS, "additional parameters to use with metaphlan2");
-		propDescMap.put( METAPHLAN2_DB, "Directory containing alternate database. Must always be paired with " + METAPHLAN2_MPA_PKL );
-		propDescMap.put( METAPHLAN2_MPA_PKL, "path to the mpa_pkl file used to reference an alternate DB. Must always be paired with " + METAPHLAN2_DB);
-		
-	}
-	
-	@Override
-	public void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put( EXE_METAPHLAN, Properties.EXE_PATH );
-		propTypeMap.put( EXE_METAPHLAN_PARAMS, Properties.LIST_TYPE );
-		propTypeMap.put( METAPHLAN2_DB, Properties.FILE_PATH );
-		propTypeMap.put( METAPHLAN2_MPA_PKL, Properties.FILE_PATH );
 	}
 	
 	/**

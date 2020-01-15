@@ -16,6 +16,8 @@ import java.util.*;
 import java.util.stream.LongStream;
 import org.apache.commons.lang.math.NumberUtils;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.SequnceFormatException;
 import biolockj.module.JavaModuleImpl;
@@ -29,7 +31,13 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Rarefy Seqs
  */
-public class RarefySeqs extends JavaModuleImpl implements SeqModule {
+public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
+
+	public RarefySeqs() {
+		super();
+		addNewProperty( INPUT_RAREFYING_MAX, Properties.NUMERTIC_TYPE, "Randomly select maximum number of sequences per sample" );
+		addNewProperty( INPUT_RAREFYING_MIN, Properties.NUMERTIC_TYPE, "Discard samples without minimum number of sequences" );
+	}
 
 	/**
 	 * Validate module dependencies
@@ -250,5 +258,15 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule {
 	 * {@link biolockj.Config} property {@value #INPUT_RAREFYING_MIN} defines the minimum number of reads per file
 	 */
 	protected static final String INPUT_RAREFYING_MIN = "rarefySeqs.min";
+
+	@Override
+	public String getDescription() {
+		return "Randomly select samples to reduce all samples to the configured maximum.<br> Samples with less than the minimum number of reads are discarded. ";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 
 }

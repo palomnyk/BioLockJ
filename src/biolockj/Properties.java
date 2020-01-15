@@ -17,10 +17,14 @@ import biolockj.api.API_Exception;
 import biolockj.exception.BioLockJException;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.BioModule;
+import biolockj.module.report.r.R_Module;
 import biolockj.util.BashScriptBuilder;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.DockerUtil;
+import biolockj.util.MetaUtil;
 import biolockj.util.NextflowUtil;
+import biolockj.util.RMetaUtil;
+import biolockj.util.ValidationUtil;
 
 /**
  * Load properties defined in the BioLockJ configuration file, including inherited properties from project.defaultProps
@@ -253,9 +257,13 @@ public class Properties extends java.util.Properties {
 		addToPropMaps( "aws.saveCloud", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
 		addToPropMaps( "aws.stack", STRING_TYPE, "An existing aws cloud stack ID" );//TODO: bash property descriptions
 		addToPropMaps( "aws.walltime", "", "" ); // I don't see this used anywhere. //TODO: bash property descriptions
+		MetaUtil.registerProps();
 		NextflowUtil.registerProps();
 		BashScriptBuilder.registerProps();
 		DockerUtil.registerProps();
+		RMetaUtil.registerProps();
+		R_Module.registerProps();
+		ValidationUtil.registerProps();
 	}
 	
 	private static void addToPropMaps(final String prop, final String type, final String desc) {
@@ -362,5 +370,6 @@ public class Properties extends java.util.Properties {
 	public static final String LIST_TYPE = "list";
 	public static final String FILE_PATH_LIST = "list of file paths";
 	public static final String INTEGER_TYPE = "integer";
-	public static final String[] KNOWN_TYPES = {STRING_TYPE, BOOLEAN_TYPE, FILE_PATH, EXE_PATH, LIST_TYPE, FILE_PATH_LIST, INTEGER_TYPE};
+	public static final String NUMERTIC_TYPE = "numeric";
+	public static final String[] KNOWN_TYPES = {STRING_TYPE, BOOLEAN_TYPE, FILE_PATH, EXE_PATH, LIST_TYPE, FILE_PATH_LIST, INTEGER_TYPE, NUMERTIC_TYPE};
 }

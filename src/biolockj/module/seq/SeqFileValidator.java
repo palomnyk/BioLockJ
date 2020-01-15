@@ -15,6 +15,8 @@ import java.io.*;
 import java.util.*;
 import biolockj.Config;
 import biolockj.Log;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigViolationException;
 import biolockj.exception.SequnceFormatException;
 import biolockj.module.JavaModuleImpl;
@@ -27,7 +29,14 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Sequence File Validator
  */
-public class SeqFileValidator extends JavaModuleImpl implements SeqModule {
+public class SeqFileValidator extends JavaModuleImpl implements SeqModule, ApiModule {
+	
+	public SeqFileValidator() {
+		super();
+		addNewProperty( INPUT_SEQ_MAX, Properties.INTEGER_TYPE, "maximum number of bases per read" );
+		addNewProperty( INPUT_SEQ_MIN, Properties.INTEGER_TYPE, "minimum number of bases per read" );
+		addNewProperty( REQUIRE_EUQL_NUM_PAIRS, Properties.BOOLEAN_TYPE, "Options: Y/N; require number of forward and reverse reads" );
+	}
 
 	/**
 	 * Set {@value #NUM_VALID_READS} as the number of reads field.
@@ -443,6 +452,16 @@ public class SeqFileValidator extends JavaModuleImpl implements SeqModule {
 	private Set<String> sampleIds = new HashSet<>();
 	private Map<String, Long[]> sampleStats = new HashMap<>();
 
+	@Override
+	public String getDescription() {
+		return "This BioModule validates fasta/fastq file formats are valid and enforces min/max read lengths.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
+	
 	/**
 	 * Column name that holds number of valid reads per sample: {@value #NUM_VALID_READS}
 	 */

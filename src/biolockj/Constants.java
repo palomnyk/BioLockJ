@@ -49,11 +49,30 @@ public class Constants {
 		Properties.registerProp( INPUT_REVERSE_READ_SUFFIX, "regex", "file suffix used to identify reverse reads in" + INPUT_DIRS );
 		Properties.registerProp( INPUT_TRIM_PREFIX, Properties.STRING_TYPE, INPUT_TRIM_PREFIX_DESC );
 		Properties.registerProp( INPUT_TRIM_SUFFIX, Properties.STRING_TYPE, INPUT_TRIM_SUFFIX_DESC );
+		Properties.registerProp( QIIME_ALPHA_DIVERSITY_METRICS, Properties.LIST_TYPE, "alpha diversity metrics to calculate through qiime; For complete list of skbio.diversity.alpha options, see <a href= \"http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html\" target=\"_top\">http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html</a>" );
+		Properties.registerProp( RM_TEMP_FILES, Properties.BOOLEAN_TYPE, RM_TEMP_FILES_DESC );
 		Properties.registerProp( SCRIPT_DEFAULT_HEADER, Properties.STRING_TYPE, SCRIPT_DEFAULT_HEADER_DESC);
 		Properties.registerProp( SCRIPT_NUM_WORKERS, Properties.INTEGER_TYPE, SCRIPT_NUM_WORKERS_DESC);
 		Properties.registerProp( SCRIPT_NUM_THREADS, Properties.INTEGER_TYPE, SCRIPT_NUM_THREADS_DESC);
 		Properties.registerProp( SCRIPT_PERMISSIONS, Properties.STRING_TYPE, SCRIPT_PERMISSIONS_DESC);
 		Properties.registerProp( SCRIPT_TIMEOUT, Properties.INTEGER_TYPE, SCRIPT_TIMEOUT_DESC);
+		Properties.registerProp( PIPELINE_COPY_FILES, Properties.BOOLEAN_TYPE, PIPELINE_COPY_FILES_DESC );
+		Properties.registerProp( PIPELINE_DEFAULT_PROPS, Properties.FILE_PATH_LIST, PIPELINE_DEFAULT_PROPS_DESC );
+		Properties.registerProp( PIPELINE_ENV, Properties.STRING_TYPE, "Environment in which a pipeline is run. Options: " + PIPELINE_ENV_CLUSTER + ", " + PIPELINE_ENV_AWS + ", " + PIPELINE_ENV_LOCAL );
+		Properties.registerProp( PIPELINE_PRIVS, Properties.STRING_TYPE, PIPELINE_PRIVS_DESC );
+		Properties.registerProp( DOWNLOAD_DIR, Properties.FILE_PATH, DOWNLOAD_DIR_DESC );
+		Properties.registerProp( LIMIT_DEBUG_CLASSES, Properties.LIST_TYPE, LIMIT_DEBUG_CLASSES_DESC );
+		Properties.registerProp( LOG_LEVEL_PROPERTY, Properties.STRING_TYPE, "Options: DEBUG, INFO, WARN, ERROR" );
+		Properties.registerProp( REPORT_LOG_BASE, Properties.STRING_TYPE, "Options: 10,e,null. If e, use natural log (base e); if 10, use log base 10; if not set, counts will not be converted to a log scale." );
+		Properties.registerProp( REPORT_MIN_COUNT, Properties.INTEGER_TYPE, "minimum table count allowed, if a count less that this value is found, it is set to 0." );
+		Properties.registerProp( REPORT_NUM_HITS, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, and add Num_Hits to metadata" );
+		Properties.registerProp( REPORT_NUM_READS, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, and add Num_Reads to metadata" );
+		Properties.registerProp( REPORT_SAMPLE_CUTOFF, Properties.NUMERTIC_TYPE, "Minimum percentage of data columns that must be non-zero to keep the sample." );
+		Properties.registerProp( REPORT_SCARCE_CUTOFF, Properties.NUMERTIC_TYPE, "Minimum percentage of samples that must contain a count value for it to be kept." );
+		Properties.registerProp( REPORT_TAXONOMY_LEVELS, Properties.LIST_TYPE, "Options: " + DOMAIN +","+ PHYLUM+","+ CLASS +","+ ORDER +","+ FAMILY +","+ GENUS +","+ SPECIES + ". Generate reports for listed taxonomy levels" );
+		Properties.registerProp( REPORT_UNCLASSIFIED_TAXA, Properties.BOOLEAN_TYPE, "report unclassified taxa" );
+		Properties.registerProp( SET_SEED, Properties.INTEGER_TYPE, SET_SEED_DESC );
+		Properties.registerProp( USER_PROFILE, Properties.FILE_PATH, USER_PROFILE_DESC );
 	}
 
 	/**
@@ -196,6 +215,13 @@ public class Constants {
 	 * {@link biolockj.Config} option for {@value #REPORT_TAXONOMY_LEVELS}: {@value #DOMAIN}
 	 */
 	public static final String DOMAIN = "domain";
+	
+	/**
+	 * {@link biolockj.Config} String property: {@value #DOWNLOAD_DIR}<br>
+	 * {@value #DOWNLOAD_DIR_DESC}
+	 */
+	public static final String DOWNLOAD_DIR = "pipeline.downloadDir";
+	private static final String DOWNLOAD_DIR_DESC = "local directory used as the destination in the download command";
 
 	/**
 	 * Prefix used in several {@link biolockj.Config} String properties. {@value #EXE_PREFIX}<br>
@@ -368,12 +394,6 @@ public class Constants {
 	private static final String INPUT_TRIM_PREFIX_DESC = "prefix to trim from sequence file names or headers to obtain Sample ID";
 
 	/**
-	 * {@link biolockj.Config} property {@value #INPUT_TRIM_SEQ_FILE} defines the file path to the file that defines the
-	 * primers as regular expressions.
-	 */
-	public static final String INPUT_TRIM_SEQ_FILE = "trimPrimers.filePath";
-
-	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_TRIM_SUFFIX}<br>
 	 * {@value #INPUT_TRIM_SUFFIX_DESC}
 	 */
@@ -450,8 +470,10 @@ public class Constants {
 	/**
 	 * {@link biolockj.Config} property used to limit classes that log debug statements when
 	 * {@value #LOG_LEVEL_PROPERTY}={@value biolockj.Constants#TRUE}
+	 * TODO: make this clearer.  Are these the classes that will log debug, or the classes that will be 'limited' ?
 	 */
 	public static final String LIMIT_DEBUG_CLASSES = "pipeline.limitDebugClasses";
+	private static final String LIMIT_DEBUG_CLASSES_DESC = "limit classes that log debug statements";
 
 	/**
 	 * BioLockJ log file extension: {@value #LOG_EXT}
@@ -523,17 +545,18 @@ public class Constants {
 	public static final String PHYLUM = "phylum";
 
 	/**
-	 * {@link biolockj.Config} property set to copy input files into pipeline root directory:
-	 * {@value #PIPELINE_COPY_FILES}
+	 * {@link biolockj.Config} property: {@value #PIPELINE_COPY_FILES}<br>
+	 * {@value #PIPELINE_COPY_FILES_DESC}
 	 */
 	public static final String PIPELINE_COPY_FILES = "pipeline.copyInput";
+	private static final String PIPELINE_COPY_FILES_DESC = "copy input files into pipeline root directory";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #PIPELINE_DEFAULT_PROPS}<br>
-	 * Set file path of default property file. Nested default properties are supported (so the default property file can
-	 * also have a default, and so on).
+	 * {@value #PIPELINE_DEFAULT_PROPS_DESC}
 	 */
 	public static final String PIPELINE_DEFAULT_PROPS = "pipeline.defaultProps";
+	private static final String PIPELINE_DEFAULT_PROPS_DESC = "file path of default property file(s); Nested default properties are supported (so the default property file can also have a default, and so on).";
 
 	/**
 	 * {@link biolockj.Config} property to allow a free-hand description to a pipeline: {@value #PIPELINE_DESC} TODO:
@@ -542,8 +565,7 @@ public class Constants {
 	public static final String PIPELINE_DESC = "pipeline.desc";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #PIPELINE_ENV}<br>
-	 * Options: {@value #PIPELINE_ENV_CLUSTER}, {@value #PIPELINE_ENV_AWS}, {@value #PIPELINE_ENV_LOCAL}
+	 * {@link biolockj.Config} String property: {@value #PIPELINE_ENV}
 	 */
 	public static final String PIPELINE_ENV = "pipeline.env";
 
@@ -576,6 +598,13 @@ public class Constants {
 	 * implemented.
 	 */
 	public static final String PIPELINE_NAME = "pipeline.name";
+	
+	/**
+	 * {@link biolockj.Config} property: {@value #PIPELINE_PRIVS}
+	 * {@value #PIPELINE_PRIVS_DESC}
+	 */
+	protected static final String PIPELINE_PRIVS = "pipeline.permissions";
+	private static final String PIPELINE_PRIVS_DESC = "Set chmod -R command security bits on pipeline root directory (Ex. 770)";
 
 	/**
 	 * Name of the file created in the BioModule root directory to indicate the precheck 
@@ -611,7 +640,7 @@ public class Constants {
 	 * {@link biolockj.Config} property to assign a free-hand to a project: {@value #PROJECT_DESC} TODO: needs to be
 	 * implemented.
 	 */
-	public static final String PROJECT_DESC = "project.desc";
+	public static final String PROJECT_DESC = "project.description";
 
 	/**
 	 * {@link biolockj.Config} property to assign a name to a project: {@value #PROJECT_NAME} TODO: needs to be
@@ -676,11 +705,6 @@ public class Constants {
 	public static final String R_INTERNAL_RUN_HN2 = "R_internal.runHumann2";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable fold change plots: {@value #R_PLOT_EFFECT_SIZE_DISABLE_FC}
-	 */
-	public static final String R_PLOT_EFFECT_SIZE_DISABLE_FC = "r_PlotEffectSize.disableFoldChange";
-
-	/**
 	 * {@link biolockj.Config} String property: {@value #RDP_THRESHOLD_SCORE}<br>
 	 * RdpParser will ignore OTU assignments below the threshold score (0-100)
 	 */
@@ -734,7 +758,6 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #REPORT_UNCLASSIFIED_TAXA}<br>
-	 * Set the max number of minutes to allow for S3 transfers to complete.
 	 */
 	public static final String REPORT_UNCLASSIFIED_TAXA = "report.unclassifiedTaxa";
 
@@ -744,10 +767,11 @@ public class Constants {
 	public static final String RETURN = "\n";
 
 	/**
-	 * {@link biolockj.Config} property set to delete {@link biolockj.module.BioModule#getTempDir()} files:
-	 * {@value #RM_TEMP_FILES}
+	 * {@link biolockj.Config} property: {@value #RM_TEMP_FILES}<br>
+	 * {@value #RM_TEMP_FILES_DESC}
 	 */
 	public static final String RM_TEMP_FILES = "pipeline.deleteTempFiles";
+	private static final String RM_TEMP_FILES_DESC = "delete files in temp directories";
 
 	/**
 	 * Rscript exe commmand.
@@ -810,9 +834,11 @@ public class Constants {
 	public static final String SCRIPT_TIMEOUT_DESC = "Sets # of minutes before worker scripts times out.";
 
 	/**
-	 * {@link biolockj.Config} property {@value #SET_SEED} set the seed for a random process. Must be positive integer.
+	 * {@link biolockj.Config} property {@value #SET_SEED}<br>
+	 * {@value #SET_SEED_DESC}
 	 */
 	public static final String SET_SEED = "pipeline.setSeed";
+	private static final String SET_SEED_DESC = "set the seed for a random process. Must be positive integer.";
 
 	/**
 	 * BioLockJ shell script file extension: {@value #SH_EXT}
@@ -856,9 +882,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} File property: {@value #USER_PROFILE}<br>
-	 * Bash profile - may be ~/.bash_profile or ~/.bashrc or others
+	 * {@value #USER_PROFILE_DESC}
 	 */
 	public static final String USER_PROFILE = "pipeline.userProfile";
+	private static final String USER_PROFILE_DESC = "Bash profile - may be ~/.bash_profile or ~/.bashrc or others";
 
 	/**
 	 * BioLockJ main() runtime arg used to print version info: {@value #VERSION}
@@ -870,9 +897,4 @@ public class Constants {
 	 */
 	public static final String VALIDATION_ENABLED = "This pipeline has validation enabled.";
 
-	/**
-	 * {@link biolockj.Config} property to define permission settings when running chmod on pipeline root dir:
-	 * {@value #PIPELINE_PRIVS}
-	 */
-	protected static final String PIPELINE_PRIVS = "pipeline.permissions";
 }

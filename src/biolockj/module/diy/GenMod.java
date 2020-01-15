@@ -32,6 +32,13 @@ import biolockj.util.BioLockJUtil;
  */
 public class GenMod extends ScriptModuleImpl implements ApiModule {
 
+	public GenMod() {
+		super();
+		addNewProperty( LAUNCHER, Properties.STRING_TYPE, LAUNCHER_DESC );
+		addNewProperty( PARAM, Properties.STRING_TYPE, PARAM_DESC );
+		addNewProperty( SCRIPT, Properties.FILE_PATH, SCRIPT_DESC );
+	}
+
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
 		final List<List<String>> data = new ArrayList<>();
@@ -90,21 +97,6 @@ public class GenMod extends ScriptModuleImpl implements ApiModule {
 	@Override
 	public String getCitationString() {
 		return "BioLockJ " + BioLockJUtil.getVersion( );
-	}
-	
-	@Override
-	protected void fillPropTypeMap() {
-		super.fillPropTypeMap();
-		propTypeMap.put(LAUNCHER, Properties.STRING_TYPE);
-		propTypeMap.put(PARAM, Properties.STRING_TYPE);
-		propTypeMap.put(SCRIPT, Properties.FILE_PATH);
-	}	
-	
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put(LAUNCHER, LAUNCHER_DESC);
-		propDescMap.put(PARAM, PARAM_DESC);
-		propDescMap.put(SCRIPT, SCRIPT_DESC);
 	}
 
 	/**

@@ -31,6 +31,11 @@ import biolockj.util.*;
  */
 public class QiimeClosedRefClassifier extends QiimeClassifier implements ApiModule {
 
+	public QiimeClosedRefClassifier() {
+		super();
+		addGeneralProperty( Constants.EXE_AWK );
+	}
+
 	/**
 	 * Create bash script lines to split up the QIIME mapping and fasta files into batches of size
 	 * {@link biolockj.Config}.{@value biolockj.Constants#SCRIPT_NUM_WORKERS}
@@ -218,9 +223,4 @@ public class QiimeClosedRefClassifier extends QiimeClassifier implements ApiModu
 		return CITE_QIIME + System.lineSeparator() + "(needs further citation)" + System.lineSeparator() + "http://www.wernerlab.org/software/macqiime/citations";
 	}
 	
-	@Override
-	protected void fillPropDescMap() {
-		super.fillPropDescMap();
-		propDescMap.put(Constants.EXE_AWK, "");
-	}
 }

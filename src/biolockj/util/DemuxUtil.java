@@ -13,6 +13,8 @@ package biolockj.util;
 
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigNotFoundException;
 
 /**
@@ -221,9 +223,16 @@ public class DemuxUtil {
 
 		return idMap;
 	}
+	
+	public static void registerProps() throws API_Exception {
+		Properties.registerProp( BARCODE_CUTOFF, Properties.NUMERTIC_TYPE, "Options: (0.0 - 1.0); if defined, pipeline will fail if the percentage of reads with a barcode is less than this cutoff." );
+		Properties.registerProp( BARCODE_USE_REV_COMP, Properties.BOOLEAN_TYPE, "Options: Y/N. Use reverse compliment of metadata.barcodeColumn if demultimplexer.strategy = barcode_in_header or barcode_in_seq." );
+		Properties.registerProp( DEMUX_STRATEGY, Properties.STRING_TYPE, "Options: barcode_in_header, barcode_in_seq, id_in_header, do_not_demux." + 
+			"If using barcodes, they must be provided in the metadata file within column defined by _metadata.barcodeColumn_." );
+	}
 
 	/**
-	 * {@link biolockj.Config} boolean property {@value #BARCODE_CUTOFF} will look for barcodes in
+	 * {@link biolockj.Config} property {@value #BARCODE_CUTOFF} will look for barcodes in
 	 * {@value biolockj.util.MetaUtil#META_BARCODE_COLUMN} to exist in this percentage of multiplex file.
 	 */
 	public static final String BARCODE_CUTOFF = "demultiplexer.barcodeCutoff";

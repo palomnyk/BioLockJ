@@ -15,6 +15,8 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.JavaModuleImpl;
 import biolockj.module.SeqModule;
@@ -27,23 +29,29 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Trim Primers
  */
-public class TrimPrimers extends JavaModuleImpl implements SeqModule {
+public class TrimPrimers extends JavaModuleImpl implements SeqModule, ApiModule {
+	
+	public TrimPrimers() {
+		super();
+		addNewProperty( INPUT_TRIM_SEQ_FILE, Properties.FILE_PATH, "file path to file containing one primer sequence per line." );
+		addNewProperty( INPUT_REQUIRE_PRIMER, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, TrimPrimers will discard reads that do not include a primer sequence." );
+	}
 
 	/**
 	 * Validates the file that defines the REGEX primers. If primers are located at start of read, add REGEX line anchor
-	 * "^" to the start of the primer sequence in {@value biolockj.Constants#INPUT_TRIM_SEQ_FILE}.
+	 * "^" to the start of the primer sequence in {@value INPUT_TRIM_SEQ_FILE}.
 	 * <ul>
 	 * <li>If seqs are multiplexed, {@link biolockj.module.implicit.Demultiplexer} must run as a prerequisite module
 	 * <li>If seqs are paired-end reads, and {@link biolockj.module.seq.PearMergeReads} is configured before this
-	 * module, {@value biolockj.Constants#INPUT_TRIM_SEQ_FILE} must contain the reverse compliment of the reverse primer
+	 * module, {@value #INPUT_TRIM_SEQ_FILE} must contain the reverse compliment of the reverse primer
 	 * with a REGEX line anchor "$" at the end.
 	 * </ul>
 	 */
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
-		if( DockerUtil.inDockerEnv() ) Config.requireString( null, Constants.INPUT_TRIM_SEQ_FILE );
-		else Config.requireExistingFile( null, Constants.INPUT_TRIM_SEQ_FILE );
+		if( DockerUtil.inDockerEnv() ) Config.requireString( null, INPUT_TRIM_SEQ_FILE );
+		else Config.requireExistingFile( null, INPUT_TRIM_SEQ_FILE );
 	}
 
 	/**
@@ -67,7 +75,7 @@ public class TrimPrimers extends JavaModuleImpl implements SeqModule {
 	public String getSummary() throws Exception {
 		final StringBuffer sb = new StringBuffer();
 		try {
-			sb.append( "Primer file: " + Config.requireString( this, Constants.INPUT_TRIM_SEQ_FILE ) + RETURN );
+			sb.append( "Primer file: " + Config.requireString( this, INPUT_TRIM_SEQ_FILE ) + RETURN );
 			for( final String msg: summaryMsgs )
 				sb.append( msg + RETURN );
 			return sb.toString() + super.getSummary();
@@ -545,7 +553,7 @@ public class TrimPrimers extends JavaModuleImpl implements SeqModule {
 	 * @throws DockerVolCreationException 
 	 */
 	public static File getSeqPrimerFile() throws ConfigNotFoundException, ConfigPathException, DockerVolCreationException {
-		return Config.requireExistingFile( null, Constants.INPUT_TRIM_SEQ_FILE );
+		return Config.requireExistingFile( null, INPUT_TRIM_SEQ_FILE );
 	}
 
 	private final DecimalFormat df = new DecimalFormat( "##.##" );
@@ -567,11 +575,28 @@ public class TrimPrimers extends JavaModuleImpl implements SeqModule {
 	public static final String NUM_TRIMMED_READS = "Num_Trimmed_Reads";
 
 	/**
+	 * {@link biolockj.Config} property {@value #INPUT_TRIM_SEQ_FILE} defines the file path to the file that defines the
+	 * primers as regular expressions.
+	 */
+	public static final String INPUT_TRIM_SEQ_FILE = "trimPrimers.filePath";
+
+	/**
 	 * {@link biolockj.Config} property {@value #INPUT_REQUIRE_PRIMER} is a boolean used to determine if sequences
 	 * without a primer should be kept or discarded
 	 */
 	protected static final String INPUT_REQUIRE_PRIMER = "trimPrimers.requirePrimer";
-
+	
 	private static Set<String> substitutions = new HashSet<>();
 	private static final List<String> summaryMsgs = new ArrayList<>();
+	
+	@Override
+	public String getDescription() {
+		return "Remove primers from reads, option to discard reads unless primers are attached to both forward and reverse reads.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
+
 }
