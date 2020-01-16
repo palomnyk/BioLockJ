@@ -113,6 +113,9 @@ p{
   margin: 10px 30px 20px 30px;
   display: none; /*hidden until "new" is clicked */
 }
+div.menu textarea{
+  height: auto;
+}
 /* Style the tab */
 div.tab {
   overflow: hidden;
