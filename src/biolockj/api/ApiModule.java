@@ -31,6 +31,13 @@ public interface ApiModule extends BioModule {
 	 * @return
 	 */
 	public String getTitle();
+	
+	/**
+	 * Get a list of Strings describing the menu structure that should be used in the GUI.
+	 * By default (BioModuleImpl) this is the just the package structure of the module class.
+	 * The option to override the this method is a way to de-couple developers organization from the presentation to the user.
+	 */
+	public List<String> getMenuPlacement();
 
 	/**
 	 * Briefly describe what this module does.

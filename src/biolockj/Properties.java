@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import biolockj.api.API_Exception;
 import biolockj.exception.BioLockJException;
+import biolockj.exception.ConfigException;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.BioModule;
 import biolockj.module.report.r.R_Module;
@@ -357,10 +358,74 @@ public class Properties extends java.util.Properties {
 		}
 		return answer;
 	}
+	
+	/**
+	 * Check if a property has a value in a valid format.
+	 * @param property
+	 * @return null if the property is no recognized, true if the property has a valid value, false otherwise.
+	 * @throws API_Exception
+	 */
+	public static Boolean isValidProp(String property) throws API_Exception {
+		String type = getPropertyType( property );
+		if (type == null) return null;
+		
+		boolean isgood = true;
+		
+		try {
+			if ( type.startsWith( REQUIRED ) ) {
+				type = type.replaceAll( REQUIRED, "" );
+				if (Config.getString( null, property ) == null) return false;
+			}
+			
+			switch (type) {
+				case STRING_TYPE:
+					Config.getString( null, property );
+					break;
+				case BOOLEAN_TYPE:
+					Config.getBoolean( null, property );
+					break;
+				case FILE_PATH:
+					Config.getExistingFileObject( Config.getString( null, property ) ) ;
+					break;
+				case FILE_PATH_LIST:
+					List<String> paths = Config.getList( null, property );
+					for (String path : paths) {
+						Config.getExistingFileObject(path);
+					}
+					break;
+				case LIST_TYPE:
+					Config.getList( null, property );
+					break;
+				case EXE_PATH:
+					Config.getExe( null, property );
+					break;
+				case INTEGER_TYPE:
+					Config.getIntegerProp( null, property );
+					break;
+				case POS_INTEGER_TYPE:
+					Config.getPositiveInteger( null, property );
+					break;
+				case NUMERTIC_TYPE:
+					Config.getDoubleVal( null, property );
+					break;
+			}
+		}catch(ConfigException ce) {
+			isgood = false;
+			System.err.print( ce.getMessage() );
+		}catch(Exception ex) {
+			isgood = false;
+		}
+		return isgood;
+	}
 
 	private static List<File> configRegister = new ArrayList<>();
 	private static int loadOrder = -1;
 	private static final long serialVersionUID = 2980376615128441545L;
+	
+	/**
+	 *  Prefix for property types whose values cannot be null.
+	 */
+	public static final String REQUIRED = "required ";
 	
 	//Property Types
 	public static final String STRING_TYPE = "string";
@@ -370,6 +435,7 @@ public class Properties extends java.util.Properties {
 	public static final String LIST_TYPE = "list";
 	public static final String FILE_PATH_LIST = "list of file paths";
 	public static final String INTEGER_TYPE = "integer";
+	public static final String POS_INTEGER_TYPE = "positive integer";
 	public static final String NUMERTIC_TYPE = "numeric";
 	public static final String[] KNOWN_TYPES = {STRING_TYPE, BOOLEAN_TYPE, FILE_PATH, EXE_PATH, LIST_TYPE, FILE_PATH_LIST, INTEGER_TYPE, NUMERTIC_TYPE};
 }

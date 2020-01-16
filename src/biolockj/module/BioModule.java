@@ -163,6 +163,16 @@ public interface BioModule {
 	 * @throws Exception if errors occur
 	 */
 	public void init() throws Exception;
+	
+	/**
+	 * If a property is null based on the config files (including all defaults and standard.properties) but 
+	 * a module is passed to the Config class as the context for getting that module, the Config class 
+	 * can query the module for a value for the property.
+	 * In general, this is used for the properties defined in this module, but it CAN also be used for general properties.
+	 * @param property
+	 * @return
+	 */
+	public String getPropDefault(String prop);
 
 	/**
 	 * BioModules {@link #getInputFiles()} method typically, but not always, return the previousModule output files.

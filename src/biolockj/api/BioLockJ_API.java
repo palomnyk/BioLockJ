@@ -1,8 +1,11 @@
 package biolockj.api;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +16,8 @@ import biolockj.exception.ConfigException;
 import biolockj.module.BioModule;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.ModuleUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.reflections.Reflections;
 
 public class BioLockJ_API {
@@ -26,9 +31,9 @@ public class BioLockJ_API {
 	private static final String PROP_TYPE = "propType";
 	private static final String PROP_VALUE = "propValue";
 	private static final String PROP_DESC = "describeProp";
-	private static final String MODULE_INFO = "allProperties";
+	private static final String PROP_INFO = "propInfo";
+	private static final String MODULE_INFO = "moduleInfo";
 	private static final String HELP = "help";
-	public static final String BACKBONE = "backbone";
 
 	private BioLockJ_API() {}
 
@@ -76,12 +81,12 @@ public class BioLockJ_API {
 					break;
 				case PROP_TYPE:
 					if (args.length == 2) reply = Properties.getPropertyType( args[1] );
-					else if (args.length == 3) reply = propTypeModule( args[1], args[2] );
+					else if (args.length == 3 || args.length == 4) reply = propTypeModule( args[1], args[2] );
 					else throw new API_Exception( "The query [" + PROP_TYPE + "] requires one or two arguments." );
 					break;
 				case PROP_DESC:
 					if (args.length == 2) reply = Properties.getDescription( args[1] );
-					else if (args.length == 3) reply = propDescModule( args[1], args[2] );
+					else if (args.length == 3 || args.length == 4) reply = propDescModule( args[1], args[2] );
 					else throw new API_Exception( "The query [" + PROP_DESC + "] requires one or two arguments." );
 					break;
 				case PROP_VALUE:
@@ -90,8 +95,11 @@ public class BioLockJ_API {
 					else if (args.length == 3) initConfig(args[2]);
 					reply = propValue( args[1] );
 					break;
+				case PROP_INFO:
+					reply = propInfo().toString(2);
+					break;
 				case MODULE_INFO:
-					reply = moduleInfo( );
+					reply = moduleInfo().toString(2);
 					break;
 				case HELP:
 					reply = getHelp();
@@ -131,8 +139,9 @@ public class BioLockJ_API {
 	 */
 	public static List<String> listModules() throws Exception {
 		List<String> allBioModules = new ArrayList<>();
+
+		Reflections reflections = supressStdOut_createReflections();
 		
-		Reflections reflections = new Reflections("[a-z]*biolockj");
 		Set<Class<? extends BioModule>> subTypes = reflections.getSubTypesOf( BioModule.class );
 		for (Class<? extends BioModule> st : subTypes ) {
 			try {
@@ -143,7 +152,22 @@ public class BioLockJ_API {
 			}	
 		}
 		
+		Collections.sort(allBioModules);
 		return allBioModules;
+	}
+	
+	private static Reflections supressStdOut_createReflections() {
+		PrintStream classicOut = System.out;
+		
+		System.setOut(new PrintStream(new OutputStream() {
+			  public void write(int b) {}
+			}));
+		
+		Reflections reflections = new Reflections("");
+		
+		System.setOut(classicOut);
+		
+		return reflections;
 	}
 	
 	/**
@@ -180,15 +204,27 @@ public class BioLockJ_API {
 		return allProps;
 	}
 	
+	/**
+	 * The bash component of this function can take 0 or more modules;
+	 * AND the last arg may not be a module, 
+	 * it may be the directory path for the external modules, which we would ignore here.
+	 * This method converts the (String[]) into (String, String, String[]) signature. 
+	 * @param args
+	 * @return
+	 * @throws Exception
+	 */
 	private static Boolean isValidProp(String[] args) throws Exception {
-		String[] modules = new String[args.length - 3];
-		if (args.length > 3) {
-			for (int i=0; i < (args.length - 3); i++) {
+		String last = args[args.length - 1];
+		boolean lastArgIsDir = (new File(last)).exists();
+		int numMods = lastArgIsDir ? args.length - 4 : args.length - 3;
+		String[] modules = new String[numMods];
+		if (numMods > 0) {
+			for (int i=0; i < numMods; i++) {
 				int j = i + 3;
 				modules[i] = args[ j ];
 			}
 		}
-		//args[0] is the query term.
+		//recall that args[0] is the query term.
 		return isValidProp(args[1], args[2], modules);
 	}
 	
@@ -204,14 +240,8 @@ public class BioLockJ_API {
 		Config.initBlankProps();
 		Config.setConfigProperty( prop, val );
 		
-		Boolean isValid = null;
+		Boolean isValid = Properties.isValidProp(prop);
 		
-		//TODO - ask the properties class if this is ok.
-//		Boolean backboneVote = Properties.validateProp(prop);
-//		if (backboneVote != null) {
-//			isValid = backboneVote;
-//		}
-		//TODO - ask each module
 		if (modules.length > 0) {
 			for (String mod : modules) {
 				BioModule tmp = ModuleUtil.createModuleInstance( mod );
@@ -292,24 +322,73 @@ public class BioLockJ_API {
 	}
 	
 	/**
+	 * For each of the properties registered to the Properties class, 
+	 * report the property name, type, description and default value.
+	 * @return
+	 * @throws Exception
+	 */
+	public static JSONArray propInfo() throws Exception {
+		HashMap<String, String> propDescMap = Properties.getPropDescMap();
+		List<String> props = new ArrayList<>(propDescMap.keySet());
+		initConfig();
+		JSONArray jarray = new JSONArray();
+		for (String prop : props) {
+			HashMap<String, String> propAtts = new HashMap<>();
+			propAtts.put("property", prop);
+			propAtts.put("type", Properties.getPropertyType( prop ));
+			propAtts.put("description", Properties.getDescription( prop ));
+			propAtts.put("default", propValue(prop));
+			JSONObject jobj = new JSONObject( propAtts );
+			jarray.put( jobj );
+		}
+		return jarray;
+	}
+	
+	/**
 	 * Returns a json formatted list of all modules and for each module that 
 	 * implements the gui interface, it lists the props used by the module,
-	 * and for each prop the propType.
-	 * "{@value BACKBONE}" is the header for the properties used by the BioLockJ backbone.
+	 * and for each prop the info.
 	 * @param args
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String moduleInfo() throws Exception {
-		// TODO
+	public static JSONArray moduleInfo() throws Exception {
+		initConfig();
 		List<String> modules = listApiModules();
-		// creat json array
+		JSONArray modsArray = new JSONArray();
 		for (String mod : modules) {
-			//create json inner array; add these props to it.
-			listModuleProps( mod );
-			// for each property, enter property and value type as key/val pair
+			BioModule tmp = biolockj.util.ModuleUtil.createModuleInstance( mod );
+			HashMap<String, Object> modAtts = new HashMap<>();
+			
+			modAtts.put("usage", "#BioModule " + mod );		
+			try {
+				modAtts.put("pre-req modules", tmp.getPreRequisiteModules() );
+				modAtts.put("post-req modules", tmp.getPostRequisiteModules() );
+			}catch(Exception e) {}
+			
+			if (tmp instanceof ApiModule) {
+				modAtts.put("description", ((ApiModule) tmp).getDescription() );
+				modAtts.put("details", ((ApiModule) tmp).getDetails() );
+				modAtts.put("citation", ((ApiModule) tmp).getCitationString() );
+				modAtts.put("title", ((ApiModule) tmp).getTitle() );
+				
+				List<String> props = listModuleProps( mod );
+				JSONArray modProps = new JSONArray();
+				for (String prop : props) {
+					HashMap<String, String> propAtts = new HashMap<>();
+					propAtts.put("property", prop);
+					propAtts.put("type", Properties.getPropertyType( prop ));
+					propAtts.put("description", Properties.getDescription( prop ));
+					propAtts.put("default", propValue(prop));
+					modProps.put( propAtts );
+				}
+				modAtts.put( "properties", modProps );
+			}
+
+			JSONObject jModAtts = new JSONObject( modAtts );
+			modsArray.put( jModAtts );
 		}
-		return ""; //return json object; confer to string in switch case.
+		return modsArray; //return json; convert to string in switch case.
 	}
 	
 	/**
@@ -320,58 +399,64 @@ public class BioLockJ_API {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "BioLockJ API " + BioLockJUtil.getVersion( ) + " - UNCC Fodor Lab" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
-		sb.append(  "Usage:" +System.lineSeparator() );
-		sb.append(  "biolockj_api <query> [args...]" +System.lineSeparator() );
-		sb.append(  "For programatic use, redirecting strerr is recommended:" +System.lineSeparator() );
-		sb.append(  "biolockj_api <query> [args...]  2> /dev/null" +System.lineSeparator() );
-		sb.append(  "" +System.lineSeparator() );
-		sb.append(  "Use biolockj_api without args to get help menu." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "query:" +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + LIST_MODULES + " [extra_modules_dir]" +System.lineSeparator() );
-		sb.append(  "        Returns a list of classpaths to the classes that extend BioModule." +System.lineSeparator() );
-		sb.append(  "        Optionally supply the path to a directory containing additional modules." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + LIST_API_MODULES + " [extra_modules_dir]" +System.lineSeparator() );
-		sb.append(  "        Like listModules but limit list to modules that implement the ApiModule interface." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + LIST_PROPS + " [module]" +System.lineSeparator() );
-		sb.append(  "        Returns a list of properties." +System.lineSeparator() );
-		sb.append(  "        If no args, it returns the list of properties used by the BioLockJ backbone." +System.lineSeparator() );
-		sb.append(  "        If a modules is given, then it returns a list of all properties used by" +System.lineSeparator() );
-		sb.append(  "        that module." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + LIST_ALL_PROPS + " [extra_modules_dir]" +System.lineSeparator() );
-		sb.append(  "        Returns a list of all properties, include all backbone properties and all module properties." );
-		sb.append(  "        Optionally supply the path to a directory containing additional modules to include their properties." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + VALIDATE_PROP + " <prop> <val> [module] [modules…]" +System.lineSeparator() );
-		sb.append(  "        T/F/NA. Returns true if the value (val) for the property (prop) is valid;" +System.lineSeparator() );
-		sb.append(  "        false if prop is a property but val is not a valid value," +System.lineSeparator() );
-		sb.append(  "        and NA if prop is not a recognized property." +System.lineSeparator() );
-		sb.append(  "        IF a module is supplied, then additionally call the validateProp(key, value)" +System.lineSeparator() );
-		sb.append(  "        for each module given." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + PROP_TYPE + " <prop> [module]" +System.lineSeparator() );
-		sb.append(  "        Returns the type expected for the property: String, list, integer, positive number, etc." +System.lineSeparator() );
-		sb.append(  "        If a module is supplied, then the modules propType method is used." +System.lineSeparator() );
-		sb.append(  "  " + PROP_DESC + " <prop> [module]" +System.lineSeparator() );
-		sb.append(  "        Returns a description of the property." +System.lineSeparator() );
-		sb.append(  "        If a module is supplied, then the modules getDescription method is used." +System.lineSeparator() );
-		sb.append(  "" +System.lineSeparator() );
-		sb.append(  "  " + PROP_VALUE + " <prop> [confg]" +System.lineSeparator() );
-		sb.append(  "        Returns the value for that property given that config file (optional) or no config file." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + MODULE_INFO + System.lineSeparator() );
-		sb.append(  "        Returns a json formatted list of all modules and for each module that " +System.lineSeparator() );
-		sb.append(  "        implements the gui interface, it lists the props used by the module," +System.lineSeparator() );
-		sb.append(  "        and for each prop the propType." +System.lineSeparator() );
-		sb.append(  "        \"BackBone\" is the header for the properties used by the BioLockJ backbone." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
-		sb.append(  "  " + HELP + "  (or no args)" +System.lineSeparator() );
-		sb.append(  "        Print help menu." +System.lineSeparator() );
-		sb.append(  System.lineSeparator() );
+		sb.append( "Usage:" +System.lineSeparator() );
+		sb.append( "biolockj_api <query> [args...]" +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "For some uses, redirecting stderr is recommended:" +System.lineSeparator() );
+		sb.append( "biolockj_api <query> [args...]  2> /dev/null" +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "Use biolockj_api without args to get help menu." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "query:" +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + LIST_MODULES + " [extra_modules_dir]" +System.lineSeparator() );
+		sb.append( "        Returns a list of classpaths to the classes that extend BioModule." +System.lineSeparator() );
+		sb.append( "        Optionally supply the path to a directory containing additional modules." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + LIST_API_MODULES + " [extra_modules_dir]" +System.lineSeparator() );
+		sb.append( "        Like listModules but limit list to modules that implement the ApiModule interface." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + LIST_PROPS + " [module]" +System.lineSeparator() );
+		sb.append( "        Returns a list of properties." +System.lineSeparator() );
+		sb.append( "        If no args, it returns the list of properties used by the BioLockJ backbone." +System.lineSeparator() );
+		sb.append( "        If a modules is given, then it returns a list of all properties used by" +System.lineSeparator() );
+		sb.append( "        that module." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + LIST_ALL_PROPS + " [extra_modules_dir]" +System.lineSeparator() );
+		sb.append( "        Returns a list of all properties, include all backbone properties and all module properties." +System.lineSeparator());
+		sb.append( "        Optionally supply the path to a directory containing additional modules to include their properties." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + PROP_TYPE + " <prop> [module [extra_modules_dir] ]" +System.lineSeparator() );
+		sb.append( "        Returns the type expected for the property: String, list, integer, positive number, etc." +System.lineSeparator() );
+		sb.append( "        If a module is supplied, then the modules propType method is used." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + PROP_DESC + " <prop> [module [extra_modules_dir] ]" +System.lineSeparator() );
+		sb.append( "        Returns a description of the property." +System.lineSeparator() );
+		sb.append( "        If a module is supplied, then the modules getDescription method is used." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + PROP_VALUE + " <prop> [confg]" +System.lineSeparator() );
+		sb.append( "        Returns the value for that property given that config file (optional) or " +System.lineSeparator() );
+		sb.append( "        no config file (ie the default value)" +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + VALIDATE_PROP + " <prop> <val> [module] [modules…] [extra_modules_dir]" +System.lineSeparator() );
+		sb.append( "        T/F/NA. Returns true if the value (val) for the property (prop) is valid;" +System.lineSeparator() );
+		sb.append( "        false if prop is a property but val is not a valid value," +System.lineSeparator() );
+		sb.append( "        and NA if prop is not a recognized property." +System.lineSeparator() );
+		sb.append( "        IF a module is supplied, then additionally call the validateProp(key, value)" +System.lineSeparator() );
+		sb.append( "        for each module given." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + PROP_INFO + System.lineSeparator() );
+		sb.append( "        Returns a json formatted list of the general properties (listProps)" +System.lineSeparator() );
+		sb.append( "        with the type, descrption and default for each property" +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + MODULE_INFO + " [extra_modules_dir]" +System.lineSeparator() );
+		sb.append( "        Returns a json formatted list of all modules and for each module that " +System.lineSeparator() );
+		sb.append( "        implements the ApiModule interface, it lists the props used by the module," +System.lineSeparator() );
+		sb.append( "        and for each prop the type, descrption and default." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
+		sb.append( "  " + HELP + "  (or no args)" +System.lineSeparator() );
+		sb.append( "        Print help menu." +System.lineSeparator() );
+		sb.append( System.lineSeparator() );
 
 		return sb.toString(); 
 	}

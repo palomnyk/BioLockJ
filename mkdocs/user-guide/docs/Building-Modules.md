@@ -106,13 +106,13 @@ To avoid running code on the cluster head node, a temporary instance of BioLockJ
 
 The BioLockJ API allows outside resources to get information about the BioLockJ program and any available modules.  
 
-To interface with the API, your module will need to implement the ApiModule interface.  When the API looks for available modules, it will only include classes that have "biolockj" in their package name. Other api methods will work on any module you specify by giving a class path.
+To interface with the API, your module will need to implement the ApiModule interface.
 
 ### API-generated html documentation
 
 The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API method `makeDocs <module> <dest>` (work in progress) will call methods on an individual module to generate a markdown document (saved under _dest_ fodler), which is ready to me rendered into an html file using mkdocs.  
 
-For more details about the BioLockJ process for generating documentation, see **work in progress > developers guide**
+For more details about the BioLockJ process for generating documentation, see **work in progress > developers guide** TODO
 
 ### Built-in descriptions
 
@@ -143,7 +143,9 @@ private static final String LAUNCHER_DESC = "Define executable language command 
 ```
 In this example, the descriptions for `PARAM` and `SCRIPT` are written in the `addNewProperty()` method.  The description for `LAUNCHER` is stored as its own string (`LAUNCHER_DESC`), and that string is referenced in the `addNewProperty` method and in the javadoc description for `LAUNCHER`. This rather verbose option IS NOT necissary, but it allows the description to viewed through the api AND through javadocs, and IDE's; this is appropriate if you expect other classes to use the properties defined in your module.  
 
-The descriptions for properties should be brief.  Additional details such as interactions between properties or the effects of different values should be part of the `getDetails()` method.
+The descriptions for properties should be brief.  Additional details such as interactions between properties or the effects of different values should be part of the `getDetails()` method.  It should always be clear to a user what will happen if the value is "null".
+
+If there is a logical default for the property, that can passed as an additional argument to `addNewProperty()`.  This value will only be used if there is no value given for the property in the config file (including any defaultProps layers and standard.properties).
 
 If your module uses any general properties (beyond any uses by the the super class), then you should register it in the module's constructor using the `addGeneralProperty()` method.
 ```java

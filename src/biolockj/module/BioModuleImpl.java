@@ -33,6 +33,7 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	public BioModuleImpl() {
 		propDescMap = new HashMap<>();
 		propTypeMap = new HashMap<>();
+		propDefaultValMap = new HashMap<>();
 	}
 	
 	/**
@@ -45,9 +46,19 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	 */
 	private final HashMap<String, String> propTypeMap;
 	
+	/**
+	 * HashMap with property name as key and the default value for this property as the value.
+	 */
+	private final HashMap<String, String> propDefaultValMap;
+	
 	protected final void addNewProperty(String prop, String type, String desc) {
+		addNewProperty(prop, type, desc, null);
+	}
+	
+	protected final void addNewProperty(String prop, String type, String desc, String defaultValue) {
 		propDescMap.put(prop, desc);
 		propTypeMap.put(prop, type);
+		propDefaultValMap.put( prop, defaultValue );
 	}
 	
 	protected final void addGeneralProperty(String prop) {
@@ -66,6 +77,10 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	}
 	protected final void addGeneralProperty(String prop, String type, String desc) {
 		addNewProperty(prop, type, desc);
+	}
+	
+	public final String getPropDefault(String prop) {
+		return propDefaultValMap.get( prop );
 	}
 	
 	/**
@@ -340,6 +355,10 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	
 	public String getTitle() {
 		return this.getClass().getSimpleName();
+	}
+	
+	public List<String> getMenuPlacement() {
+		return Arrays.asList( this.getClass().toString().split( "." ) );
 	}
 
 
