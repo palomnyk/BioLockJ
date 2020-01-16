@@ -49,7 +49,7 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
     console.log('in currentConfig.sendConfigDataToForms()');
     try {
       if (this.paramKeys.length != this.paramValues.length){
-        alert('Your paramKeys should be the same length as your paramValues.  Find the error');
+        alert('Your paramKeys should be the same length as your paramValues.  Contact the BioLockJ team if you have this error');
         return false;
       }
       //reorder module list elements to match the config
@@ -59,10 +59,7 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
       //get all input elements for adding values too
       const selects = Array.from(document.getElementsByTagName('select'));
       const inputs = Array.from(document.getElementsByTagName('input'));
-      const texts = inputs.filter(inp => inp.type === 'text');
-      const radios = inputs.filter(inp => inp.type === 'radio');
       const checkboxs = inputs.filter(inp => inp.type === 'checkbox');
-      const numbers = inputs.filter(inp => inp.type === 'number');
 
       //first step, loop through modules and show them
       for (mod of this.modules){
@@ -99,7 +96,7 @@ function Config(modules = [], paramKeys = [], paramValues = [], comments = []){
               Array.apply(null, select.options).find(option => option.value === valueOfKey);
               if (opt.value != undefined){ opt.setAttribute('selected', true); };//select opt if not undefined
               }
-            else if (targetInput.type == 'text' || targetInput.type == 'number'){
+            else {
               targetInput.value = valueOfKey;
               }
             }//end else
@@ -729,8 +726,9 @@ const configTexts = configFormInputs.filter(inp => inp.type === 'text');
 const configSelects = Array.from(document.getElementById('configForm').getElementsByTagName('SELECT'));
 const configChecks = configFormInputs.filter(inp => inp.type === 'checkbox');
 const configNumbers = configFormInputs.filter(inp => inp.type === 'number');
+const textareas = Array.from(document.getElementById('configForm').getElementsByTagName('textarea'));
 
-for (let inp of configTexts){
+for (let inp of configTexts.concat(textareas)){
 inp.addEventListener('change', currentConfig.saveConfigParamsForm, false);
 }
 

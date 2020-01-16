@@ -101,6 +101,10 @@ body {background-color: #A9A9A9;}/* for dark theme */
   display: none !important;
 }
 
+p{
+  vertical-align: top;
+}
+
 /* for menu and tabbed buttons of menu */
 .menu {
   padding: 14px 10px;
@@ -108,6 +112,9 @@ body {background-color: #A9A9A9;}/* for dark theme */
   border: 1px solid black;
   margin: 10px 30px 20px 30px;
   display: none; /*hidden until "new" is clicked */
+}
+div.menu textarea{
+  height: auto;
 }
 /* Style the tab */
 div.tab {
