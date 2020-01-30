@@ -7,7 +7,7 @@ The basic installation assumes a unix-like environment.
 
 #### 1. Download the [latest release](https://github.com/BioLockJ-Dev-Team/BioLockJ/releases/latest) & unpack the tarball.
 ```bash
-tar -zxf BioLockJ-1.2.6.tar.gz
+tar -zxf BioLockJ-v1.2.7.tar.gz
 ```
 Put the folder to wherever you like to keep executables.
 If you choose to download the source code, you will need to compile it by running `ant` with the `build.xml` file in the `resources` folder. 

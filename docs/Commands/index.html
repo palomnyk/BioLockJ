@@ -55,11 +55,6 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Installation/">Installation</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <a class="" href="../Getting-Started/">Getting Started</a>
 	    </li>
           
@@ -68,9 +63,6 @@
     <a class="current" href="./">Commands</a>
     <ul class="subnav">
             
-    <li class="toctree-l2"><a href="#biolockj-commands-are-located-under-bljscript">BioLockJ commands are located under $BLJ/script</a></li>
-    
-
     </ul>
 	    </li>
           
@@ -101,6 +93,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Check-Dependencies/">Check Dependencies</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Failure-Recovery/">Failure Recovery</a>
@@ -158,7 +154,8 @@
           <div role="main">
             <div class="section">
               
-                <h3 id="biolockj-commands-are-located-under-bljscript">BioLockJ commands are located under $BLJ/script</h3>
+                <p>The BioLockJ program is launched through the <code>biolockj</code> script. See <a href="../help-biolockj/"><code>biolockj --help</code></a>.</p>
+<p>There are also several helper scripts for small specific tasks, these are all found under $BLJ/script and added to the <code>$PATH</code> after the basic installation:</p>
 <table>
 <thead>
 <tr>
@@ -167,10 +164,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td align="left"><strong><a href="https://github.com/msioda/BioLockJ/blob/master/script/biolockj?raw=true">biolockj</a></strong> [config_path]</td>
-<td align="left">Start a pipeline using the Configuration properties in [config_path].<br>Pipeline output directory is created under <a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_config?raw=true">$BLJ_PROJ</a>.</td>
-</tr>
 <tr>
 <td align="left"><strong><a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_go?raw=true">blj_go</a></strong></td>
 <td align="left">Go to most recent <a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_config?raw=true">$BLJ_PROJ</a> pipeline &amp; list contents.</td>

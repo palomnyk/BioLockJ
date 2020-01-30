@@ -41,7 +41,7 @@
 				<delete file="dist/BioLockJ.jar"/>
 			</then>
 		</if>
-    		<property name="release_tar" value="dist/biolockj_${blj_version}.tgz"/>
+    	<property name="release_tar" value="dist/BioLockJ_${blj_version}.tgz"/>
 	</target>
 
     <target name="compile-source" depends="init">
@@ -105,7 +105,7 @@
 			</then>
 		</if>
 		<tar compression="gzip" destfile="${release_tar}" longfile="gnu">
-			<tarfileset dir="." filemode="770" dirmode="770">
+			<tarfileset dir="." filemode="770" dirmode="770" prefix="BioLockJ">
 				<exclude name="/bin"/>
 				<exclude name="${release_tar}"/> 
 				<exclude name="*.yml"/> 

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ivory Blakley">
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Pure Docker - BioLockJ User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Pure Docker";
+    var mkdocs_page_input_path = "Pure-Docker.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> BioLockJ User Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Getting-Started/">Getting Started</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Commands/">Commands</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Pipeline Componenets</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Built-in-modules/">Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../The-Metadata-File/">Metadata</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Dependencies/">Dependencies</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Check-Dependencies/">Check Dependencies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Failure-Recovery/">Failure Recovery</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Validation/">Validation</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Building-Modules/">Building Modules</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Example-Pipeline/">Example Pipeline</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../FAQ/">FAQ</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">BioLockJ User Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Pure Docker</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="pure-docker-experimental">Pure Docker (experimental)</h2>
+<p>This option is still in the early experimental stages.</p>
+<p>If you are running from any system that supports docker, you can run all commands through docker containers.</p>
+<h4 id="1-install-docker-and-make-sure-the-hello-world-image-runs-correctly-see-above">1. Install docker and make sure the hello world image runs correctly. (see above)</h4>
+<h4 id="2-enable-file-sharing-see-above">2. Enable file sharing. (see above)</h4>
+<h4 id="3-create-a-directory-where-your-pipelines-will-be-saved-this-directory-will-be-referred-to-as-blj_proj-and-it-must-be-under-a-share-enabled-directory">3. Create a directory where your pipelines will be saved; this directory will be referred to as <code>$BLJ_PROJ</code> and it must be under a share-enabled directory.</h4>
+<pre><code class="bash">mkdir pipelines
+BLJ_PROJ=`pwd`/pipelines
+</code></pre>
+
+<h4 id="4-run-the-test-pipeline-in-pure-docker">4. Run the test pipeline in pure docker</h4>
+<p>To test your all-docker BioLockJ, run:</p>
+<pre><code class="bash">docker run --rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $BLJ_PROJ:/mnt/efs/pipelines \
+biolockjdevteam/biolockj_controller:v1.2.7 \
+biolockj -df /app/biolockj/templates/myFirstPipeline/myFirstPipeline.properties
+</code></pre>
+
+<p>You should see a pipeline named <code>myFirstPipeline_&lt;DATE&gt;</code> in your <code>$BLJ_PROJ</code> folder.</p>
+<p>The above example uses a config file that is in the docker container.  To use a file from your own machine, mount the parent directory, and use the in-container path to reach it.  To test this, extract the <code>myFirstPipeline.properties</code> file from the docker container and use it from the outside:</p>
+<pre><code class="bash">ID=$(docker run -d biolockjdevteam/biolockj_controller:v1.2.7 /bin/bash)
+docker cp $ID:/app/biolockj/templates/myFirstPipeline/myFirstPipeline.properties ~/Downloads/origTest.properties
+</code></pre>
+
+<p>Alternatively, create a file, and copy this text into it:</p>
+<pre><code class="text">#BioModule biolockj.module.implicit.RegisterNumReads
+#BioModule biolockj.module.seq.RarefySeqs
+#BioModule biolockj.module.seq.Multiplexer
+
+input.dirPaths=${BLJ}/templates/myFirstPipeline/rhizosphere_16S_data
+
+rarefySeqs.max=500
+</code></pre>
+
+<p>Run biolockj using this config file.</p>
+<pre><code class="bash">docker run --rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-e HOME=~ \
+biolockjdevteam/biolockj_controller:v1.2.7 \
+biolockj -df --blj_proj $BLJ_PROJ /Downloads/origTest.properties
+</code></pre>
+
+<p>This should make a new pipeline called <code>origTest_&lt;DATE&gt;</code> in your <code>$BLJ_PROJ</code> folder.</p>
+<p>Finally, run the container interactively:</p>
+<pre><code class="bash">docker run --rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v $BLJ_PROJ:/mnt/efs/pipelines \
+-it biolockjdevteam/biolockj_controller:v1.2.7 /bin/bash
+</code></pre>
+
+<p>A general difficulty of the <em>Pure Docker</em> path is managing the volume mounts.  Calling <code>biolockj</code> locally allows the biolockj script to handle this for you.  Variable path support may make this eaiser. (TODO: add link to config variable descriptions)</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>2019 Fodor Lab</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
