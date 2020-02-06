@@ -312,7 +312,7 @@ display_help() {
     addSpace "version"       "Show version"
     addSpace "help"          "Show help menu"
     addSpace "$PRECHECK"     "Set up pipeline and check dependencies and then STOP;"
-    continueDescriptoin      "do not execute the pipeline. This is helpful when testing edits to config files."
+    continueDescription      "do not execute the pipeline. This is helpful when testing edits to config files."
     addSpace "$RESTART_ARG"  "Resume an existing pipeline"
     addSpace "$CONFIG_ARG <file>" "New config file (if restarting a pipeline)"
     addSpace "$PASSWORD_ARG <password>" "Encrypt password"

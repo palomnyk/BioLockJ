@@ -12,6 +12,7 @@
 package biolockj.module.report.r;
 
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Properties;
 import biolockj.api.ApiModule;
 import biolockj.util.BioLockJUtil;
@@ -27,10 +28,10 @@ public class R_PlotMds extends R_Module implements ApiModule {
 
 	public R_PlotMds() {
 		super();
-		addGeneralProperty( R_COLOR_BASE );
-		addGeneralProperty( R_COLOR_HIGHLIGHT );
-		addGeneralProperty( R_COLOR_PALETTE );
-		addGeneralProperty( R_PCH );
+		addGeneralProperty( Constants.R_COLOR_BASE );
+		addGeneralProperty( Constants.R_COLOR_HIGHLIGHT );
+		addGeneralProperty( Constants.R_COLOR_PALETTE );
+		addGeneralProperty( Constants.R_PCH );
 		addNewProperty( R_MDS_DISTANCE, Properties.STRING_TYPE, "distance metric for calculating MDS (default: bray)" );
 		addNewProperty( R_MDS_NUM_AXIS, Properties.INTEGER_TYPE, "Sets # MDS axis to plot; default (3) produces mds1 vs mds2, mds1 vs mds3, and mds2 vs mds3" );
 		addNewProperty( R_MDS_REPORT_FIELDS, Properties.LIST_TYPE, "Override field used to explicitly list metadata columns to build MDS plots. If left undefined, all columns are reported" );
@@ -43,10 +44,10 @@ public class R_PlotMds extends R_Module implements ApiModule {
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
 		Config.requireString( this, R_MDS_DISTANCE );
-		Config.getString( this, R_COLOR_BASE );
-		Config.getString( this, R_COLOR_HIGHLIGHT );
-		Config.getString( this, R_COLOR_PALETTE );
-		Config.getString( this, R_PCH );
+		Config.getString( this, Constants.R_COLOR_BASE );
+		Config.getString( this, Constants.R_COLOR_HIGHLIGHT );
+		Config.getString( this, Constants.R_COLOR_PALETTE );
+		Config.getString( this, Constants.R_PCH );
 		if( Config.requirePositiveInteger( this, R_MDS_NUM_AXIS ) < 2 )
 			throw new Exception( "Config property [" + R_MDS_NUM_AXIS + "] must be > 2" );
 	}

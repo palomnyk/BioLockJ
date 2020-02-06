@@ -11,7 +11,7 @@ main(){
 	# Before anything else, check to see if the user just wants help or version info.
 	[ $# -eq 0 ] && display_help && exit 0
 	
-	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && printf "\n ---------> Execute CMD [  biolockj_api $(echo ${@})  ]\n"
+	[ ${#BIOLOCKJ_TEST_MODE} -gt 0 ] && printf "\n ---------> Execute CMD [  biolockj-api $(echo ${@})  ]\n"
 	
 	findMoreModsDir $@ # define EXTRA
 	
@@ -30,12 +30,12 @@ main(){
 # Make sure required variables exist and are valid
 check_env_vars(){
 	pls_use_install="\nThe install script packaged with BioLockJ sets this value. You may need to start a new terminal window.\n"
-	[ ${#BLJ_PROJ} -eq 0 ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ_PROJ is not defined. $pls_use_install"
-	[ ! -d "${BLJ_PROJ}" ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ_PROJ [\"${BLJ_PROJ}\"] must be a directory on the filesystem. $pls_use_install"
-	[ ${#BLJ} -eq 0 ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ is not defined. $pls_use_install"
-	[ ! -d "${BLJ}" ] && exit_with_message "Error [ biolockj_api ]: Required env variable BLJ [\"${BLJ}\"] must be a directory on the filesystem. $pls_use_install"
+	[ ${#BLJ_PROJ} -eq 0 ] && exit_with_message "Error [ biolockj-api ]: Required env variable BLJ_PROJ is not defined. $pls_use_install"
+	[ ! -d "${BLJ_PROJ}" ] && exit_with_message "Error [ biolockj-api ]: Required env variable BLJ_PROJ [\"${BLJ_PROJ}\"] must be a directory on the filesystem. $pls_use_install"
+	[ ${#BLJ} -eq 0 ] && exit_with_message "Error [ biolockj-api ]: Required env variable BLJ is not defined. $pls_use_install"
+	[ ! -d "${BLJ}" ] && exit_with_message "Error [ biolockj-api ]: Required env variable BLJ [\"${BLJ}\"] must be a directory on the filesystem. $pls_use_install"
 	BLJ_JAR=${BLJ}/dist/BioLockJ.jar
-	[ ! -f "${BLJ_JAR}" ] && exit_script "Error [ biolockj_api ]: BioLockJ Jar file \"${BLJ_JAR}\" not found."
+	[ ! -f "${BLJ_JAR}" ] && exit_script "Error [ biolockj-api ]: BioLockJ Jar file \"${BLJ_JAR}\" not found."
 }
 
 java_cmd_core(){
@@ -94,9 +94,9 @@ display_help_without_java(){
 	eval "java -jar $BLJ/dist/BioLockJ.jar --version"
 	echo ""
 	echo "Usage:"
-	echo "biolockj_api <querry> [args...]"
+	echo "biolockj-api <querry> [args...]"
 	echo ""
-	echo "Use biolockj_api without args to get help menu."
+	echo "Use biolockj-api without args to get help menu."
 	echo ""
 }
 

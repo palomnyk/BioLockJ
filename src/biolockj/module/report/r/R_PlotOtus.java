@@ -13,6 +13,7 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Properties;
 import biolockj.api.ApiModule;
 import biolockj.util.BioLockJUtil;
@@ -28,24 +29,24 @@ public class R_PlotOtus extends R_Module implements ApiModule {
 	public R_PlotOtus() {
 		super();
 		addNewProperty( R_PVAL_FORMAT, Properties.STRING_TYPE, "Sets the format used in R sprintf() function" );
-		addGeneralProperty( R_RARE_OTU_THRESHOLD );
-		addGeneralProperty( R_COLOR_BASE );
-		addGeneralProperty( R_COLOR_HIGHLIGHT );
-		addGeneralProperty( R_COLOR_PALETTE );
-		addGeneralProperty( R_COLOR_POINT );
-		addGeneralProperty( R_PCH );
+		addGeneralProperty( Constants.R_RARE_OTU_THRESHOLD );
+		addGeneralProperty( Constants.R_COLOR_BASE );
+		addGeneralProperty( Constants.R_COLOR_HIGHLIGHT );
+		addGeneralProperty( Constants.R_COLOR_PALETTE );
+		addGeneralProperty( Constants.R_COLOR_POINT );
+		addGeneralProperty( Constants.R_PCH );
 	}
 
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
 		Config.getString( this, R_PVAL_FORMAT );
-		Config.getPositiveDoubleVal( this, R_RARE_OTU_THRESHOLD );
-		Config.getString( this, R_COLOR_BASE );
-		Config.getString( this, R_COLOR_HIGHLIGHT );
-		Config.getString( this, R_COLOR_PALETTE );
-		Config.getString( this, R_COLOR_POINT );
-		Config.getString( this, R_PCH );
+		Config.getPositiveDoubleVal( this, Constants.R_RARE_OTU_THRESHOLD );
+		Config.getString( this, Constants.R_COLOR_BASE );
+		Config.getString( this, Constants.R_COLOR_HIGHLIGHT );
+		Config.getString( this, Constants.R_COLOR_PALETTE );
+		Config.getString( this, Constants.R_COLOR_POINT );
+		Config.getString( this, Constants.R_PCH );
 	}
 
 	/**

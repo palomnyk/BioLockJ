@@ -250,6 +250,14 @@ public class Properties extends java.util.Properties {
 	
 	private static void fillPropMaps() throws API_Exception {
 		Constants.registerProps();
+		MetaUtil.registerProps();
+		NextflowUtil.registerProps();
+		BashScriptBuilder.registerProps();
+		DockerUtil.registerProps();
+		RMetaUtil.registerProps();
+		ValidationUtil.registerProps();
+		
+		//These aws* properties are only used in the bash layer, there is no java class that owns these.
 		addToPropMaps( "aws.ec2InstanceID", STRING_TYPE, "ID of an existing ec2 instance to use as the head node" );//TODO: bash property descriptions
 		addToPropMaps( "aws.ec2SpotPer", "", "" );//TODO: bash property descriptions
 		addToPropMaps( "aws.ec2TerminateHead", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
@@ -258,13 +266,6 @@ public class Properties extends java.util.Properties {
 		addToPropMaps( "aws.saveCloud", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
 		addToPropMaps( "aws.stack", STRING_TYPE, "An existing aws cloud stack ID" );//TODO: bash property descriptions
 		addToPropMaps( "aws.walltime", "", "" ); // I don't see this used anywhere. //TODO: bash property descriptions
-		MetaUtil.registerProps();
-		NextflowUtil.registerProps();
-		BashScriptBuilder.registerProps();
-		DockerUtil.registerProps();
-		RMetaUtil.registerProps();
-		R_Module.registerProps();
-		ValidationUtil.registerProps();
 	}
 	
 	private static void addToPropMaps(final String prop, final String type, final String desc) {

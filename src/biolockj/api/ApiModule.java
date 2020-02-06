@@ -4,12 +4,6 @@ import java.util.List;
 import biolockj.module.BioModule;
 
 public interface ApiModule extends BioModule {
-	
-	/**
-	 * A string used to insert a separation point within a description.
-	 * This is used to (optionally) indicate where to truncate the description to produce a short description.
-	 */
-	public static final String endShortDesc = "<br><br>";
 
 	/**
 	 * Tests to see if the value val is valid for property prop.
@@ -40,9 +34,8 @@ public interface ApiModule extends BioModule {
 	public List<String> getMenuPlacement();
 
 	/**
-	 * Briefly describe what this module does.
-	 * The entire text is shown in the user guide.
-	 * If the String {@value endShortDesc} is used, some functions may truncate the description at that point. 
+	 * Briefly describe what this module does. 
+	 * A more detailed description may be returned by {@link getDetails}.
 	 * @return
 	 */
 	public String getDescription();
@@ -53,6 +46,11 @@ public interface ApiModule extends BioModule {
 	 */
 	public String getDescription(String prop) throws API_Exception;
 	
+	/**
+	 * A extension of {@link getDescription}. Beyond the brief description, give details such as
+	 * the interaction between properties.
+	 * @return
+	 */
 	public String getDetails();
 	
 	/**

@@ -13,6 +13,7 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.api.ApiModule;
 import biolockj.util.BioLockJUtil;
 
@@ -26,13 +27,13 @@ public class R_PlotPvalHistograms extends R_Module implements ApiModule {
 	
 	public R_PlotPvalHistograms() {
 		super();
-		addGeneralProperty( P_VAL_CUTOFF );
+		addGeneralProperty( Constants.P_VAL_CUTOFF );
 	}
 
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
-		Config.requireString( this, P_VAL_CUTOFF );
+		Config.requireString( this, Constants.P_VAL_CUTOFF );
 	}
 
 	/**

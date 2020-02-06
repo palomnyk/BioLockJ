@@ -16,6 +16,7 @@ import java.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Log;
 import biolockj.Properties;
 import biolockj.api.ApiModule;
@@ -49,7 +50,7 @@ public class R_CalculateStats extends R_Module implements ApiModule {
 		super.checkDependencies();
 		Config.requireString( this, R_ADJ_PVALS_SCOPE );
 		Config.requireString( this, R_PVAL_ADJ_METHOD );
-		Config.getPositiveDoubleVal( this, R_RARE_OTU_THRESHOLD );
+		Config.getPositiveDoubleVal( this, Constants.R_RARE_OTU_THRESHOLD );
 	}
 
 	/**

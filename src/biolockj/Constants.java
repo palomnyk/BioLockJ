@@ -51,6 +51,20 @@ public class Constants {
 		Properties.registerProp( INPUT_TRIM_SUFFIX, Properties.STRING_TYPE, INPUT_TRIM_SUFFIX_DESC );
 		Properties.registerProp( QIIME_ALPHA_DIVERSITY_METRICS, Properties.LIST_TYPE, "alpha diversity metrics to calculate through qiime; For complete list of skbio.diversity.alpha options, see <a href= \"http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html\" target=\"_top\">http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html</a>" );
 		Properties.registerProp( RM_TEMP_FILES, Properties.BOOLEAN_TYPE, RM_TEMP_FILES_DESC );
+		
+		Properties.registerProp( P_VAL_CUTOFF, Properties.NUMERTIC_TYPE, "p-value cutoff used to assign label _r.colorHighlight_" );
+		Properties.registerProp( R_COLOR_BASE, Properties.STRING_TYPE, "base color used for labels & headings in the PDF report; Must be a valid color in R." );
+		Properties.registerProp( R_COLOR_FILE, Properties.FILE_PATH, "path to a tab-delimited file giving the color to use for each value of each metadata field plotted." );
+		Properties.registerProp( R_COLOR_HIGHLIGHT, Properties.STRING_TYPE, "color is used to highlight significant OTUs in plot" );
+		Properties.registerProp( R_COLOR_PALETTE, Properties.STRING_TYPE, "palette argument passed to [get_palette {ggpubr}](https://www.rdocumentation.org/packages/ggpubr/versions/0.2/topics/get_palette) to select colors for some output visualiztions" );
+		Properties.registerProp( R_COLOR_POINT, Properties.STRING_TYPE, "default color of scatterplot and strip-chart plot points" );
+		Properties.registerProp( R_DEBUG, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, will generate R Script log files" );
+		Properties.registerProp( R_PCH, Properties.INTEGER_TYPE, "Sets R plot pch parameter for PDF report" );
+		Properties.registerProp( R_RARE_OTU_THRESHOLD, Properties.NUMERTIC_TYPE, "If >=1, R will filter OTUs found in fewer than this many samples. If <1, R will interperate the value as a percentage and discard OTUs not found in at least that percentage of samples" );
+		Properties.registerProp( R_SAVE_R_DATA, Properties.BOOLEAN_TYPE, "If Y, all R script generating BioModules will save R Session data to the module output directory to a file using the extension \".RData\"" );
+		Properties.registerProp( R_TIMEOUT, Properties.INTEGER_TYPE, "the # minutes before R Script will time out and fail; If undefined, no timeout is used." );
+		Properties.registerProp( R_USE_UINQUE_COLORS, Properties.BOOLEAN_TYPE, "force to use a unique color for every value in every field plotted; only recommended for low numbers of metadata columns/values." );
+		
 		Properties.registerProp( SCRIPT_DEFAULT_HEADER, Properties.STRING_TYPE, SCRIPT_DEFAULT_HEADER_DESC);
 		Properties.registerProp( SCRIPT_NUM_WORKERS, Properties.INTEGER_TYPE, SCRIPT_NUM_WORKERS_DESC);
 		Properties.registerProp( SCRIPT_NUM_THREADS, Properties.INTEGER_TYPE, SCRIPT_NUM_THREADS_DESC);
@@ -699,6 +713,76 @@ public class Constants {
 	 */
 	public static final String R_EXT = ".R";
 
+	/**
+	 * {@link biolockj.Config} property {@value #P_VAL_CUTOFF} defines the p-value cutoff for significance
+	 */
+	public static final String P_VAL_CUTOFF = "r.pvalCutoff";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_BASE} 
+	 */
+	public static final String R_COLOR_BASE = "r.colorBase";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_FILE} gives the path to a tab-delimited file giving the color
+	 * to use for each value of each metadata filed plotted.
+	 */
+	public static final String R_COLOR_FILE = "r.colorFile";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_HIGHLIGHT} defines the highlight label color
+	 */
+	public static final String R_COLOR_HIGHLIGHT = "r.colorHighlight";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_PALETTE} defines the color palette for PDF plots
+	 */
+	public static final String R_COLOR_PALETTE = "r.colorPalette";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_POINT} defines the pch point colors for PDF plots
+	 */
+	public static final String R_COLOR_POINT = "r.colorPoint";
+
+	/**
+	 * {@link biolockj.Config} boolean property {@value #R_DEBUG} sets the debug log function enabled
+	 */
+	public static final String R_DEBUG = "r.debug";
+
+	/**
+	 * This library script contains helper functions used in the R scripts: {@value #R_FUNCTION_LIB}
+	 */
+	public static final String R_FUNCTION_LIB = "BioLockJ_Lib.R";
+
+	/**
+	 * This main R script that sources helper libraries and calls modules main method function: {@value #R_MAIN_SCRIPT}
+	 */
+	public static final String R_MAIN_SCRIPT = "BioLockJ_MAIN.R";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_PCH} defines the plot point shape for PDF plots
+	 */
+	public static final String R_PCH = "r.pch";
+
+	/**
+	 * {@link biolockj.Config} Double property {@value #R_RARE_OTU_THRESHOLD} defines number OTUs needed to includ in
+	 * reports
+	 */
+	public static final String R_RARE_OTU_THRESHOLD = "r.rareOtuThreshold";
+
+	/**
+	 * {@link biolockj.Config} boolean property {@value #R_SAVE_R_DATA} enables the .RData file to save.
+	 */
+	public static final String R_SAVE_R_DATA = "r.saveRData";
+	
+	public static final String R_USE_UINQUE_COLORS = "r.useUniqueColors";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_TIMEOUT} defines the number of minutes before R script fails due to
+	 * timeout. If undefined, no timeout is used.
+	 */
+	public static final String R_TIMEOUT = "r.timeout";
+	
 	/**
 	 * {@link biolockj.Config} Boolean property to signal R scripts to build HumanN2 reports
 	 */

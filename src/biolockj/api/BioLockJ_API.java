@@ -35,6 +35,8 @@ public class BioLockJ_API {
 	private static final String MODULE_INFO = "moduleInfo";
 	private static final String HELP = "help";
 
+	private static boolean verbose = false;
+
 	private BioLockJ_API() {}
 
 	public static void main( String[] args ) throws Exception {
@@ -116,6 +118,10 @@ public class BioLockJ_API {
 		}
 	}
 	
+	public static void setVerbose(boolean writeLots) {
+		verbose = writeLots;
+	}
+	
 	private static String listToString( Iterable<? extends Object> elements ) {
 		ArrayList<String> output = new ArrayList<>();
 		for (Object elem : elements ) {
@@ -158,14 +164,23 @@ public class BioLockJ_API {
 	
 	private static Reflections supressStdOut_createReflections() {
 		PrintStream classicOut = System.out;
+		PrintStream classicErr = System.err;
 		
-		System.setOut(new PrintStream(new OutputStream() {
-			  public void write(int b) {}
-			}));
+		if (verbose) {
+			System.setOut( classicErr );
+		}else {
+			System.setOut(new PrintStream(new OutputStream() {
+				  public void write(int b) {}
+				}));
+			System.setErr( new PrintStream(new OutputStream() {
+				  public void write(int b) {}
+				}));
+		}
 		
 		Reflections reflections = new Reflections("");
-		
+
 		System.setOut(classicOut);
+		System.setErr(classicErr);
 		
 		return reflections;
 	}
@@ -400,12 +415,12 @@ public class BioLockJ_API {
 		sb.append( "BioLockJ API " + BioLockJUtil.getVersion( ) + " - UNCC Fodor Lab" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
 		sb.append( "Usage:" +System.lineSeparator() );
-		sb.append( "biolockj_api <query> [args...]" +System.lineSeparator() );
+		sb.append( "biolockj-api <query> [args...]" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
 		sb.append( "For some uses, redirecting stderr is recommended:" +System.lineSeparator() );
-		sb.append( "biolockj_api <query> [args...]  2> /dev/null" +System.lineSeparator() );
+		sb.append( "biolockj-api <query> [args...]  2> /dev/null" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
-		sb.append( "Use biolockj_api without args to get help menu." +System.lineSeparator() );
+		sb.append( "Use biolockj-api without args to get help menu." +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
 		sb.append( "query:" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );

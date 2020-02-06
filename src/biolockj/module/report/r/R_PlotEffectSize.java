@@ -13,6 +13,7 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Properties;
 import biolockj.api.ApiModule;
 import biolockj.exception.ConfigViolationException;
@@ -46,7 +47,7 @@ public class R_PlotEffectSize extends R_Module implements ApiModule {
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
-		Config.getString( this, R_COLOR_HIGHLIGHT );
+		Config.getString( this, Constants.R_COLOR_HIGHLIGHT );
 
 		// Use single "&" to ensure all config values saved to MASTER config
 		if( Config.getBoolean( this, R_PLOT_EFFECT_SIZE_DISABLE_FC ) &&
