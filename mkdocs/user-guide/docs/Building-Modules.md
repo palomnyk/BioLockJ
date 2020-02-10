@@ -10,7 +10,8 @@ See the BioModule hello world tutorial.
 
 ## Coding your module
 
-To create a new [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html), simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file:<br>
+To create a new [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html), simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file: 
+###           
 1. [BioModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html): Extend if a more specific interface does not apply
 1. [ScriptModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html): Extend if your module generates and executes bash scripts
 1. [JavaModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html): Extend if your module only runs Java code 
@@ -106,19 +107,17 @@ To avoid running code on the cluster head node, a temporary instance of BioLockJ
 
 The BioLockJ API allows outside resources to get information about the BioLockJ program and any available modules.  
 
-To interface with the API, your module will need to implement the ApiModule interface.
+To interface with the API, your module will need to implement the **ApiModule interface**.
 
 ### API-generated html documentation
 
-The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API method `makeDocs <module> <dest>` (work in progress) will call methods on an individual module to generate a markdown document (saved under _dest_ fodler), which is ready to me rendered into an html file using mkdocs.  
-
-For more details about the BioLockJ process for generating documentation, see **work in progress > developers guide** TODO
+The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API is designed to generate a markdown document, which is ready to be rendered into an html file using mkdocs.  
 
 ### Built-in descriptions
 
 Override the `getCitationString()` method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.
 
-Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method.
+Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).
 
 ### Documenting Properties
 
@@ -141,7 +140,7 @@ protected static final String SCRIPT = "genMod.scriptPath";
 protected static final String LAUNCHER = "genMod.launcher";
 private static final String LAUNCHER_DESC = "Define executable language command if it is not included in your $PATH";
 ```
-In this example, the descriptions for `PARAM` and `SCRIPT` are written in the `addNewProperty()` method.  The description for `LAUNCHER` is stored as its own string (`LAUNCHER_DESC`), and that string is referenced in the `addNewProperty` method and in the javadoc description for `LAUNCHER`. This rather verbose option IS NOT necissary, but it allows the description to viewed through the api AND through javadocs, and IDE's; this is appropriate if you expect other classes to use the properties defined in your module.  
+In this example, the descriptions for `PARAM` and `SCRIPT` are written in the `addNewProperty()` method.  The description for `LAUNCHER` is stored as its own string (`LAUNCHER_DESC`), and that string is referenced in the `addNewProperty` method and in the javadoc description for `LAUNCHER`. This rather verbose option IS NOT necissary, but it allows the description to be viewed through the api AND through javadocs, and IDE's; this is appropriate if you expect other classes to use the properties defined in your module.  
 
 The descriptions for properties should be brief.  Additional details such as interactions between properties or the effects of different values should be part of the `getDetails()` method.  It should always be clear to a user what will happen if the value is "null".
 
@@ -177,15 +176,14 @@ public Boolean isValidProp( String property ) throws Exception {
 	return isValid;
 }
 ```
-In the example above, the Humann2Parser module uses two properties that are not used by any super class. the call to `super.isValidProp( property )` tests the property if it is used by a super class.  This class only adds checks only for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time (in isolation) as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the `checkDependencies()` method.
+In the example above, the Humann2Parser module uses two properties that are not used by any super class. The call to `super.isValidProp( property )` tests the property if it is used by a super class.  This class only adds checks for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the `checkDependencies()` method.
 
-### 
 
 ## Using External Modules
 
-To use a module that you have created yourself or aquired from a third party, you need to do three things:
+To use a module that you have created yourself or aquired from a third party, you need to:
 
-1. Save the compiled code in a folder on your machine (the name of this folder does not matter), for example: `/Users/joe/biolockjModules/JoesMods.jar` 
+1. Save the compiled code in a folder on your machine, for example: `/Users/joe/biolockjModules/JoesMods.jar` 
 1. Include your module in the module run order in your config file, for example:<br>
 `#BioModule com.joesCode.biolockj.RunTool`
 <br>Be sure to include any properties your module needs in the config file.
