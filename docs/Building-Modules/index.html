@@ -107,37 +107,41 @@
     <a class="current" href="./">Building Modules</a>
     <ul class="subnav">
             
-    <li class="toctree-l3"><a href="#any-java-class-that-implements-the-biomodule-interface-can-be-added-to-a-biolockj-pipeline">Any Java class that implements the BioModule interface can be added to a BioLockJ pipeline.</a></li>
-    
-
-    <li class="toctree-l3"><a href="#beginners">Beginners</a></li>
-    
-
-    <li class="toctree-l3"><a href="#coding-your-module">Coding your module</a></li>
+    <li class="toctree-l3"><a href="#building-new-modules">Building New Modules</a></li>
     
         <ul>
         
-            <li><a class="toctree-l4" href="#to-support-a-new-classifier-create-3-modules-that-implement-the-following-interfaces">To support a new classifier, create 3 modules that implement the following interfaces:</a></li>
+            <li><a class="toctree-l4" href="#beginners">Beginners</a></li>
         
-            <li><a class="toctree-l4" href="#biomoduleimpl-is-the-top-level-superclass-for-all-modules">BioModuleImpl is the top-level superclass for all modules.</a></li>
-        
-            <li><a class="toctree-l4" href="#scriptmoduleimpl-extends-biomoduleimpl-superclass-for-script-generating-modules">ScriptModuleImpl extends BioModuleImpl:  superclass for script-generating modules.</a></li>
-        
-            <li><a class="toctree-l4" href="#javamoduleimpl-extends-scriptmoduleimpl-superclass-for-pure-java-modules">JavaModuleImpl extends ScriptModuleImpl: superclass for pure Java modules.</a></li>
-        
-            <li><a class="toctree-l4" href="#classifiermoduleimpl-extends-scriptmoduleimpl-biolockjmoduleclassifier-superclass">ClassifierModuleImpl extends ScriptModuleImpl: biolockj.module.classifier superclass.</a></li>
-        
-            <li><a class="toctree-l4" href="#parsermoduleimpl-extends-javamoduleimpl-biolockjmoduleimplicitparser-superclass">ParserModuleImpl extends JavaModuleImpl: biolockj.module.implicit.parser superclass.</a></li>
-        
-            <li><a class="toctree-l4" href="#otunodeimpl-is-the-superclass-for-the-biolockjnode-package">OtuNodeImpl is the superclass for the biolockj.node package.</a></li>
+            <li><a class="toctree-l4" href="#coding-your-module">Coding your module</a></li>
         
         </ul>
     
 
-    <li class="toctree-l3"><a href="#share-your-module">Share your module</a></li>
+    <li class="toctree-l3"><a href="#document-your-module">Document your module</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l4" href="#api-generated-html-documentation">API-generated html documentation</a></li>
+        
+            <li><a class="toctree-l4" href="#built-in-descriptions">Built-in descriptions</a></li>
+        
+            <li><a class="toctree-l4" href="#documenting-properties">Documenting Properties</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l3"><a href="#using-external-modules">Using External Modules</a></li>
+    
+
+    <li class="toctree-l3"><a href="#finding-and-sharing-modules">Finding and Sharing Modules</a></li>
     
 
     </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
                 </li>
     </ul>
 	    </li>
@@ -188,18 +192,22 @@
           <div role="main">
             <div class="section">
               
-                <h4 id="any-java-class-that-implements-the-biomodule-interface-can-be-added-to-a-biolockj-pipeline">Any Java class that implements the <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a> interface can be added to a BioLockJ pipeline.</h4>
+                <h1 id="building-new-modules">Building New Modules</h1>
+<p><strong>Any Java class that implements the <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a> interface can be added to a BioLockJ pipeline.</strong></p>
 <p>The BioLockJ v1.0 implementation is currently focused on metagenomics analysis, but the generalized application framework is not limited to this domain.  Users can implement new BioModules to automate a wide variety of bioinformatics and report analytics.  The <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a> interface was designed so that users can develop new modules on their own.  </p>
 <h2 id="beginners">Beginners</h2>
 <p>See the BioModule hello world tutorial.</p>
 <h2 id="coding-your-module">Coding your module</h2>
-<p>To create a new <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a>, simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file:<br>
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a>: Extend if a more specific interface does not apply
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: Extend if your module generates and executes bash scripts
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a>: Extend if your module only runs Java code 
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModuleImpl.html">ClassifierModuleImpl</a>: Extend to support a new classifier program
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModuleImpl.html">ParserModuleImpl</a>: Extend to parse output of a new classifier program
-1. <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/report/r/R_Module.html">R_Module</a>: Extend if your module generates and executes R scripts</p>
+<p>To create a new <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a>, simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file: </p>
+<h3 id="_1"></h3>
+<ol>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a>: Extend if a more specific interface does not apply</li>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: Extend if your module generates and executes bash scripts</li>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a>: Extend if your module only runs Java code </li>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModuleImpl.html">ClassifierModuleImpl</a>: Extend to support a new classifier program</li>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModuleImpl.html">ParserModuleImpl</a>: Extend to parse output of a new classifier program</li>
+<li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/report/r/R_Module.html">R_Module</a>: Extend if your module generates and executes R scripts</li>
+</ol>
 <h4 id="to-support-a-new-classifier-create-3-modules-that-implement-the-following-interfaces">To support a new classifier, create 3 modules that implement the following interfaces:</h4>
 <ol>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModule.html">ClassifierModule</a>: Implement to generate bash scripts needed to call classifier program</li>
@@ -469,9 +477,80 @@
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNodeImpl.html">OtuNodeImpl</a> methods do not need to be overridden.  </li>
 <li>New <a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNode.html">OtuNode</a> implementations should call existing methods from their constructor.</li>
 </ul>
-<h2 id="share-your-module">Share your module</h2>
-<p>Other users can use your module by putting the compiled class in the java classpath when they run BioLockj and using #BioModule <strong>classname</strong> in their config file.</p>
-<p>You can share your module as code or as a compiled class any way that you like.  The official repository for external BioLockJ modules is <a href="https://github.com/IvoryC/blj_ext_modules">blj_ext_modules</a>.  Each module has a folder at the top level of the repository and should include the java code as well a config file to test the module alone, a test file to run a multi-module pipeline that includes the module, and (where applicable) a dockerfile.</p>
+<h2 id="document-your-module">Document your module</h2>
+<p>The BioLockJ API allows outside resources to get information about the BioLockJ program and any available modules.  </p>
+<p>To interface with the API, your module will need to implement the <strong>ApiModule interface</strong>.</p>
+<h3 id="api-generated-html-documentation">API-generated html documentation</h3>
+<p>The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API is designed to generate a markdown document, which is ready to be rendered into an html file using mkdocs.  </p>
+<h3 id="built-in-descriptions">Built-in descriptions</h3>
+<p>Override the <code>getCitationString()</code> method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.</p>
+<p>Override the <code>getDescription()</code> method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the <code>getDetails()</code> method (optional).</p>
+<h3 id="documenting-properties">Documenting Properties</h3>
+<p>If your module introduces any NEW configuration properties, those properties should registered to the module so the API can retrieve them.  Register properties using the <code>addNewProperty()</code> method in the modules constructor.  For example, the GenMod module defines three properties:</p>
+<pre><code class="java">public GenMod() {
+    super();
+    addNewProperty( PARAM, Properties.STRING_TYPE, &quot;parameters to pass to the user's script&quot; );
+    addNewProperty( SCRIPT, Properties.FILE_PATH, &quot;path to user script&quot; );
+    addNewProperty( LAUNCHER, Properties.STRING_TYPE, LAUNCHER_DESC );
+}
+
+protected static final String PARAM = &quot;genMod.param&quot;;
+protected static final String SCRIPT = &quot;genMod.scriptPath&quot;;
+
+/**
+ * {@link biolockj.Config} property: {@value #LAUNCHER}&lt;br&gt;
+ * {@value #LAUNCHER_DESC}
+ */
+protected static final String LAUNCHER = &quot;genMod.launcher&quot;;
+private static final String LAUNCHER_DESC = &quot;Define executable language command if it is not included in your $PATH&quot;;
+</code></pre>
+
+<p>In this example, the descriptions for <code>PARAM</code> and <code>SCRIPT</code> are written in the <code>addNewProperty()</code> method.  The description for <code>LAUNCHER</code> is stored as its own string (<code>LAUNCHER_DESC</code>), and that string is referenced in the <code>addNewProperty</code> method and in the javadoc description for <code>LAUNCHER</code>. This rather verbose option IS NOT necissary, but it allows the description to be viewed through the api AND through javadocs, and IDE's; this is appropriate if you expect other classes to use the properties defined in your module.  </p>
+<p>The descriptions for properties should be brief.  Additional details such as interactions between properties or the effects of different values should be part of the <code>getDetails()</code> method.  It should always be clear to a user what will happen if the value is "null".</p>
+<p>If there is a logical default for the property, that can passed as an additional argument to <code>addNewProperty()</code>.  This value will only be used if there is no value given for the property in the config file (including any defaultProps layers and standard.properties).</p>
+<p>If your module uses any general properties (beyond any uses by the the super class), then you should register it in the module's constructor using the <code>addGeneralProperty()</code> method.</p>
+<pre><code class="java">public QiimeClosedRefClassifier() {
+    super();
+    addGeneralProperty( Constants.EXE_AWK );
+}
+</code></pre>
+
+<p>The existing description and type for this property (defined in biolockj.Properties) will be returned if the module is queried about this property.  For a list of general properties, run:<br> 
+<code>biolockj_api listProps</code></p>
+<p>Finally, to very polished, you should override the <code>isValidProp()</code> method.  Be sure to include the call to super.</p>
+<pre><code class="java">@Override
+public Boolean isValidProp( String property ) throws Exception {
+    Boolean isValid = super.isValidProp( property );
+    switch(property) {
+        case HN2_KEEP_UNINTEGRATED:
+            try {Config.getBoolean( this, HN2_KEEP_UNINTEGRATED );}
+            catch(Exception e) { isValid = false; }
+            isValid = true;
+            break;
+        case HN2_KEEP_UNMAPPED:
+            try {Config.getBoolean( this, HN2_KEEP_UNMAPPED );}
+            catch(Exception e) { isValid = false; }
+            isValid = true;
+            break;
+    }
+    return isValid;
+}
+</code></pre>
+
+<p>In the example above, the Humann2Parser module uses two properties that are not used by any super class. The call to <code>super.isValidProp( property )</code> tests the property if it is used by a super class.  This class only adds checks for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the <code>checkDependencies()</code> method.</p>
+<h2 id="using-external-modules">Using External Modules</h2>
+<p>To use a module that you have created yourself or aquired from a third party, you need to:</p>
+<ol>
+<li>Save the compiled code in a folder on your machine, for example: <code>/Users/joe/biolockjModules/JoesMods.jar</code> </li>
+<li>Include your module in the module run order in your config file, for example:<br>
+<code>#BioModule com.joesCode.biolockj.RunTool</code>
+<br>Be sure to include any properties your module needs in the config file.</li>
+<li>Use the <code>--external-modules &lt;dir&gt;</code> option  when you call biolockj:<br>
+<code>biolockj --external-modules /Users/joe/biolockjModules myPipeline.properties</code></li>
+</ol>
+<p>Any other modules you have made or aquired can also be in the <code>/Users/joe/biolockjModules</code> folder.</p>
+<h2 id="finding-and-sharing-modules">Finding and Sharing Modules</h2>
+<p>The official repository for external BioLockJ modules is <a href="https://github.com/IvoryC/blj_ext_modules">blj_ext_modules</a>.  Each module has a folder at the top level of the repository and should include the java code as well a config file to test the module alone, a test file to run a multi-module pipeline that includes the module, and (where applicable) a dockerfile.  This is work in progress.</p>
               
             </div>
           </div>
@@ -479,7 +558,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../Example-Pipeline/" class="btn btn-neutral float-right" title="Example Pipeline">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../BioLockJ-Api/" class="btn btn-neutral float-right" title="BioLockJ API">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../Validation/" class="btn btn-neutral" title="Validation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -513,7 +592,7 @@
         <span><a href="../Validation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../Example-Pipeline/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../BioLockJ-Api/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
