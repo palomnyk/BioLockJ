@@ -1,6 +1,8 @@
 
 The BioLockJ program is launched through the `biolockj` script. See [`biolockj --help`](help-biolockj.md).
 
+Support programs can access information about BioLockJ modules and properties through [`biolockj-api`](BioLockJ-Api.md). 
+
 There are also several helper scripts for small specific tasks, these are all found under $BLJ/script and added to the `$PATH` after the basic installation:
 
 

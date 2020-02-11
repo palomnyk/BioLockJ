@@ -38,6 +38,7 @@ nav:
         - Failure Recovery: Failure-Recovery.md
         - Validation: Validation.md
         - Building Modules: Building-Modules.md
+        - BioLockJ API: BioLockJ-Api.md
     - Example Pipeline: Example-Pipeline.md
     - FAQ: FAQ.md
     # - more:

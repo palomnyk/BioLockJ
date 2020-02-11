@@ -30,8 +30,8 @@
      * [Failure Recovery](Failure-Recovery.md)
      * [Validation](Validation.md)
      * Supported Environments
-     * BioLockJ [API](BioLockJ-Api)
      * Expand BioLockJ by [Building Modules](Building-Modules.md)
+     * BioLockJ [API](BioLockJ-Api)
  * Examples and Templates
      * [Example Pipeline](Example-Pipeline.md)
  * [FAQ](FAQ.md)
