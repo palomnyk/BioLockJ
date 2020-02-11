@@ -17,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.comparator.SizeFileComparator;
 import org.apache.commons.io.filefilter.HiddenFileFilter;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.ConfigNotFoundException;
 import biolockj.exception.PipelineFormationException;
@@ -28,6 +30,59 @@ import biolockj.util.*;
  */
 public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> {
 
+	public BioModuleImpl() {
+		propDescMap = new HashMap<>();
+		propTypeMap = new HashMap<>();
+		propDefaultValMap = new HashMap<>();
+	}
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private final HashMap<String, String> propDescMap;
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private final HashMap<String, String> propTypeMap;
+	
+	/**
+	 * HashMap with property name as key and the default value for this property as the value.
+	 */
+	private final HashMap<String, String> propDefaultValMap;
+	
+	protected final void addNewProperty(String prop, String type, String desc) {
+		addNewProperty(prop, type, desc, null);
+	}
+	
+	protected final void addNewProperty(String prop, String type, String desc, String defaultValue) {
+		propDescMap.put(prop, desc);
+		propTypeMap.put(prop, type);
+		propDefaultValMap.put( prop, defaultValue );
+	}
+	
+	protected final void addGeneralProperty(String prop) {
+		try {
+			addGeneralProperty(prop, Properties.getDescription( prop ));
+		}catch(API_Exception ex) {
+			addNewProperty(prop, "", "");
+		}
+	}
+	protected final void addGeneralProperty(String prop, String desc) {
+		try {
+			addGeneralProperty(prop, Properties.getPropertyType( prop ), desc);
+		}catch(API_Exception ex) {
+			addNewProperty(prop, "", desc);
+		}
+	}
+	protected final void addGeneralProperty(String prop, String type, String desc) {
+		addNewProperty(prop, type, desc);
+	}
+	
+	public final String getPropDefault(String prop) {
+		return propDefaultValMap.get( prop );
+	}
+	
 	/**
 	 * If restarting or running a direct pipeline execute the cleanup for completed modules.
 	 */
@@ -296,6 +351,55 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	private File moduleDir = null;
 	private Integer moduleId;
 	private String alias = null;
+	
+	
+	public String getTitle() {
+		return this.getClass().getSimpleName();
+	}
+	
+	public List<String> getMenuPlacement() {
+		return Arrays.asList( this.getClass().toString().split( "." ) );
+	}
+
+
+	protected final HashMap<String, String> getPropDescMap() {
+		return propDescMap;
+	}
+	public final String getDescription( String prop ) throws API_Exception {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX )
+						&& listProps().contains( prop ) ) {
+			return Properties.getDescription( prop ) ;
+		}
+		HashMap<String, String> descriptions = getPropDescMap();
+		return descriptions.get( prop );
+	}
+	public final List<String> listProps() {
+		List<String> props = new ArrayList<>(getPropDescMap().keySet());
+		Collections.sort(props);
+		return props;
+	}
+	
+	protected final HashMap<String, String> getPropTypeMap() {
+		return propTypeMap;
+	}
+	public final String getPropType( String prop ) throws API_Exception {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) 
+						&& listProps().contains( prop )) {
+			return Properties.getPropertyType(prop);
+		}
+		HashMap<String, String> types = getPropTypeMap();
+		return types.get( prop );
+	}
+	
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = null;
+		if ( listProps().contains( property ) ) isValid = true;
+		return isValid;
+	}	
+	
+	public String getDetails() {
+		return "";
+	}
 
 	/**
 	 * BioLockJ gzip file extension constant: {@value #GZIP_EXT}

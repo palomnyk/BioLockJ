@@ -14,6 +14,7 @@ package biolockj.module.implicit;
 import java.io.*;
 import java.util.*;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.SequnceFormatException;
 import biolockj.module.JavaModuleImpl;
@@ -40,7 +41,16 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Demultiplexer
  */
-public class Demultiplexer extends JavaModuleImpl implements SeqModule {
+public class Demultiplexer extends JavaModuleImpl implements SeqModule, ApiModule {
+	
+	public Demultiplexer() {
+		super();
+		addGeneralProperty( MetaUtil.META_BARCODE_COLUMN );
+		addGeneralProperty( DemuxUtil.BARCODE_CUTOFF );
+		addGeneralProperty( DemuxUtil.BARCODE_USE_REV_COMP );
+		addGeneralProperty( DemuxUtil.DEMUX_STRATEGY );
+	}
+
 	/**
 	 * Validate module dependencies:
 	 * <ol>
@@ -607,4 +617,14 @@ public class Demultiplexer extends JavaModuleImpl implements SeqModule {
 	 * Module splits multiplexed file into smaller files with this number of lines: {@value #NUM_LINES_TEMP_FILE}
 	 */
 	protected static final int NUM_LINES_TEMP_FILE = 2000000;
+
+	@Override
+	public String getDescription() {
+		return "Demultiplex samples into separate files for each sample.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 }

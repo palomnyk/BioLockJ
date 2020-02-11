@@ -12,6 +12,10 @@
 package biolockj.module.report.r;
 
 import biolockj.Config;
+import biolockj.Constants;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
+import biolockj.util.BioLockJUtil;
 
 /**
  * This BioModule is used to build the R script used to generate MDS plots for each report field and each taxonomy level
@@ -19,7 +23,19 @@ import biolockj.Config;
  * 
  * @blj.web_desc R Plot MDS
  */
-public class R_PlotMds extends R_Module {
+public class R_PlotMds extends R_Module implements ApiModule {
+	
+
+	public R_PlotMds() {
+		super();
+		addGeneralProperty( Constants.R_COLOR_BASE );
+		addGeneralProperty( Constants.R_COLOR_HIGHLIGHT );
+		addGeneralProperty( Constants.R_COLOR_PALETTE );
+		addGeneralProperty( Constants.R_PCH );
+		addNewProperty( R_MDS_DISTANCE, Properties.STRING_TYPE, "distance metric for calculating MDS (default: bray)" );
+		addNewProperty( R_MDS_NUM_AXIS, Properties.INTEGER_TYPE, "Sets # MDS axis to plot; default (3) produces mds1 vs mds2, mds1 vs mds3, and mds2 vs mds3" );
+		addNewProperty( R_MDS_REPORT_FIELDS, Properties.LIST_TYPE, "Override field used to explicitly list metadata columns to build MDS plots. If left undefined, all columns are reported" );
+	}
 
 	/**
 	 * Require {@link biolockj.Config}.{@value #R_MDS_NUM_AXIS} set to integer greater than 2
@@ -28,10 +44,10 @@ public class R_PlotMds extends R_Module {
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
 		Config.requireString( this, R_MDS_DISTANCE );
-		Config.getString( this, R_COLOR_BASE );
-		Config.getString( this, R_COLOR_HIGHLIGHT );
-		Config.getString( this, R_COLOR_PALETTE );
-		Config.getString( this, R_PCH );
+		Config.getString( this, Constants.R_COLOR_BASE );
+		Config.getString( this, Constants.R_COLOR_HIGHLIGHT );
+		Config.getString( this, Constants.R_COLOR_PALETTE );
+		Config.getString( this, Constants.R_PCH );
 		if( Config.requirePositiveInteger( this, R_MDS_NUM_AXIS ) < 2 )
 			throw new Exception( "Config property [" + R_MDS_NUM_AXIS + "] must be > 2" );
 	}
@@ -52,5 +68,15 @@ public class R_PlotMds extends R_Module {
 	 * List metadata fields to generate MDS ordination plots.
 	 */
 	protected static final String R_MDS_REPORT_FIELDS = "r_PlotMds.reportFields";
+
+	@Override
+	public String getDescription() {
+		return "Generate sets of multidimensional scaling plots showing 2 axes at a time (up to the <*r_PlotMds.numAxis*>th axis) with color coding based on each categorical metadata field (default) or by each field given in *r_PlotMds.reportFields*";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 
 }

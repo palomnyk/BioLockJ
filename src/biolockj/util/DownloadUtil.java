@@ -109,7 +109,7 @@ public final class DownloadUtil {
 	 * @return String download directory file or null
 	 */
 	public static String getDownloadDirPath() {
-		String dir = Config.getString( null, DOWNLOAD_DIR );
+		String dir = Config.getString( null, Constants.DOWNLOAD_DIR );
 		if( dir != null ) {
 			if( !dir.endsWith( File.separator ) ) dir = dir + File.separator;
 			return dir + Config.pipelineName();
@@ -279,11 +279,6 @@ public final class DownloadUtil {
 	 */
 	public static final String DOWNLOAD_LIST = "downloadList.txt";
 
-	/**
-	 * {@link biolockj.Config} String property: {@value #DOWNLOAD_DIR}<br>
-	 * Sets the local directory targeted by the scp command.
-	 */
-	protected static final String DOWNLOAD_DIR = "pipeline.downloadDir";
 	private static final String RETURN = Constants.RETURN;
 	private static final String RUN_ALL_SCRIPT = "Run_All_R" + Constants.SH_EXT;
 	private static final String SRC = "src";

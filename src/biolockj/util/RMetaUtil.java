@@ -15,6 +15,8 @@ import java.io.File;
 import java.util.*;
 import org.apache.commons.lang.math.NumberUtils;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.exception.ConfigFormatException;
 import biolockj.exception.MetadataException;
 import biolockj.module.BioModule;
@@ -340,6 +342,19 @@ public final class RMetaUtil {
 			if( !NumberUtils.isNumber( val ) ) throw new Exception( "Invalid Config! " + R_NUMERIC_FIELDS +
 				" contains field [" + field + "] with non-numeric data [" + val + "]" );
 	}
+	
+	public static void registerProps() throws API_Exception {
+		//Properties.registerProp( BINARY_FIELDS, Properties.LIST_TYPE, "List of fields which contain exactly 2 unique non-NA options" );
+		//Properties.registerProp( NUM_META_COLS, Properties.INTEGER_TYPE, "Name of R script variable with metadata column count" );//TODO: clarify this
+		Properties.registerProp( QIIME_PLOT_ALPHA_METRICS, Properties.BOOLEAN_TYPE, "" );
+		Properties.registerProp( R_EXCLUDE_FIELDS, Properties.LIST_TYPE, "Fields from the metadata that will be excluded from any auto-determined typing, or plotting; R reports must contain at least one valid nominal or numeric metadata field." );
+		Properties.registerProp( R_MDS_REPORT_FIELDS, Properties.LIST_TYPE, "Metadata column names indicating fields to include in the MDS report; Fields listed here must exist in the metadata file." );
+		Properties.registerProp( R_NOMINAL_FIELDS, Properties.LIST_TYPE, "Override default property type by explicitly listing it as nominal." );
+		Properties.registerProp( R_NUMERIC_FIELDS, Properties.LIST_TYPE, "Override default property type by explicitly listing it as numeric." );
+		Properties.registerProp( R_REPORT_FIELDS, Properties.LIST_TYPE, "Metadata fields to include in reports; Fields listed here must exist in the metadata file. R reports must contain at least one valid field." );
+		//Properties.registerProp( NOMINAL_FIELDS, Properties.LIST_TYPE, "" );
+		//Properties.registerProp( NUMERIC_FIELDS, Properties.LIST_TYPE, "" );
+	}
 
 	/**
 	 * {@link biolockj.Config} Internal List property: {@value #BINARY_FIELDS}<br>
@@ -348,7 +363,7 @@ public final class RMetaUtil {
 	protected static final String BINARY_FIELDS = "R_internal.binaryFields";
 
 	/**
-	 * Name of R script variable with metadata column count
+	 * Name of R script variable with metadata column count //TODO: is this an int? or a String giving a variable storing an int ?
 	 */
 	protected static final String NUM_META_COLS = "R_internal.numMetaCols";
 

@@ -14,6 +14,8 @@ package biolockj.module.seq;
 import java.io.*;
 import java.util.*;
 import biolockj.*;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.MetadataException;
 import biolockj.module.SeqModuleImpl;
 import biolockj.module.implicit.RegisterNumReads;
@@ -27,7 +29,14 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Merge Reads with PEAR
  */
-public class PearMergeReads extends SeqModuleImpl {
+public class PearMergeReads extends SeqModuleImpl implements ApiModule {
+	
+	public PearMergeReads() {
+		super();
+		addNewProperty( EXE_PEAR, Properties.EXE_PATH, "" );
+		addNewProperty( EXE_PEAR_PARAMS, Properties.STRING_TYPE, "optionally pass additional parameters to pear." );
+	}
+
 	/**
 	 * Build the script lines for each sample as a nested list. PAIR program will be called once for each pair of files
 	 * to output a single merged read.
@@ -157,7 +166,7 @@ public class PearMergeReads extends SeqModuleImpl {
 	/**
 	 * {@link biolockj.Config} property {@value #EXE_PEAR_PARAMS} is used to set the PEAR executable runtime parameters
 	 */
-	protected static final String EXE_PEAR_PARAMS = "exe.pearParams";
+	protected static final String EXE_PEAR_PARAMS = "pearMergeReads.pearParams";
 	/**
 	 * Name of the bash function that merges files with PEAR: {@value #FUNCTION_PEAR_MERGE}
 	 */
@@ -171,4 +180,16 @@ public class PearMergeReads extends SeqModuleImpl {
 
 	private static final String RV_READ_PARAM = "-r ";
 
+	@Override
+	public String getDescription() {
+		return "Run pear, the Paired-End reAd mergeR";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Jiajie Zhang, Kassian Kobert, Tomáš Flouri, Alexandros Stamatakis, PEAR: a fast and accurate Illumina Paired-End reAd mergeR, Bioinformatics, Volume 30, Issue 5, 1 March 2014, Pages 614–620, https://doi.org/10.1093/bioinformatics/btt593" 
+						+ System.lineSeparator() + "https://cme.h-its.org/exelixis/web/software/pear/doc.html" 
+						+ System.lineSeparator() + "Module developed by Mike Sioda";
+	}
+	
 }

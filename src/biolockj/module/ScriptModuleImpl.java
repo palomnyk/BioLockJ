@@ -25,6 +25,21 @@ import biolockj.util.*;
  * Superclass for Java BioModules that will be called in separate instances of the application.
  */
 public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptModule {
+	
+	public ScriptModuleImpl() {
+		super();
+		addGeneralProperty( Constants.SCRIPT_DEFAULT_HEADER );
+		addGeneralProperty( Constants.SCRIPT_NUM_WORKERS );
+		addGeneralProperty( Constants.SCRIPT_NUM_THREADS );
+		addGeneralProperty( Constants.SCRIPT_PERMISSIONS );
+		addGeneralProperty( Constants.SCRIPT_TIMEOUT );
+		List<String> generalProps = BashScriptBuilder.listProps();
+		generalProps.addAll( DockerUtil.listProps() );
+		for (String prop : generalProps ) {
+			addGeneralProperty( prop );
+		}
+	}
+
 	@Override
 	public abstract List<List<String>> buildScript( final List<File> files ) throws Exception;
 
@@ -50,10 +65,11 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 	 */
 	@Override
 	public void checkDependencies() throws Exception {
-		Config.requireString( this, Constants.SCRIPT_PERMISSIONS );
-		Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_WORKERS );
-		Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
-		Config.getPositiveInteger( this, Constants.SCRIPT_TIMEOUT );
+		isValidProp( Constants.SCRIPT_PERMISSIONS);
+		isValidProp( Constants.SCRIPT_PERMISSIONS );
+		isValidProp( Constants.SCRIPT_NUM_WORKERS );
+		isValidProp( Constants.SCRIPT_NUM_THREADS );
+		isValidProp( Constants.SCRIPT_TIMEOUT );
 	}
 
 	/**
@@ -184,4 +200,31 @@ public abstract class ScriptModuleImpl extends BioModuleImpl implements ScriptMo
 		return Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
 	}
 
+	@Override
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = super.isValidProp( property );
+		switch(property) {
+			case Constants.SCRIPT_DEFAULT_HEADER:
+				isValid = true;
+				break;
+			case Constants.SCRIPT_NUM_WORKERS:
+				Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_WORKERS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_NUM_THREADS:
+				Config.requirePositiveInteger( this, Constants.SCRIPT_NUM_THREADS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_PERMISSIONS:
+				Config.requireString( this, Constants.SCRIPT_PERMISSIONS );
+				isValid = true;
+				break;
+			case Constants.SCRIPT_TIMEOUT:
+				Config.getPositiveInteger( this, Constants.SCRIPT_TIMEOUT );
+				isValid = true;
+				break;
+		}
+		return isValid;
+	}
+	
 }

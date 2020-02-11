@@ -1,4 +1,6 @@
-#### Any Java class that implements the [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html) interface can be added to a BioLockJ pipeline.
+# Building New Modules
+
+**Any Java class that implements the [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html) interface can be added to a BioLockJ pipeline.**
 
 The BioLockJ v1.0 implementation is currently focused on metagenomics analysis, but the generalized application framework is not limited to this domain.  Users can implement new BioModules to automate a wide variety of bioinformatics and report analytics.  The [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html) interface was designed so that users can develop new modules on their own.  
 
@@ -8,7 +10,8 @@ See the BioModule hello world tutorial.
 
 ## Coding your module
 
-To create a new [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html), simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file:<br>
+To create a new [BioModule](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html), simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file: 
+###           
 1. [BioModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html): Extend if a more specific interface does not apply
 1. [ScriptModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html): Extend if your module generates and executes bash scripts
 1. [JavaModuleImpl](https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html): Extend if your module only runs Java code 
@@ -100,8 +103,96 @@ To avoid running code on the cluster head node, a temporary instance of BioLockJ
 * [OtuNodeImpl](https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNodeImpl.html) methods do not need to be overridden.  
 * New [OtuNode](https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNode.html) implementations should call existing methods from their constructor.
 
-## Share your module
+## Document your module
 
-Other users can use your module by putting the compiled class in the java classpath when they run BioLockj and using #BioModule **classname** in their config file.
+The BioLockJ API allows outside resources to get information about the BioLockJ program and any available modules.  
 
-You can share your module as code or as a compiled class any way that you like.  The official repository for external BioLockJ modules is [blj_ext_modules](https://github.com/IvoryC/blj_ext_modules).  Each module has a folder at the top level of the repository and should include the java code as well a config file to test the module alone, a test file to run a multi-module pipeline that includes the module, and (where applicable) a dockerfile.
+To interface with the API, your module will need to implement the **ApiModule interface**.
+
+### API-generated html documentation
+
+The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API is designed to generate a markdown document, which is ready to be rendered into an html file using mkdocs.  
+
+### Built-in descriptions
+
+Override the `getCitationString()` method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.
+
+Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).
+
+### Documenting Properties
+
+If your module introduces any NEW configuration properties, those properties should registered to the module so the API can retrieve them.  Register properties using the `addNewProperty()` method in the modules constructor.  For example, the GenMod module defines three properties:
+```java
+public GenMod() {
+	super();
+	addNewProperty( PARAM, Properties.STRING_TYPE, "parameters to pass to the user's script" );
+	addNewProperty( SCRIPT, Properties.FILE_PATH, "path to user script" );
+	addNewProperty( LAUNCHER, Properties.STRING_TYPE, LAUNCHER_DESC );
+}
+
+protected static final String PARAM = "genMod.param";
+protected static final String SCRIPT = "genMod.scriptPath";
+
+/**
+ * {@link biolockj.Config} property: {@value #LAUNCHER}<br>
+ * {@value #LAUNCHER_DESC}
+ */
+protected static final String LAUNCHER = "genMod.launcher";
+private static final String LAUNCHER_DESC = "Define executable language command if it is not included in your $PATH";
+```
+In this example, the descriptions for `PARAM` and `SCRIPT` are written in the `addNewProperty()` method.  The description for `LAUNCHER` is stored as its own string (`LAUNCHER_DESC`), and that string is referenced in the `addNewProperty` method and in the javadoc description for `LAUNCHER`. This rather verbose option IS NOT necissary, but it allows the description to be viewed through the api AND through javadocs, and IDE's; this is appropriate if you expect other classes to use the properties defined in your module.  
+
+The descriptions for properties should be brief.  Additional details such as interactions between properties or the effects of different values should be part of the `getDetails()` method.  It should always be clear to a user what will happen if the value is "null".
+
+If there is a logical default for the property, that can passed as an additional argument to `addNewProperty()`.  This value will only be used if there is no value given for the property in the config file (including any defaultProps layers and standard.properties).
+
+If your module uses any general properties (beyond any uses by the the super class), then you should register it in the module's constructor using the `addGeneralProperty()` method.
+```java
+public QiimeClosedRefClassifier() {
+	super();
+	addGeneralProperty( Constants.EXE_AWK );
+}
+```
+The existing description and type for this property (defined in biolockj.Properties) will be returned if the module is queried about this property.  For a list of general properties, run:<br> 
+`biolockj_api listProps `
+
+Finally, to very polished, you should override the `isValidProp()` method.  Be sure to include the call to super.
+```java
+@Override
+public Boolean isValidProp( String property ) throws Exception {
+	Boolean isValid = super.isValidProp( property );
+	switch(property) {
+		case HN2_KEEP_UNINTEGRATED:
+			try {Config.getBoolean( this, HN2_KEEP_UNINTEGRATED );}
+			catch(Exception e) { isValid = false; }
+			isValid = true;
+			break;
+		case HN2_KEEP_UNMAPPED:
+			try {Config.getBoolean( this, HN2_KEEP_UNMAPPED );}
+			catch(Exception e) { isValid = false; }
+			isValid = true;
+			break;
+	}
+	return isValid;
+}
+```
+In the example above, the Humann2Parser module uses two properties that are not used by any super class. The call to `super.isValidProp( property )` tests the property if it is used by a super class.  This class only adds checks for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the `checkDependencies()` method.
+
+
+## Using External Modules
+
+To use a module that you have created yourself or aquired from a third party, you need to:
+
+1. Save the compiled code in a folder on your machine, for example: `/Users/joe/biolockjModules/JoesMods.jar` 
+1. Include your module in the module run order in your config file, for example:<br>
+`#BioModule com.joesCode.biolockj.RunTool`
+<br>Be sure to include any properties your module needs in the config file.
+1. Use the ` --external-modules <dir>` option  when you call biolockj:<br>
+`biolockj --external-modules /Users/joe/biolockjModules myPipeline.properties`
+
+Any other modules you have made or aquired can also be in the `/Users/joe/biolockjModules` folder.
+
+## Finding and Sharing Modules
+
+The official repository for external BioLockJ modules is [blj_ext_modules](https://github.com/IvoryC/blj_ext_modules).  Each module has a folder at the top level of the repository and should include the java code as well a config file to test the module alone, a test file to run a multi-module pipeline that includes the module, and (where applicable) a dockerfile.  This is work in progress.
+

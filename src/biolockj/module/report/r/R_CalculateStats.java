@@ -16,7 +16,10 @@ import java.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.*;
 import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Log;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.module.BioModule;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.ModuleUtil;
@@ -26,7 +29,14 @@ import biolockj.util.ModuleUtil;
  * 
  * @blj.web_desc R Statistics Calculator
  */
-public class R_CalculateStats extends R_Module {
+public class R_CalculateStats extends R_Module implements ApiModule {
+	
+	public R_CalculateStats() {
+		super();
+		addNewProperty( R_ADJ_PVALS_SCOPE, Properties.STRING_TYPE, "defines R p.adjust( n ) parameter is calculated. Options:  GLOBAL, LOCAL, TAXA, ATTRIBUTE" );
+		addNewProperty( R_PVAL_ADJ_METHOD, Properties.STRING_TYPE, "the p.adjust \"method\" parameter" );
+	}
+
 	/**
 	 * Validate configuration file properties used to build the R report:
 	 * <ul>
@@ -40,7 +50,7 @@ public class R_CalculateStats extends R_Module {
 		super.checkDependencies();
 		Config.requireString( this, R_ADJ_PVALS_SCOPE );
 		Config.requireString( this, R_PVAL_ADJ_METHOD );
-		Config.getPositiveDoubleVal( this, R_RARE_OTU_THRESHOLD );
+		Config.getPositiveDoubleVal( this, Constants.R_RARE_OTU_THRESHOLD );
 	}
 
 	/**
@@ -189,5 +199,15 @@ public class R_CalculateStats extends R_Module {
 		statSuffixSet.add( P_VALS_PAR );
 		statSuffixSet.add( P_VALS_PAR_ADJ );
 		statSuffixSet.add( R_SQUARED_VALS );
+	}
+
+	@Override
+	public String getDescription() {
+		return "Generate a summary statistics table with [adjusted and unadjusted] [parameteric and non-parametirc] p-values and r<sup>2</sup> values for each reportable metadata field and each *report.taxonomyLevel* configured.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "BioLockJ " + BioLockJUtil.getVersion() + System.lineSeparator() + "Module developted by Mike Sioda.";
 	}
 }

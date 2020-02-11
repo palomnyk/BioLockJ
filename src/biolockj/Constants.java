@@ -11,10 +11,83 @@
  */
 package biolockj;
 
+import biolockj.api.API_Exception;
+
 /**
  * Single Java class to hold shared constant values referenced my multiple classes.
  */
 public class Constants {
+	
+	/**
+	 * Register properties with the Properties class for API access.
+	 * @throws API_Exception 
+	 */
+	static final void registerProps() throws API_Exception {
+		Properties.registerProp( AWS_S3_XFER_TIMEOUT, Properties.INTEGER_TYPE, AWS_S3_XFER_TIMEOUT_DESC );
+		Properties.registerProp( CLUSTER_HOST, Properties.STRING_TYPE, CLUSTER_HOST_DESC);
+		Properties.registerProp( DEFAULT_MOD_DEMUX, Properties.STRING_TYPE, DEFAULT_MOD_DEMUX_DESC );
+		Properties.registerProp( DEFAULT_MOD_FASTA_CONV, Properties.STRING_TYPE, DEFAULT_MOD_FASTA_CONV_DESC );
+		Properties.registerProp( DEFAULT_MOD_SEQ_MERGER, Properties.STRING_TYPE, DEFAULT_MOD_SEQ_MERGER_DESC );
+		Properties.registerProp( DEFAULT_STATS_MODULE, Properties.STRING_TYPE, DEFAULT_STATS_MODULE_DESC );
+		Properties.registerProp( DETACH_JAVA_MODULES, Properties.BOOLEAN_TYPE, DETACH_JAVA_MODULES_DESC );
+		Properties.registerProp( DISABLE_ADD_IMPLICIT_MODULES, Properties.BOOLEAN_TYPE, DISABLE_ADD_IMPLICIT_MODULES_DESC );
+		Properties.registerProp( DISABLE_PRE_REQ_MODULES, Properties.BOOLEAN_TYPE, DISABLE_PRE_REQ_MODULES_DESC );
+		Properties.registerProp( DOCKER_CONTAINER_NAME, Properties.STRING_TYPE, DOCKER_CONTAINER_NAME_DESC );
+		Properties.registerProp( EXE_AWK, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_DOCKER, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_GZIP, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_JAVA, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_PYTHON, Properties.EXE_PATH, "" );
+		Properties.registerProp( EXE_RSCRIPT, Properties.EXE_PATH, "" );
+		Properties.registerProp( HN2_DISABLE_GENE_FAMILIES, Properties.BOOLEAN_TYPE, HN2_DISABLE_GENE_FAMILIES_DESC );
+		Properties.registerProp( HN2_DISABLE_PATH_ABUNDANCE, Properties.BOOLEAN_TYPE, HN2_DISABLE_PATH_ABUNDANCE_DESC );
+		Properties.registerProp( HN2_DISABLE_PATH_COVERAGE, Properties.BOOLEAN_TYPE, HN2_DISABLE_PATH_COVERAGE_DESC );
+		Properties.registerProp( INPUT_DIRS, Properties.FILE_PATH_LIST, INPUT_DIRS_DESC );
+		Properties.registerProp( INPUT_FORWARD_READ_SUFFIX, "regex", "file suffix used to identify forward reads in" + INPUT_DIRS );
+		Properties.registerProp( INPUT_IGNORE_FILES, Properties.LIST_TYPE, INPUT_IGNORE_FILES_DESC );
+		Properties.registerProp( INPUT_REQUIRE_COMPLETE_PAIRS, Properties.BOOLEAN_TYPE, INPUT_REQUIRE_COMPLETE_PAIRS_DESC );
+		Properties.registerProp( INPUT_REVERSE_READ_SUFFIX, "regex", "file suffix used to identify reverse reads in" + INPUT_DIRS );
+		Properties.registerProp( INPUT_TRIM_PREFIX, Properties.STRING_TYPE, INPUT_TRIM_PREFIX_DESC );
+		Properties.registerProp( INPUT_TRIM_SUFFIX, Properties.STRING_TYPE, INPUT_TRIM_SUFFIX_DESC );
+		Properties.registerProp( QIIME_ALPHA_DIVERSITY_METRICS, Properties.LIST_TYPE, "alpha diversity metrics to calculate through qiime; For complete list of skbio.diversity.alpha options, see <a href= \"http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html\" target=\"_top\">http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html</a>" );
+		Properties.registerProp( RM_TEMP_FILES, Properties.BOOLEAN_TYPE, RM_TEMP_FILES_DESC );
+		
+		Properties.registerProp( P_VAL_CUTOFF, Properties.NUMERTIC_TYPE, "p-value cutoff used to assign label _r.colorHighlight_" );
+		Properties.registerProp( R_COLOR_BASE, Properties.STRING_TYPE, "base color used for labels & headings in the PDF report; Must be a valid color in R." );
+		Properties.registerProp( R_COLOR_FILE, Properties.FILE_PATH, "path to a tab-delimited file giving the color to use for each value of each metadata field plotted." );
+		Properties.registerProp( R_COLOR_HIGHLIGHT, Properties.STRING_TYPE, "color is used to highlight significant OTUs in plot" );
+		Properties.registerProp( R_COLOR_PALETTE, Properties.STRING_TYPE, "palette argument passed to [get_palette {ggpubr}](https://www.rdocumentation.org/packages/ggpubr/versions/0.2/topics/get_palette) to select colors for some output visualiztions" );
+		Properties.registerProp( R_COLOR_POINT, Properties.STRING_TYPE, "default color of scatterplot and strip-chart plot points" );
+		Properties.registerProp( R_DEBUG, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, will generate R Script log files" );
+		Properties.registerProp( R_PCH, Properties.INTEGER_TYPE, "Sets R plot pch parameter for PDF report" );
+		Properties.registerProp( R_RARE_OTU_THRESHOLD, Properties.NUMERTIC_TYPE, "If >=1, R will filter OTUs found in fewer than this many samples. If <1, R will interperate the value as a percentage and discard OTUs not found in at least that percentage of samples" );
+		Properties.registerProp( R_SAVE_R_DATA, Properties.BOOLEAN_TYPE, "If Y, all R script generating BioModules will save R Session data to the module output directory to a file using the extension \".RData\"" );
+		Properties.registerProp( R_TIMEOUT, Properties.INTEGER_TYPE, "the # minutes before R Script will time out and fail; If undefined, no timeout is used." );
+		Properties.registerProp( R_USE_UINQUE_COLORS, Properties.BOOLEAN_TYPE, "force to use a unique color for every value in every field plotted; only recommended for low numbers of metadata columns/values." );
+		
+		Properties.registerProp( SCRIPT_DEFAULT_HEADER, Properties.STRING_TYPE, SCRIPT_DEFAULT_HEADER_DESC);
+		Properties.registerProp( SCRIPT_NUM_WORKERS, Properties.INTEGER_TYPE, SCRIPT_NUM_WORKERS_DESC);
+		Properties.registerProp( SCRIPT_NUM_THREADS, Properties.INTEGER_TYPE, SCRIPT_NUM_THREADS_DESC);
+		Properties.registerProp( SCRIPT_PERMISSIONS, Properties.STRING_TYPE, SCRIPT_PERMISSIONS_DESC);
+		Properties.registerProp( SCRIPT_TIMEOUT, Properties.INTEGER_TYPE, SCRIPT_TIMEOUT_DESC);
+		Properties.registerProp( PIPELINE_COPY_FILES, Properties.BOOLEAN_TYPE, PIPELINE_COPY_FILES_DESC );
+		Properties.registerProp( PIPELINE_DEFAULT_PROPS, Properties.FILE_PATH_LIST, PIPELINE_DEFAULT_PROPS_DESC );
+		Properties.registerProp( PIPELINE_ENV, Properties.STRING_TYPE, "Environment in which a pipeline is run. Options: " + PIPELINE_ENV_CLUSTER + ", " + PIPELINE_ENV_AWS + ", " + PIPELINE_ENV_LOCAL );
+		Properties.registerProp( PIPELINE_PRIVS, Properties.STRING_TYPE, PIPELINE_PRIVS_DESC );
+		Properties.registerProp( DOWNLOAD_DIR, Properties.FILE_PATH, DOWNLOAD_DIR_DESC );
+		Properties.registerProp( LIMIT_DEBUG_CLASSES, Properties.LIST_TYPE, LIMIT_DEBUG_CLASSES_DESC );
+		Properties.registerProp( LOG_LEVEL_PROPERTY, Properties.STRING_TYPE, "Options: DEBUG, INFO, WARN, ERROR" );
+		Properties.registerProp( REPORT_LOG_BASE, Properties.STRING_TYPE, "Options: 10,e,null. If e, use natural log (base e); if 10, use log base 10; if not set, counts will not be converted to a log scale." );
+		Properties.registerProp( REPORT_MIN_COUNT, Properties.INTEGER_TYPE, "minimum table count allowed, if a count less that this value is found, it is set to 0." );
+		Properties.registerProp( REPORT_NUM_HITS, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, and add Num_Hits to metadata" );
+		Properties.registerProp( REPORT_NUM_READS, Properties.BOOLEAN_TYPE, "Options: Y/N. If Y, and add Num_Reads to metadata" );
+		Properties.registerProp( REPORT_SAMPLE_CUTOFF, Properties.NUMERTIC_TYPE, "Minimum percentage of data columns that must be non-zero to keep the sample." );
+		Properties.registerProp( REPORT_SCARCE_CUTOFF, Properties.NUMERTIC_TYPE, "Minimum percentage of samples that must contain a count value for it to be kept." );
+		Properties.registerProp( REPORT_TAXONOMY_LEVELS, Properties.LIST_TYPE, "Options: " + DOMAIN +","+ PHYLUM+","+ CLASS +","+ ORDER +","+ FAMILY +","+ GENUS +","+ SPECIES + ". Generate reports for listed taxonomy levels" );
+		Properties.registerProp( REPORT_UNCLASSIFIED_TAXA, Properties.BOOLEAN_TYPE, "report unclassified taxa" );
+		Properties.registerProp( SET_SEED, Properties.INTEGER_TYPE, SET_SEED_DESC );
+		Properties.registerProp( USER_PROFILE, Properties.FILE_PATH, USER_PROFILE_DESC );
+	}
 
 	/**
 	 * Captures the application start time
@@ -28,9 +101,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #AWS_S3_XFER_TIMEOUT}<br>
-	 * Set the max number of minutes to allow for S3 transfers to complete.
+	 * {@value #AWS_S3_XFER_TIMEOUT_DESC}
 	 */
 	public static final String AWS_S3_XFER_TIMEOUT = "aws.s3TransferTimeout";
+	private static final String AWS_S3_XFER_TIMEOUT_DESC = "Set the max number of minutes to allow for S3 transfers to complete.";
 
 	/**
 	 * Bash profile fo;e name: {@value #BASH_PROFILE}
@@ -76,34 +150,40 @@ public class Constants {
 	public static final String CLASS = "class";
 
 	/**
-	 * {@link biolockj.Config} String property: {@value #CLUSTER_HOST}<br>
-	 * The remote cluster host URL (used for ssh, scp, rsync, etc)
+	 * {@link biolockj.Config} {@value biolockj.Properties#STRING_TYPE} property: {@value #CLUSTER_HOST}<br>
+	 * {@value #CLUSTER_HOST_DESC}
 	 */
 	public static final String CLUSTER_HOST = "cluster.host";
+	private static final String CLUSTER_HOST_DESC = "The remote cluster host URL (used for ssh, scp, rsync, etc)";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used to demultiplex data:
-	 * {@value #DEFAULT_MOD_DEMUX}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_DEMUX}
+	 * {@value #DEFAULT_MOD_DEMUX_DESC}
 	 */
 	public static final String DEFAULT_MOD_DEMUX = "pipeline.defaultDemultiplexer";
+	private static final String DEFAULT_MOD_DEMUX_DESC = "Java class name for default module used to demultiplex data";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used to convert files into fasta:
-	 * {@value #DEFAULT_MOD_FASTA_CONV} format
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_FASTA_CONV}
+	 * {@value #DEFAULT_MOD_FASTA_CONV_DESC}
 	 */
-	public static final String DEFAULT_MOD_FASTA_CONV = "pipeline.defaultFastaConverter";
+	 public static final String DEFAULT_MOD_FASTA_CONV = "pipeline.defaultFastaConverter";
+	 private static final String DEFAULT_MOD_FASTA_CONV_DESC = "Java class name for default module used to convert files into fasta format";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used combined paired read files:
-	 * {@value #DEFAULT_MOD_SEQ_MERGER}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_MOD_SEQ_MERGER}
+	 * {@value #DEFAULT_MOD_SEQ_MERGER_DESC}
+	 * 
 	 */
 	public static final String DEFAULT_MOD_SEQ_MERGER = "pipeline.defaultSeqMerger";
+	private static final String DEFAULT_MOD_SEQ_MERGER_DESC = "Java class name for default module used combined paired read files";
 
 	/**
-	 * {@link biolockj.Config} String property: Java class name for default module used generate p-value and other
-	 * stats: {@value #DEFAULT_STATS_MODULE}
+	 * {@link biolockj.Config} {@value Properties.STRING_TYPE} property: {@value #DEFAULT_STATS_MODULE}
+	 * {@value #DEFAULT_STATS_MODULE_DESC}
 	 */
 	public static final String DEFAULT_STATS_MODULE = "pipeline.defaultStatsModule";
+	private static final String DEFAULT_STATS_MODULE_DESC = "Java class name for default module used generate p-value and other stats";
 
 	/**
 	 * In an otu string for multiple levels, each separated by {@value #OTU_SEPARATOR}, each otu has a level prefix
@@ -112,38 +192,50 @@ public class Constants {
 	public static final String DELIM_SEP = "__";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DETACH_JAVA_MODULES}<br>
-	 * If {@value biolockj.Constants#TRUE} Java modules do not run with main BioLockJ Java application. Instead they run
-	 * on compute nodes on the CLUSTER or AWS environments.
+	 * {@link biolockj.Config} {@value Properties.BOOLEAN_TYPE} property: {@value #DETACH_JAVA_MODULES}<br>
+	 * {@value #DETACH_JAVA_MODULES_DESC}
 	 */
 	public static final String DETACH_JAVA_MODULES = "pipeline.detachJavaModules";
+	private static final String DETACH_JAVA_MODULES_DESC = "If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
-	 * If set to {@value #TRUE}, implicit modules will not be added to the pipeline.
+	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE} property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
+	 * {@value #DISABLE_ADD_IMPLICIT_MODULES_DESC}
 	 */
 	public static final String DISABLE_ADD_IMPLICIT_MODULES = "pipeline.disableAddImplicitModules";
+	private static final String DISABLE_ADD_IMPLICIT_MODULES_DESC = "If set to true, implicit modules will not be added to the pipeline.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #DISABLE_PRE_REQ_MODULES}<br>
-	 * If set to {@value #TRUE}, prerequisite modules will not be added to the pipeline.
+	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE } property: {@value #DISABLE_PRE_REQ_MODULES}<br>
+	 * {@value #DISABLE_PRE_REQ_MODULES_DESC}
 	 */
 	public static final String DISABLE_PRE_REQ_MODULES = "pipeline.disableAddPreReqModules";
+	private static final String DISABLE_PRE_REQ_MODULES_DESC = "If set to true, prerequisite modules will not be added to the pipeline.";
 
 	/**
-	 * Default Docker {@link biolockj.Config} file imported after {@value #STANDARD_CONFIG_PATH} (if files exist)
+	 * {@link biolockj.Config} {@value biolockj.Properties#FILE_PATH } property: {@value #DOCKER_CONFIG_PATH}
+	 * Default path for an additional configuration file used for any pipeline run in docker.
 	 */
 	public static final String DOCKER_CONFIG_PATH = "${BLJ}/resources/config/default/docker.properties";
 
 	/**
-	 * {@link biolockj.Config} property for GenMod to set its Docker container name: {@value #DOCKER_CONTAINER_NAME}
+	 * {@link biolockj.Config} {@value biolockj.Properties#STRING_TYPE} property: {@value #DOCKER_CONTAINER_NAME}
+	 * {@value #DOCKER_CONTAINER_NAME_DESC}
 	 */
 	public static final String DOCKER_CONTAINER_NAME = "genMod.dockerContainerName";
+	private static final String DOCKER_CONTAINER_NAME_DESC = "Name of the docker container to use when executing an instance of the GenMod module.";
 
 	/**
 	 * {@link biolockj.Config} option for {@value #REPORT_TAXONOMY_LEVELS}: {@value #DOMAIN}
 	 */
 	public static final String DOMAIN = "domain";
+	
+	/**
+	 * {@link biolockj.Config} String property: {@value #DOWNLOAD_DIR}<br>
+	 * {@value #DOWNLOAD_DIR_DESC}
+	 */
+	public static final String DOWNLOAD_DIR = "pipeline.downloadDir";
+	private static final String DOWNLOAD_DIR_DESC = "local directory used as the destination in the download command";
 
 	/**
 	 * Prefix used in several {@link biolockj.Config} String properties. {@value #EXE_PREFIX}<br>
@@ -155,32 +247,34 @@ public class Constants {
 	public static final String EXE_PREFIX = "exe.";
 	
 	/**
-	 * {@link biolockj.Config} String property: {@value #EXE_AWK}<br>
-	 * Set command line executable awk.
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_AWK}<br>
 	 */
 	public static final String EXE_AWK = "exe.awk";
 
 	/**
-	 * {@link biolockj.Config} String property {@value #EXE_DOCKER}<br>
-	 * Set command line executable docker
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_DOCKER}<br>
 	 */
 	public static final String EXE_DOCKER = "exe.docker";
 
 	/**
-	 * {@link biolockj.Config} String property {@value #EXE_GZIP}<br>
-	 * Set command line executable gzip
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_GZIP}<br>
 	 */
 	public static final String EXE_GZIP = "exe.gzip";
 
 	/**
-	 * {@link biolockj.Config} property for java executable: {@value #EXE_JAVA}
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_JAVA}
 	 */
 	public static final String EXE_JAVA = "exe.java";
 
 	/**
-	 * {@link biolockj.Config} property to python executable
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_PYTHON}
 	 */
 	public static final String EXE_PYTHON = "exe.python";
+	
+	/**
+	 * {@link biolockj.Config} {@value biolockj.Properties#EXE_PATH} property: {@value #EXE_RSCRIPT}
+	 */
+	public static final String EXE_RSCRIPT = "exe.Rscript";
 
 	/**
 	 * Boolean {@link biolockj.Config} property value option: {@value #FALSE}
@@ -223,22 +317,25 @@ public class Constants {
 	public static final String HOST_EXE_PREFIX = "hostExe.";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Gene Family report:
-	 * {@value #HN2_DISABLE_GENE_FAMILIES}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_GENE_FAMILIES}<br>
+	 * {@value #HN2_DISABLE_GENE_FAMILIES_DESC}
 	 */
 	public static final String HN2_DISABLE_GENE_FAMILIES = "humann2.disableGeneFamilies";
+	private static final String HN2_DISABLE_GENE_FAMILIES_DESC = "disable HumanN2 Gene Family report";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Pathway Abundance report:
-	 * {@value #HN2_DISABLE_PATH_ABUNDANCE}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_PATH_ABUNDANCE}<br>
+	 * {@value HN2_DISABLE_PATH_ABUNDANCE_DESC}
 	 */
 	public static final String HN2_DISABLE_PATH_ABUNDANCE = "humann2.disablePathAbundance";
+	private static final String HN2_DISABLE_PATH_ABUNDANCE_DESC = "disable HumanN2 Pathway Abundance report";
 
 	/**
-	 * {@link biolockj.Config} Boolean property to disable HumanN2 Pathway Coverage report:
-	 * {@value #HN2_DISABLE_PATH_COVERAGE}
+	 * {@link biolockj.Config} Boolean property: {@value #HN2_DISABLE_PATH_COVERAGE}
+	 * {@value HN2_DISABLE_PATH_COVERAGE_DESC}
 	 */
 	public static final String HN2_DISABLE_PATH_COVERAGE = "humann2.disablePathCoverage";
+	private static final String HN2_DISABLE_PATH_COVERAGE_DESC = "disable HumanN2 Pathway Coverage report";
 
 	/**
 	 * HumanN2 file suffix identifier for Gene Family Summary report: {@value #HN2_GENE_FAM_SUM}
@@ -272,9 +369,11 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #INPUT_DIRS}<br>
-	 * Set sequence file directories
+	 * {@value #INPUT_DIRS_DESC}
 	 */
 	public static final String INPUT_DIRS = "input.dirPaths";
+	private static final String INPUT_DIRS_DESC = "List of one or more directories containing the pipeline input data.";
+	
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_FORWARD_READ_SUFFIX}<br>
 	 * Set file suffix used to identify forward reads in {@value #INPUT_DIRS}
@@ -283,39 +382,37 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #INPUT_IGNORE_FILES}<br>
-	 * Set file names to ignore if found in {@value #INPUT_DIRS}
+	 * {@value #INPUT_IGNORE_FILES_DESC}
 	 */
 	public static final String INPUT_IGNORE_FILES = "input.ignoreFiles";
+	private static final String INPUT_IGNORE_FILES_DESC = "file names to ignore if found in input directories";
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #INPUT_REQUIRE_COMPLETE_PAIRS}<br>
-	 * Require 100% sequence input files are matching paired reads
+	 * {@value #INPUT_REQUIRE_COMPLETE_PAIRS_DESC}
 	 */
 	public static final String INPUT_REQUIRE_COMPLETE_PAIRS = "input.requireCompletePairs";
+	static final String INPUT_REQUIRE_COMPLETE_PAIRS_DESC = "Require all sequence input files have matching paired reads";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_REVERSE_READ_SUFFIX}<br>
-	 * Set file suffix used to identify forward reads in {@value #INPUT_DIRS}
+	 * Set file suffix used to identify reverse reads in {@value #INPUT_DIRS}
 	 */
 	public static final String INPUT_REVERSE_READ_SUFFIX = "input.suffixRv";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_TRIM_PREFIX}<br>
-	 * Set value of prefix to trim from sequence file names or headers to obtain Sample ID.
+	 * {@value #INPUT_TRIM_PREFIX_DESC}
 	 */
 	public static final String INPUT_TRIM_PREFIX = "input.trimPrefix";
-
-	/**
-	 * {@link biolockj.Config} property {@value #INPUT_TRIM_SEQ_FILE} defines the file path to the file that defines the
-	 * primers as regular expressions.
-	 */
-	public static final String INPUT_TRIM_SEQ_FILE = "trimPrimers.filePath";
+	private static final String INPUT_TRIM_PREFIX_DESC = "prefix to trim from sequence file names or headers to obtain Sample ID";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #INPUT_TRIM_SUFFIX}<br>
-	 * Set value of suffix to trim from sequence file names or headers to obtain Sample ID.
+	 * {@value #INPUT_TRIM_SUFFIX_DESC}
 	 */
 	public static final String INPUT_TRIM_SUFFIX = "input.trimSuffix";
+	private static final String INPUT_TRIM_SUFFIX_DESC = "suffix to trim from sequence file names or headers to obtain Sample ID";
 	
 	/**
 	 * Any {@link biolockj.Config} property that starts with the {@value INTERNAL_PREFIX}
@@ -387,8 +484,10 @@ public class Constants {
 	/**
 	 * {@link biolockj.Config} property used to limit classes that log debug statements when
 	 * {@value #LOG_LEVEL_PROPERTY}={@value biolockj.Constants#TRUE}
+	 * TODO: make this clearer.  Are these the classes that will log debug, or the classes that will be 'limited' ?
 	 */
 	public static final String LIMIT_DEBUG_CLASSES = "pipeline.limitDebugClasses";
+	private static final String LIMIT_DEBUG_CLASSES_DESC = "limit classes that log debug statements";
 
 	/**
 	 * BioLockJ log file extension: {@value #LOG_EXT}
@@ -450,11 +549,6 @@ public class Constants {
 	public static final String OTU_TABLE_PREFIX = "otu_table";
 
 	/**
-	 * {@link biolockj.Config} property suffix for exe.* properties, used to set optional parameters: {@value #PARAMS}
-	 */
-	public static final String PARAMS = "Params";
-
-	/**
 	 * BioLockJ PDF file extension: {@value #PDF_EXT}
 	 */
 	public static final String PDF_EXT = ".pdf";
@@ -465,17 +559,18 @@ public class Constants {
 	public static final String PHYLUM = "phylum";
 
 	/**
-	 * {@link biolockj.Config} property set to copy input files into pipeline root directory:
-	 * {@value #PIPELINE_COPY_FILES}
+	 * {@link biolockj.Config} property: {@value #PIPELINE_COPY_FILES}<br>
+	 * {@value #PIPELINE_COPY_FILES_DESC}
 	 */
 	public static final String PIPELINE_COPY_FILES = "pipeline.copyInput";
+	private static final String PIPELINE_COPY_FILES_DESC = "copy input files into pipeline root directory";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #PIPELINE_DEFAULT_PROPS}<br>
-	 * Set file path of default property file. Nested default properties are supported (so the default property file can
-	 * also have a default, and so on).
+	 * {@value #PIPELINE_DEFAULT_PROPS_DESC}
 	 */
 	public static final String PIPELINE_DEFAULT_PROPS = "pipeline.defaultProps";
+	private static final String PIPELINE_DEFAULT_PROPS_DESC = "file path of default property file(s); Nested default properties are supported (so the default property file can also have a default, and so on).";
 
 	/**
 	 * {@link biolockj.Config} property to allow a free-hand description to a pipeline: {@value #PIPELINE_DESC} TODO:
@@ -484,8 +579,7 @@ public class Constants {
 	public static final String PIPELINE_DESC = "pipeline.desc";
 
 	/**
-	 * {@link biolockj.Config} Boolean property: {@value #PIPELINE_ENV}<br>
-	 * Options: {@value #PIPELINE_ENV_CLUSTER}, {@value #PIPELINE_ENV_AWS}, {@value #PIPELINE_ENV_LOCAL}
+	 * {@link biolockj.Config} String property: {@value #PIPELINE_ENV}
 	 */
 	public static final String PIPELINE_ENV = "pipeline.env";
 
@@ -518,6 +612,13 @@ public class Constants {
 	 * implemented.
 	 */
 	public static final String PIPELINE_NAME = "pipeline.name";
+	
+	/**
+	 * {@link biolockj.Config} property: {@value #PIPELINE_PRIVS}
+	 * {@value #PIPELINE_PRIVS_DESC}
+	 */
+	protected static final String PIPELINE_PRIVS = "pipeline.permissions";
+	private static final String PIPELINE_PRIVS_DESC = "Set chmod -R command security bits on pipeline root directory (Ex. 770)";
 
 	/**
 	 * Name of the file created in the BioModule root directory to indicate the precheck 
@@ -553,7 +654,7 @@ public class Constants {
 	 * {@link biolockj.Config} property to assign a free-hand to a project: {@value #PROJECT_DESC} TODO: needs to be
 	 * implemented.
 	 */
-	public static final String PROJECT_DESC = "project.desc";
+	public static final String PROJECT_DESC = "project.description";
 
 	/**
 	 * {@link biolockj.Config} property to assign a name to a project: {@value #PROJECT_NAME} TODO: needs to be
@@ -613,14 +714,79 @@ public class Constants {
 	public static final String R_EXT = ".R";
 
 	/**
+	 * {@link biolockj.Config} property {@value #P_VAL_CUTOFF} defines the p-value cutoff for significance
+	 */
+	public static final String P_VAL_CUTOFF = "r.pvalCutoff";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_BASE} 
+	 */
+	public static final String R_COLOR_BASE = "r.colorBase";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_FILE} gives the path to a tab-delimited file giving the color
+	 * to use for each value of each metadata filed plotted.
+	 */
+	public static final String R_COLOR_FILE = "r.colorFile";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_HIGHLIGHT} defines the highlight label color
+	 */
+	public static final String R_COLOR_HIGHLIGHT = "r.colorHighlight";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_PALETTE} defines the color palette for PDF plots
+	 */
+	public static final String R_COLOR_PALETTE = "r.colorPalette";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_COLOR_POINT} defines the pch point colors for PDF plots
+	 */
+	public static final String R_COLOR_POINT = "r.colorPoint";
+
+	/**
+	 * {@link biolockj.Config} boolean property {@value #R_DEBUG} sets the debug log function enabled
+	 */
+	public static final String R_DEBUG = "r.debug";
+
+	/**
+	 * This library script contains helper functions used in the R scripts: {@value #R_FUNCTION_LIB}
+	 */
+	public static final String R_FUNCTION_LIB = "BioLockJ_Lib.R";
+
+	/**
+	 * This main R script that sources helper libraries and calls modules main method function: {@value #R_MAIN_SCRIPT}
+	 */
+	public static final String R_MAIN_SCRIPT = "BioLockJ_MAIN.R";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_PCH} defines the plot point shape for PDF plots
+	 */
+	public static final String R_PCH = "r.pch";
+
+	/**
+	 * {@link biolockj.Config} Double property {@value #R_RARE_OTU_THRESHOLD} defines number OTUs needed to includ in
+	 * reports
+	 */
+	public static final String R_RARE_OTU_THRESHOLD = "r.rareOtuThreshold";
+
+	/**
+	 * {@link biolockj.Config} boolean property {@value #R_SAVE_R_DATA} enables the .RData file to save.
+	 */
+	public static final String R_SAVE_R_DATA = "r.saveRData";
+	
+	public static final String R_USE_UINQUE_COLORS = "r.useUniqueColors";
+
+	/**
+	 * {@link biolockj.Config} property {@value #R_TIMEOUT} defines the number of minutes before R script fails due to
+	 * timeout. If undefined, no timeout is used.
+	 */
+	public static final String R_TIMEOUT = "r.timeout";
+	
+	/**
 	 * {@link biolockj.Config} Boolean property to signal R scripts to build HumanN2 reports
 	 */
 	public static final String R_INTERNAL_RUN_HN2 = "R_internal.runHumann2";
-
-	/**
-	 * {@link biolockj.Config} Boolean property to disable fold change plots: {@value #R_PLOT_EFFECT_SIZE_DISABLE_FC}
-	 */
-	public static final String R_PLOT_EFFECT_SIZE_DISABLE_FC = "r_PlotEffectSize.disableFoldChange";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #RDP_THRESHOLD_SCORE}<br>
@@ -676,7 +842,6 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #REPORT_UNCLASSIFIED_TAXA}<br>
-	 * Set the max number of minutes to allow for S3 transfers to complete.
 	 */
 	public static final String REPORT_UNCLASSIFIED_TAXA = "report.unclassifiedTaxa";
 
@@ -686,10 +851,11 @@ public class Constants {
 	public static final String RETURN = "\n";
 
 	/**
-	 * {@link biolockj.Config} property set to delete {@link biolockj.module.BioModule#getTempDir()} files:
-	 * {@value #RM_TEMP_FILES}
+	 * {@link biolockj.Config} property: {@value #RM_TEMP_FILES}<br>
+	 * {@value #RM_TEMP_FILES_DESC}
 	 */
 	public static final String RM_TEMP_FILES = "pipeline.deleteTempFiles";
+	private static final String RM_TEMP_FILES_DESC = "delete files in temp directories";
 
 	/**
 	 * Rscript exe commmand.
@@ -698,9 +864,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} List property: {@value #SCRIPT_DEFAULT_HEADER}<br>
-	 * Store default script header for MAIN script and locally run WORKER scripts.
+	 * {@value SCRIPT_DEFAULT_HEADER_DESC}
 	 */
 	public static final String SCRIPT_DEFAULT_HEADER = "script.defaultHeader";
+	public static final String SCRIPT_DEFAULT_HEADER_DESC = "Store default script header for MAIN script and locally run WORKER scripts.";
 
 	/**
 	 * Name of the script sub-directory: {@value #SCRIPT_DIR}
@@ -714,22 +881,24 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_NUM_THREADS}<br>
-	 * Used to reserve cluster resources and passed to any external application call that accepts a numThreads
-	 * parameter.
+	 * {@value SCRIPT_NUM_THREADS_DESC}
 	 */
 	public static final String SCRIPT_NUM_THREADS = "script.numThreads";
+	public static final String SCRIPT_NUM_THREADS_DESC = "Used to reserve cluster resources and passed to any external application call that accepts a numThreads parameter.";
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_NUM_WORKERS}<br>
-	 * Set number of samples to process per script (if parallel processing)
+	 * {@value SCRIPT_NUM_WORKERS_DESC}
 	 */
 	public static final String SCRIPT_NUM_WORKERS = "script.numWorkers";
+	public static final String SCRIPT_NUM_WORKERS_DESC = "Set number of samples to process per script (if parallel processing)";
 
 	/**
 	 * {@link biolockj.Config} String property: {@value #SCRIPT_PERMISSIONS}<br>
-	 * Used as chmod permission parameter (ex: 774)
+	 * {@value SCRIPT_PERMISSIONS_DESC}
 	 */
 	public static final String SCRIPT_PERMISSIONS = "script.permissions";
+	public static final String SCRIPT_PERMISSIONS_DESC = "Used as chmod permission parameter (ex: 774)";
 
 	/**
 	 * File suffix appended to started script: {@value #SCRIPT_STARTED}
@@ -743,14 +912,17 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} Integer property: {@value #SCRIPT_TIMEOUT}<br>
-	 * Sets # of minutes before worker scripts times out.
+	 * {@value SCRIPT_TIMEOUT_DESC}
 	 */
 	public static final String SCRIPT_TIMEOUT = "script.timeout";
+	public static final String SCRIPT_TIMEOUT_DESC = "Sets # of minutes before worker scripts times out.";
 
 	/**
-	 * {@link biolockj.Config} property {@value #SET_SEED} set the seed for a random process. Must be positive integer.
+	 * {@link biolockj.Config} property {@value #SET_SEED}<br>
+	 * {@value #SET_SEED_DESC}
 	 */
 	public static final String SET_SEED = "pipeline.setSeed";
+	private static final String SET_SEED_DESC = "set the seed for a random process. Must be positive integer.";
 
 	/**
 	 * BioLockJ shell script file extension: {@value #SH_EXT}
@@ -794,9 +966,10 @@ public class Constants {
 
 	/**
 	 * {@link biolockj.Config} File property: {@value #USER_PROFILE}<br>
-	 * Bash profile - may be ~/.bash_profile or ~/.bashrc or others
+	 * {@value #USER_PROFILE_DESC}
 	 */
 	public static final String USER_PROFILE = "pipeline.userProfile";
+	private static final String USER_PROFILE_DESC = "Bash profile - may be ~/.bash_profile or ~/.bashrc or others";
 
 	/**
 	 * BioLockJ main() runtime arg used to print version info: {@value #VERSION}
@@ -808,9 +981,4 @@ public class Constants {
 	 */
 	public static final String VALIDATION_ENABLED = "This pipeline has validation enabled.";
 
-	/**
-	 * {@link biolockj.Config} property to define permission settings when running chmod on pipeline root dir:
-	 * {@value #PIPELINE_PRIVS}
-	 */
-	protected static final String PIPELINE_PRIVS = "pipeline.permissions";
 }

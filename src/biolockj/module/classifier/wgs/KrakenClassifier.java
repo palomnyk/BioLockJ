@@ -15,6 +15,8 @@ import java.io.File;
 import java.util.*;
 import biolockj.Config;
 import biolockj.Constants;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.*;
 import biolockj.module.classifier.ClassifierModuleImpl;
 import biolockj.util.*;
@@ -26,7 +28,14 @@ import biolockj.util.*;
  * 
  * @blj.web_desc Kraken Classifier
  */
-public class KrakenClassifier extends ClassifierModuleImpl {
+public class KrakenClassifier extends ClassifierModuleImpl implements ApiModule {
+
+	public KrakenClassifier() {
+		super();
+		addNewProperty( EXE_KRAKEN, Properties.EXE_PATH, "" );
+		addNewProperty( KRAKEN_DATABASE, Properties.FILE_PATH, "file path to Kraken kmer database directory" );
+		addNewProperty( KRAKEN_PARAMS, Properties.LIST_TYPE, "additional parameters to use with kraken" );
+	}
 
 	/**
 	 * Build bash script lines to classify unpaired WGS reads with Kraken. The inner list contains 2 bash script lines
@@ -189,7 +198,7 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	}
 
 	private static String getExeParamName() {
-		return EXE_KRAKEN + Constants.PARAMS;
+		return KRAKEN_PARAMS;
 	}
 
 	/**
@@ -205,6 +214,20 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	}
 
 	private String defaultSwitches = null;
+	
+	@Override
+	public String getDescription() {
+		return "Classify WGS samples with KRAKEN.";
+	}
+	
+	public String getDetails() {
+		return "Classify WGS samples with [KRAKEN](http://ccb.jhu.edu/software/kraken/).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Wood DE, Salzberg SL: Kraken: ultrafast metagenomic sequence classification using exact alignments. Genome Biology 2014, 15:R46.";
+	}
 
 	/**
 	 * {@link biolockj.Config} exe property for kraken executable: {@value #EXE_KRAKEN}
@@ -226,6 +249,8 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	 * {@value #KRAKEN_DATABASE}
 	 */
 	protected static final String KRAKEN_DATABASE = "kraken.db";
+	
+	protected static final String KRAKEN_PARAMS = "kraken.krakenParams";
 
 	/**
 	 * File suffix added by BioLockJ to kraken output files (before translation): {@value #KRAKEN_FILE}
@@ -239,4 +264,5 @@ public class KrakenClassifier extends ClassifierModuleImpl {
 	private static final String NUM_THREADS_PARAM = "--threads";
 	private static final String OUTPUT_PARAM = "--output ";
 	private static final String PAIRED_PARAM = "--paired ";
+
 }

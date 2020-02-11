@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.*;
 import org.apache.commons.io.FileUtils;
 import biolockj.*;
+import biolockj.Properties;
 import biolockj.exception.*;
 import biolockj.module.BioModule;
 import biolockj.module.classifier.ClassifierModuleImpl;
@@ -31,6 +32,18 @@ import biolockj.util.*;
  * @blj.web_desc
  */
 public class QiimeClassifier extends ClassifierModuleImpl {
+	
+	public QiimeClassifier() {
+		super();
+		addNewProperty( EXE_VSEARCH, Properties.EXE_PATH, "" );
+		addNewProperty( EXE_VSEARCH_PARAMS, Properties.LIST_TYPE, "Parameters for vsearch" );
+		addNewProperty( QIIME_PARAMS, Properties.LIST_TYPE, "Parameters for qiime" );
+		addNewProperty( QIIME_PYNAST_ALIGN_DB, Properties.FILE_PATH, "path to define ~/.qiime_config pynast_template_alignment_fp" );
+		addNewProperty( QIIME_REF_SEQ_DB, Properties.FILE_PATH, "path to define ~/.qiime_config pick_otus_reference_seqs_fp and assign_taxonomy_reference_seqs_fp" );
+		addNewProperty( QIIME_REMOVE_CHIMERAS, Properties.BOOLEAN_TYPE, "if vsearch is needed for chimera removal" );
+		addNewProperty( QIIME_TAXA_DB, Properties.FILE_PATH, "path to define ~/.qiime_config assign_taxonomy_id_to_taxonomy_fp" );
+	}
+
 	/**
 	 * Generate bash script lines to summarize QIIME results, build taxonomy reports, and add alpha diversity metrics.
 	 * <p>
@@ -467,7 +480,7 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	}
 
 	private String switches = null;
-
+	
 	/**
 	 * Value output by {@value #SCRIPT_CALC_ALPHA_DIVERSITY} for null values: {@value #ALPHA_DIV_NULL_VALUE}
 	 */
@@ -492,7 +505,7 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	 * {@link biolockj.Config} property for {@value #EXE_VSEARCH} parameters (such as alternate reference database
 	 * path): {@value #EXE_VSEARCH_PARAMS}
 	 */
-	protected static final String EXE_VSEARCH_PARAMS = "exe.vsearchParams";
+	protected static final String EXE_VSEARCH_PARAMS = "qiime.vsearchParams";
 
 	/**
 	 * File produced by QIIME {@value #SCRIPT_SUMMARIZE_BIOM} script: {@value #OTU_SUMMARY_FILE}
@@ -581,6 +594,9 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	 * BioLockJ parsers expect clear text files in the module output directory, so the biom files must be excluded.
 	 */
 	protected static final String SUMMARIZE_TAXA_SUPPRESS_BIOM = "suppress_biom_table_output";
+	
+	protected static final String CITE_QIIME = "QIIME allows analysis of high-throughput community sequencing data\n" + 
+		"J Gregory Caporaso, Justin Kuczynski, Jesse Stombaugh, Kyle Bittinger, Frederic D Bushman, Elizabeth K Costello, Noah Fierer, Antonio Gonzalez Pena, Julia K Goodrich, Jeffrey I Gordon, Gavin A Huttley, Scott T Kelley, Dan Knights, Jeremy E Koenig, Ruth E Ley, Catherine A Lozupone, Daniel McDonald, Brian D Muegge, Meg Pirrung, Jens Reeder, Joel R Sevinsky, Peter J Turnbaugh, William A Walters, Jeremy Widmann, Tanya Yatsunenko, Jesse Zaneveld and Rob Knight; Nature Methods, 2010; doi:10.1038/nmeth.f.303";
 
 	// OTHER SCRIPT THAT MAY BE ADDED IN THE FUTURE
 	// public static final String VALIDATED_MAPPING = "_corrected.txt";

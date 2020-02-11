@@ -13,6 +13,9 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Constants;
+import biolockj.api.ApiModule;
+import biolockj.util.BioLockJUtil;
 
 /**
  * This BioModule is used to build the R script used to generate p-value histograms for each report field and each
@@ -20,11 +23,17 @@ import biolockj.Config;
  * 
  * @blj.web_desc R Plot P-value Histograms
  */
-public class R_PlotPvalHistograms extends R_Module {
+public class R_PlotPvalHistograms extends R_Module implements ApiModule {
+	
+	public R_PlotPvalHistograms() {
+		super();
+		addGeneralProperty( Constants.P_VAL_CUTOFF );
+	}
+
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
-		Config.requireString( this, P_VAL_CUTOFF );
+		Config.requireString( this, Constants.P_VAL_CUTOFF );
 	}
 
 	/**
@@ -33,6 +42,16 @@ public class R_PlotPvalHistograms extends R_Module {
 	@Override
 	public List<String> getPreRequisiteModules() throws Exception {
 		return getStatPreReqs();
+	}
+
+	@Override
+	public String getDescription() {
+		return "Generate p-value histograms for each reportable metadata field and each *report.taxonomyLevel* configured";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
 	}
 
 }

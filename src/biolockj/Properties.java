@@ -13,10 +13,19 @@ package biolockj;
 
 import java.io.*;
 import java.util.*;
+import biolockj.api.API_Exception;
 import biolockj.exception.BioLockJException;
+import biolockj.exception.ConfigException;
 import biolockj.exception.ConfigPathException;
+import biolockj.module.BioModule;
+import biolockj.module.report.r.R_Module;
+import biolockj.util.BashScriptBuilder;
 import biolockj.util.BioLockJUtil;
 import biolockj.util.DockerUtil;
+import biolockj.util.MetaUtil;
+import biolockj.util.NextflowUtil;
+import biolockj.util.RMetaUtil;
+import biolockj.util.ValidationUtil;
 
 /**
  * Load properties defined in the BioLockJ configuration file, including inherited properties from project.defaultProps
@@ -228,8 +237,206 @@ public class Properties extends java.util.Properties {
 		Log.debug( Properties.class,
 			" ----------------------------------------------------------------------------------" );
 	}
+	
+	/**
+	 * HashMap with property name as key and the description for this property as the value.
+	 */
+	private static HashMap<String, String> propDescMap = new HashMap<>();
+	
+	/**
+	 * HashMap with property name as key and the type for this property as the value.
+	 */
+	private static HashMap<String, String> propTypeMap = new HashMap<>();
+	
+	private static void fillPropMaps() throws API_Exception {
+		Constants.registerProps();
+		MetaUtil.registerProps();
+		NextflowUtil.registerProps();
+		BashScriptBuilder.registerProps();
+		DockerUtil.registerProps();
+		RMetaUtil.registerProps();
+		ValidationUtil.registerProps();
+		
+		//These aws* properties are only used in the bash layer, there is no java class that owns these.
+		addToPropMaps( "aws.ec2InstanceID", STRING_TYPE, "ID of an existing ec2 instance to use as the head node" );//TODO: bash property descriptions
+		addToPropMaps( "aws.ec2SpotPer", "", "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.ec2TerminateHead", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.profile", FILE_PATH, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.region", STRING_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.saveCloud", BOOLEAN_TYPE, "" );//TODO: bash property descriptions
+		addToPropMaps( "aws.stack", STRING_TYPE, "An existing aws cloud stack ID" );//TODO: bash property descriptions
+		addToPropMaps( "aws.walltime", "", "" ); // I don't see this used anywhere. //TODO: bash property descriptions
+	}
+	
+	private static void addToPropMaps(final String prop, final String type, final String desc) {
+		propTypeMap.put( prop, type);
+		propDescMap.put( prop, desc );
+	}
+	
+	/**
+	 * Allow utility classes to keep their props private but still register them with Properties for API.
+	 * @param prop a property
+	 * @param type The expected type of value for that property, must be one of the recognized types in Properties class
+	 * @param desc Human readable string for users guide and similar uses.
+	 * @throws API_Exception 
+	 */
+	public static void registerProp(final String prop, final String type, final String desc) throws API_Exception {
+		if ( prop != null ) {
+			testPropName(prop);
+			if (! Arrays.asList( KNOWN_TYPES ).contains( type )) {
+				addToPropMaps(prop, "", "[" + type + "] " + desc);
+			}
+			addToPropMaps(prop, type, desc);
+		}else {
+			throw new API_Exception( "Cannot register a null property" );
+		}
+	}
+	
+	//TODO: at least the 2nd test is not working
+	private static void testPropName(String prop) throws API_Exception {
+		if (! prop.contains( "." )) throw new API_Exception( "Bad property [" + prop + "], no \'.\', property names should contain exactly one \'.\' ." );
+		if ( prop.indexOf( "." ) != prop.lastIndexOf( "." ) ) throw new API_Exception( "Bad property [" + prop + "], too many \'.\'s, property names should contain exactly one \'.\' ." );
+		if (! prop.startsWith( prop.substring( 0, 1 ).toLowerCase() )) throw new API_Exception( "Bad property [" + prop + "], property names shoudl start with a lower case letter." );
+	}
+	
+	/**
+	 * Allow the API to access the list of properties and descriptions.
+	 * @return
+	 * @throws API_Exception 
+	 */
+	public static HashMap<String, String> getPropDescMap() throws API_Exception {
+		if (propDescMap.size() == 0) fillPropMaps();
+		return propDescMap;
+	}
+	public static String getDescription( String prop ) throws API_Exception {
+		if (prop.startsWith( Constants.EXE_PREFIX ) || prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return describeSpecialProp( prop );
+		}
+		return getPropDescMap().get( prop );
+	}
+	
+	private static String describeSpecialProp(String prop) {
+		if (prop.startsWith( Constants.EXE_PREFIX ) ) {
+			return "Path for the \"" + prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
+							+ "\" executable; if not supplied, any script that needs the "+ prop.replaceFirst( Constants.EXE_PREFIX, "" ) 
+							+ " command will assume it is on the PATH." ;
+		}else if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) {
+			return "Host machine path for the \"" + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) 
+							+ "\" executable. If running a pipeline in docker, use this property in place of " 
+							+ Constants.EXE_PREFIX + prop.replaceFirst( Constants.HOST_EXE_PREFIX, "" ) 
+							+ " to point to an executable on the host machine rather than a path within the docker container." ;
+		}
+		return "";
+	}
+	
+	/**
+	 * Allow the API to access the list of properties and descriptions.
+	 * @return
+	 * @throws API_Exception 
+	 */
+	public static HashMap<String, String> getPropTypeMap() throws API_Exception {
+		if (propTypeMap.size() == 0) fillPropMaps();
+		return propTypeMap;
+	}
+	public static String getPropertyType( String prop ) throws API_Exception {
+		if (prop.startsWith( Constants.EXE_PREFIX ) ) return EXE_PATH;
+		if (prop.startsWith( Constants.HOST_EXE_PREFIX ) ) return EXE_PATH;
+		return getPropTypeMap().get( prop );
+	}
+	
+	/**
+	 * Verify that a given exe property has a valid value.
+	 * @param property
+	 * @return
+	 */
+	public static boolean isValidExeProp(BioModule module, String property) {
+		boolean answer;
+		try {
+			Config.getExe( module, property );
+			answer = true;
+		}catch(Exception e) {
+			answer = false;
+		}
+		return answer;
+	}
+	
+	/**
+	 * Check if a property has a value in a valid format.
+	 * @param property
+	 * @return null if the property is no recognized, true if the property has a valid value, false otherwise.
+	 * @throws API_Exception
+	 */
+	public static Boolean isValidProp(String property) throws API_Exception {
+		String type = getPropertyType( property );
+		if (type == null) return null;
+		
+		boolean isgood = true;
+		
+		try {
+			if ( type.startsWith( REQUIRED ) ) {
+				type = type.replaceAll( REQUIRED, "" );
+				if (Config.getString( null, property ) == null) return false;
+			}
+			
+			switch (type) {
+				case STRING_TYPE:
+					Config.getString( null, property );
+					break;
+				case BOOLEAN_TYPE:
+					Config.getBoolean( null, property );
+					break;
+				case FILE_PATH:
+					Config.getExistingFileObject( Config.getString( null, property ) ) ;
+					break;
+				case FILE_PATH_LIST:
+					List<String> paths = Config.getList( null, property );
+					for (String path : paths) {
+						Config.getExistingFileObject(path);
+					}
+					break;
+				case LIST_TYPE:
+					Config.getList( null, property );
+					break;
+				case EXE_PATH:
+					Config.getExe( null, property );
+					break;
+				case INTEGER_TYPE:
+					Config.getIntegerProp( null, property );
+					break;
+				case POS_INTEGER_TYPE:
+					Config.getPositiveInteger( null, property );
+					break;
+				case NUMERTIC_TYPE:
+					Config.getDoubleVal( null, property );
+					break;
+			}
+		}catch(ConfigException ce) {
+			isgood = false;
+			System.err.print( ce.getMessage() );
+		}catch(Exception ex) {
+			isgood = false;
+		}
+		return isgood;
+	}
 
 	private static List<File> configRegister = new ArrayList<>();
 	private static int loadOrder = -1;
 	private static final long serialVersionUID = 2980376615128441545L;
+	
+	/**
+	 *  Prefix for property types whose values cannot be null.
+	 */
+	public static final String REQUIRED = "required ";
+	
+	//Property Types
+	public static final String STRING_TYPE = "string";
+	public static final String BOOLEAN_TYPE = "boolean";
+	public static final String FILE_PATH = "file path";
+	public static final String EXE_PATH = "executable";
+	public static final String LIST_TYPE = "list";
+	public static final String FILE_PATH_LIST = "list of file paths";
+	public static final String INTEGER_TYPE = "integer";
+	public static final String POS_INTEGER_TYPE = "positive integer";
+	public static final String NUMERTIC_TYPE = "numeric";
+	public static final String[] KNOWN_TYPES = {STRING_TYPE, BOOLEAN_TYPE, FILE_PATH, EXE_PATH, LIST_TYPE, FILE_PATH_LIST, INTEGER_TYPE, NUMERTIC_TYPE};
 }

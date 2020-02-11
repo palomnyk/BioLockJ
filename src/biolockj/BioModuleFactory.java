@@ -43,7 +43,7 @@ public class BioModuleFactory {
 		for( final String postReq: module.getPostRequisiteModules() ) {
 			if( !postReqs.contains( postReq ) ) postReqs.add( postReq );
 
-			final List<String> postPostReqs = getPostRequisites( ModuleUtil.getTempModule( postReq ) );
+			final List<String> postPostReqs = getPostRequisites( ModuleUtil.createModuleInstance( postReq ) );
 			for( final String postPostReq: postPostReqs )
 				if( !postReqs.contains( postPostReq ) ) postReqs.add( postPostReq );
 		}
@@ -63,7 +63,7 @@ public class BioModuleFactory {
 			throw new Exception( "Too many calls [" + SAFE_MAX + "] to getPreRequisites( module )" );
 		final List<String> preReqs = new ArrayList<>();
 		for( final String preReq: module.getPreRequisiteModules() ) {
-			final List<String> prePreReqs = getPreRequisites( ModuleUtil.getTempModule( preReq ) );
+			final List<String> prePreReqs = getPreRequisites( ModuleUtil.createModuleInstance( preReq ) );
 			for( final String prePreReq: prePreReqs )
 				if( !preReqs.contains( prePreReq ) ) preReqs.add( prePreReq );
 
@@ -140,7 +140,7 @@ public class BioModuleFactory {
 			this.safteyCheck = SAFE_MAX;
 			String[] parts = moduleLine.split(Constants.ASSIGN_ALIAS);
 			String className = parts[0].trim();
-			final BioModule module = ModuleUtil.getTempModule( className );
+			final BioModule module = ModuleUtil.createModuleInstance( className );
 			if( !Config.getBoolean( null, Constants.DISABLE_PRE_REQ_MODULES ) )
 				for( final String mod: getPreRequisites( module ) )
 				if( !branchModules.contains( mod ) ) branchModules.add( addModule( mod ) );

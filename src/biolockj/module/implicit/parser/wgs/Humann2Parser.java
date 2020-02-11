@@ -15,19 +15,28 @@ import java.io.*;
 import java.util.*;
 import biolockj.Config;
 import biolockj.Constants;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.module.BioModule;
 import biolockj.module.classifier.wgs.Humann2Classifier;
 import biolockj.module.implicit.parser.ParserModuleImpl;
 import biolockj.util.*;
 
 /**
- * This BioModules parses Humann2Classifier output reports to build standard OTU abundance tables.<br>
+ * This BioModule parses Humann2Classifier output reports to build standard OTU abundance tables.<br>
  * Samples IDs are found in the column headers starting with the 2nd column.<br>
  * The count type depends on the HumanN2 config properties.
  * 
  * @blj.web_desc HumanN2 Parser
  */
-public class Humann2Parser extends ParserModuleImpl {
+public class Humann2Parser extends ParserModuleImpl implements ApiModule {
+	
+	public Humann2Parser() {
+		super();
+		addNewProperty( HN2_KEEP_UNINTEGRATED, Properties.BOOLEAN_TYPE, HN2_KEEP_UNINTEGRATED_DESC );
+		addNewProperty( HN2_KEEP_UNMAPPED, Properties.BOOLEAN_TYPE, HN2_KEEP_UNMAPPED_DESC );
+	}
+
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
@@ -167,6 +176,34 @@ public class Humann2Parser extends ParserModuleImpl {
 
 		return transpose;
 	}
+	
+	@Override
+	public String getDescription() {
+		return "Build OTU tables from HumanN2 classifier module output.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockJ " + BioLockJUtil.getVersion( );
+	}
+	
+	@Override
+	public Boolean isValidProp( String property ) throws Exception {
+		Boolean isValid = super.isValidProp( property );
+		switch(property) {
+			case HN2_KEEP_UNINTEGRATED:
+				try {Config.getBoolean( this, HN2_KEEP_UNINTEGRATED );}
+				catch(Exception e) { isValid = false; }
+				isValid = true;
+				break;
+			case HN2_KEEP_UNMAPPED:
+				try {Config.getBoolean( this, HN2_KEEP_UNMAPPED );}
+				catch(Exception e) { isValid = false; }
+				isValid = true;
+				break;
+		}
+		return isValid;
+	}
 
 	private Integer numGeneFamilies = null;
 
@@ -176,14 +213,17 @@ public class Humann2Parser extends ParserModuleImpl {
 	private Integer numSamples = null;
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #HN2_KEEP_UNINTEGRATED}<br>
-	 * Set value = {@value biolockj.Constants#TRUE} to keep UNINTEGRATED column in count tables
+	 * {@value #HN2_KEEP_UNINTEGRATED_DESC}
 	 */
 	protected static final String HN2_KEEP_UNINTEGRATED = "humann2.keepUnintegrated";
+	private static final String HN2_KEEP_UNINTEGRATED_DESC = "if true, keep UNINTEGRATED column in count tables";
 	/**
 	 * {@link biolockj.Config} Boolean property: {@value #HN2_KEEP_UNMAPPED}<br>
-	 * Set value = {@value biolockj.Constants#TRUE} to keep UNMAPPED column in count tables
+	 * {@value #HN2_KEEP_UNMAPPED_DESC}
 	 */
 	protected static final String HN2_KEEP_UNMAPPED = "humann2.keepUnmapped";
+	private static final String HN2_KEEP_UNMAPPED_DESC = "if true, keep UNMAPPED column in count tables";
+	
 	private static final String ABUND_SUFFIX = "_Abundance";
 	private static final String COVERAGE_SUFFIX = "_Coverage";
 	private static final String HN2_PARSED = "hn2";
@@ -192,5 +232,5 @@ public class Humann2Parser extends ParserModuleImpl {
 	private static final String RPK_SUFFIX = "-RPKs";
 	private static final String UNINTEGRATED = "UNINTEGRATED";
 	private static final String UNMAPPED = "UNMAPPED";
-
+	
 }

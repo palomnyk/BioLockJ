@@ -13,6 +13,10 @@ package biolockj.module.report.r;
 
 import java.util.List;
 import biolockj.Config;
+import biolockj.Constants;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
+import biolockj.util.BioLockJUtil;
 
 /**
  * This BioModule is used to build the R script used to generate OTU-metadata box-plots and scatter-plots for each
@@ -20,17 +24,29 @@ import biolockj.Config;
  * 
  * @blj.web_desc R Plot OTUs
  */
-public class R_PlotOtus extends R_Module {
+public class R_PlotOtus extends R_Module implements ApiModule {
+	
+	public R_PlotOtus() {
+		super();
+		addNewProperty( R_PVAL_FORMAT, Properties.STRING_TYPE, "Sets the format used in R sprintf() function" );
+		addGeneralProperty( Constants.R_RARE_OTU_THRESHOLD );
+		addGeneralProperty( Constants.R_COLOR_BASE );
+		addGeneralProperty( Constants.R_COLOR_HIGHLIGHT );
+		addGeneralProperty( Constants.R_COLOR_PALETTE );
+		addGeneralProperty( Constants.R_COLOR_POINT );
+		addGeneralProperty( Constants.R_PCH );
+	}
+
 	@Override
 	public void checkDependencies() throws Exception {
 		super.checkDependencies();
 		Config.getString( this, R_PVAL_FORMAT );
-		Config.getPositiveDoubleVal( this, R_RARE_OTU_THRESHOLD );
-		Config.getString( this, R_COLOR_BASE );
-		Config.getString( this, R_COLOR_HIGHLIGHT );
-		Config.getString( this, R_COLOR_PALETTE );
-		Config.getString( this, R_COLOR_POINT );
-		Config.getString( this, R_PCH );
+		Config.getPositiveDoubleVal( this, Constants.R_RARE_OTU_THRESHOLD );
+		Config.getString( this, Constants.R_COLOR_BASE );
+		Config.getString( this, Constants.R_COLOR_HIGHLIGHT );
+		Config.getString( this, Constants.R_COLOR_PALETTE );
+		Config.getString( this, Constants.R_COLOR_POINT );
+		Config.getString( this, Constants.R_PCH );
 	}
 
 	/**
@@ -42,4 +58,14 @@ public class R_PlotOtus extends R_Module {
 	}
 
 	private static final String R_PVAL_FORMAT = "r.pValFormat";
+
+	@Override
+	public String getDescription() {
+		return "Generate OTU-metadata box-plots and scatter-plots for each reportable metadata field and each *report.taxonomyLevel* configured";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
+	}
 }

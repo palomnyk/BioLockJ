@@ -14,6 +14,7 @@ package biolockj.module.implicit.parser.r16s;
 import java.io.BufferedReader;
 import java.io.File;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.module.implicit.parser.ParserModuleImpl;
 import biolockj.node.OtuNode;
 import biolockj.node.r16s.RdpNode;
@@ -25,7 +26,13 @@ import biolockj.util.SeqUtil;
  * 
  * @blj.web_desc RDP Parser
  */
-public class RdpParser extends ParserModuleImpl {
+public class RdpParser extends ParserModuleImpl implements ApiModule{
+	
+	public RdpParser() {
+		super();
+		addNewProperty( Constants.RDP_THRESHOLD_SCORE, Properties.NUMERTIC_TYPE, "RdpParser will ignore OTU assignments below this threshold score (0-100)" );
+	}
+
 	/**
 	 * Parse all {@link biolockj.module.classifier.r16s.RdpClassifier} reports in the input directory.<br>
 	 * Build an {@link biolockj.node.r16s.RdpNode} for each line.<br>
@@ -67,6 +74,16 @@ public class RdpParser extends ParserModuleImpl {
 			Log.error( getClass(), "Unable to verify if OTU node is valid!", ex );
 		}
 		return false;
+	}
+
+	@Override
+	public String getDescription() {
+		return "Build OTU tables from [RDP](http://rdp.cme.msu.edu/classifier/classifier.jsp) reports.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();
 	}
 
 	/**

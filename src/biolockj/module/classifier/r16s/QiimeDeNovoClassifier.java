@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import biolockj.Config;
+import biolockj.api.ApiModule;
 import biolockj.module.implicit.qiime.QiimeClassifier;
 import biolockj.util.MetaUtil;
 
@@ -24,7 +25,7 @@ import biolockj.util.MetaUtil;
  * 
  * @blj.web_desc QIIME de novo Classifier
  */
-public class QiimeDeNovoClassifier extends QiimeClassifier {
+public class QiimeDeNovoClassifier extends QiimeClassifier implements ApiModule {
 
 	/**
 	 * Return bash script lines to pick de novo OTUs by calling {@link biolockj.module.implicit.qiime.QiimeClassifier}
@@ -85,4 +86,20 @@ public class QiimeDeNovoClassifier extends QiimeClassifier {
 	 * De novo OTU picking script: {@value #PICK_OTU_SCRIPT}
 	 */
 	public static final String PICK_OTU_SCRIPT = "pick_de_novo_otus.py";
+	
+	@Override
+	public String getDescription() {
+		return "Run the QIIME pick_de_novo_otus.py script on all fasta sequence files";
+	}
+	
+	@Override
+	public String getDetails() {
+		return "This module runs the QIIME [pick_de_novo_otus.py](http://qiime.org/scripts/pick_de_novo_otus.html) script on all fasta sequence files in a single script since OTUs are assigned by a clustering algorithm.  Additional parameters for this script are set using *exe.classifierParams*.  If *qiime.removeChimeras* = \"Y\", vsearch is used to find chimeric sequences in the output and the QIIME script [filter_otus_from_otu_table.py](http://qiime.org/scripts/filter_otus_from_otu_table.html) is run to remove them from ./output/otu_table.biom.  Inherits from [QiimeClassifier](../../../module.implicit.qiime#QiimeClassifier).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return CITE_QIIME + System.lineSeparator() + "(needs further citation)" + System.lineSeparator() + "http://www.wernerlab.org/software/macqiime/citations";
+	}
+
 }

@@ -19,15 +19,25 @@ import org.apache.commons.io.FileUtils;
 import biolockj.Config;
 import biolockj.Constants;
 import biolockj.Log;
+import biolockj.Properties;
+import biolockj.api.ApiModule;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.ScriptModuleImpl;
+import biolockj.util.BioLockJUtil;
 
 /**
  * This BioModule allows users to call in their own scripts into BLJ
  * 
  * @blj.web_desc Allows User made scripts into the BLJ pipeline
  */
-public class GenMod extends ScriptModuleImpl {
+public class GenMod extends ScriptModuleImpl implements ApiModule {
+
+	public GenMod() {
+		super();
+		addNewProperty( LAUNCHER, Properties.STRING_TYPE, LAUNCHER_DESC );
+		addNewProperty( PARAM, Properties.STRING_TYPE, PARAM_DESC );
+		addNewProperty( SCRIPT, Properties.FILE_PATH, SCRIPT_DESC );
+	}
 
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
@@ -78,17 +88,36 @@ public class GenMod extends ScriptModuleImpl {
 		return copy.getAbsolutePath();
 
 	}
+	
+	@Override
+	public String getDescription() {
+		return "Allows user to add their own scripts into the BioLockJ pipeline.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "BioLockJ " + BioLockJUtil.getVersion( );
+	}
 
 	/**
-	 * {@value #LAUNCHER} type of Script used by User
+	 * {@link biolockj.Config} property: {@value #LAUNCHER}<br>
+	 * {@value #LAUNCHER_DESC}
 	 */
 	protected static final String LAUNCHER = "genMod.launcher";
+	private static final String LAUNCHER_DESC = "Define executable language command if it is not included in your $PATH";
+	
 	/**
-	 * {@value #PARAM} parameters for user script
+	 * {@link biolockj.Config} property: {@value #PARAM}<br>
+	 * {@value #PARAM_DESC}
 	 */
 	protected static final String PARAM = "genMod.param";
+	private static final String PARAM_DESC = "parameters to pass to the user's script";
+	
 	/**
-	 * {@value #SCRIPT} path to user Script
+	 * {@link biolockj.Config} property: {@value #SCRIPT}<br>
+	 * {@value #SCRIPT_DESC}
 	 */
 	protected static final String SCRIPT = "genMod.scriptPath";
+	private static final String SCRIPT_DESC = "path to user script";
+
 }

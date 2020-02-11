@@ -35,16 +35,12 @@ public class Config {
 	 * @throws ConfigFormatException if property value is not null but also not Y or N.
 	 */
 	public static boolean getBoolean( final BioModule module, final String property ) throws ConfigFormatException {
-		if( getString( module, property ) != null && getString( module, property ).equalsIgnoreCase( Constants.TRUE ) )
-			return true;
-		else if( getString( module, property ) == null ) {
-			setConfigProperty( property, Constants.FALSE );
-			Log.debug( Config.class, property + " is undefined, so return: " + Constants.FALSE );
-		} else if( !getString( module, property ).equalsIgnoreCase( Constants.FALSE ) )
-			throw new ConfigFormatException( property, "Boolean properties must be set to either " + Constants.TRUE +
-				" or " + Constants.FALSE + ".  Update this property in your Config file to a valid option." );
-
-		return false;
+		String value = getString( module, property );
+		if ( value == null ) return false;
+		else if ( value.equalsIgnoreCase( Constants.TRUE ) ) return true;
+		else if ( value.equalsIgnoreCase( Constants.FALSE ) ) return false;
+		throw new ConfigFormatException( property, "Boolean properties must be set to either " + Constants.TRUE +
+			" or " + Constants.FALSE + "." );
 	}
 
 	/**
@@ -134,11 +130,8 @@ public class Config {
 	 * @throws Exception if errors occur
 	 */
 	public static String getExeParams( final BioModule module, final String property ) throws Exception {
-		final String property2 = property;
-		if( !property2.startsWith( Constants.EXE_PREFIX ) )
-			throw new SpecialPropertiesException( property, "Config.getExeParams() can only be called for properties that begin with \"" + Constants.EXE_PREFIX + "\"" );
-		if( getString( module, property2 + Constants.PARAMS ) == null ) return "";
-		String val = getString( module, property2 + Constants.PARAMS );
+		String val = getString( module, property );
+		if( val == null ) return "";
 		if( val != null && !val.isEmpty() && !val.endsWith( " " ) ) val = val + " ";
 		return val;
 	}
@@ -345,6 +338,14 @@ public class Config {
 		if( props == null ) return null;
 		String prop = getModulePropName( module, property );
 		String val = props.getProperty( prop );
+		if ( val == null && module != null) {
+			val=module.getPropDefault( prop );
+			if (val != null) {
+				Log.info(Config.class, "Setting property [" + prop + "] to [" 
+								+ val + "], the default value supplied by my module: " + ModuleUtil.displaySignature( module ) + ".");
+				props.setProperty( prop, val );
+			}
+		}
 		if( val != null ) val = val.trim();
 		val = replaceEnvVar( val );
 		if( val != null && val.isEmpty() ) val = null;
@@ -391,6 +392,20 @@ public class Config {
 		Log.info( Config.class, "Total # initial properties: " + props.size() );
 		unmodifiedInputProps.putAll( props );
 		TaxaUtil.initTaxaLevels();
+	}
+	
+	/**
+	 * Allow the system to act with no properties to allow for quick testing of individual props.
+	 * @param prop
+	 * @param val
+	 * @throws Exception
+	 */
+	public static void initBlankProps() throws Exception {
+		props = new Properties();
+	}
+	
+	public static void partiallyInitialize(File config) throws Exception {
+		props = replaceEnvVars( Properties.loadProperties( config ) );
 	}
 
 	/**
@@ -478,12 +493,8 @@ public class Config {
 	 */
 	public static boolean requireBoolean( final BioModule module, final String property )
 		throws ConfigNotFoundException, ConfigFormatException {
-		final String val = requireString( module, property );
-		if( val.equalsIgnoreCase( Constants.TRUE ) ) return true;
-		if( val.equalsIgnoreCase( Constants.FALSE ) ) return false;
-
-		throw new ConfigFormatException( property,
-			"Property only accepts boolean values: " + Constants.TRUE + " or " + Constants.FALSE );
+		requireString( module, property );
+		return (getBoolean( module, property ));
 	}
 
 	/**
@@ -841,7 +852,7 @@ public class Config {
 	 * @return integer value or null
 	 * @throws ConfigFormatException if property is defined, but does not return an integer
 	 */
-	private static Integer getIntegerProp( final BioModule module, final String property )
+	public static Integer getIntegerProp( final BioModule module, final String property )
 		throws ConfigFormatException {
 		if( getString( module, property ) != null ) try {
 			final Integer val = Integer.parseInt( getString( module, property ) );
@@ -884,4 +895,6 @@ public class Config {
 	private static Properties props = null;
 	private static Properties unmodifiedInputProps = new Properties();
 	private static final Map<String, String> usedProps = new HashMap<>();
+	
 }
+
