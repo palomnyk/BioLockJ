@@ -117,7 +117,7 @@ The BioLockJ documentation is stored in markdown files and rendered into html us
 
 Override the `getCitationString()` method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.
 
-Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).
+Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).  If your module has any pre-requisit modules or post-requisit modules, the modules Details should include the names of these modules and information about when and why these modules are added.
 
 ### Documenting Properties
 

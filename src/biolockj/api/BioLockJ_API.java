@@ -125,14 +125,13 @@ public class BioLockJ_API {
 					}
 					break;
 				case PROP_VALUE:
-					unsupportedOption(query, options, new String[] {PROP_ARG, CONFIG_ARG} );
+					unsupportedOption(query, options, new String[] {PROP_ARG, CONFIG_ARG, MODULE_ARG} );
 					requiredOption(query, options, new String[] {PROP_ARG} );
-					if ( options.get( CONFIG_ARG ) != null ) {
-						initConfig(options.get( CONFIG_ARG ));
-					}else {
-						initConfig();
+					BioModule mod = null;
+					if ( options.get( MODULE_ARG ) != null ) {
+						mod = ModuleUtil.createModuleInstance( options.get( MODULE_ARG ) );
 					}
-					reply = propValue( options.get( PROP_ARG ) );
+					reply = propValue( options.get( PROP_ARG ), options.get( CONFIG_ARG ), mod);
 					break;
 				case PROP_INFO:
 					unsupportedOption(query, options, new String[0]);
@@ -369,14 +368,24 @@ public class BioLockJ_API {
 	/**
 	 * Returns the value for that property (first String)
 	 * If a second argument is given, it is assumed to be the primary config file.
-	 * @param args
+	 * @param property - the property to get the value of
+	 * @param config - (can be null) the config file to read in to establish property values
+	 * @param module - (can be null) a module to pass in a context when getting the value
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String propValue(String property) throws Exception {
-		return Config.getString( null, property );
+	public static String propValue(String property, String config, BioModule module) throws Exception {
+		if (config != null) initConfig(config);
+		else initConfig();
+		return Config.getString( module, property );
 	}
-
+	public static String propValue(String property, BioModule module) throws Exception {
+		return propValue(property, null, module);
+	}
+	public static String propValue(String property) throws Exception {
+		return propValue(property, null, null);
+	}
+	
 	private static void initConfig(String path) throws Exception {
 		File config = new File(path);
 		if (!config.exists()) throw new API_Exception( "Cannot find configuration file: " + path );
@@ -525,7 +534,7 @@ public class BioLockJ_API {
 		sb.append( "        Returns a description of the property." +System.lineSeparator() );
 		sb.append( "        If a module is supplied, then the modules getDescription method is used." +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
-		sb.append( "  " + PROP_VALUE + " " + PROP_OPTION + " [ " + CONFIG_OPTION + " ]" +System.lineSeparator() );
+		sb.append( "  " + PROP_VALUE + " " + PROP_OPTION + " [ " + CONFIG_OPTION + " ] [ "+ MODULE_OPTION + " ]" +System.lineSeparator() );
 		sb.append( "        Returns the value for that property given that config file (optional) or " +System.lineSeparator() );
 		sb.append( "        no config file (ie the default value)" +System.lineSeparator() );
 		sb.append( System.lineSeparator() );

@@ -84,7 +84,23 @@
 		</javadoc>
 	</target>
 
-	<target name="userguide" depends="javadoc">
+	<target name="buildDocs" depends="build-jar">
+		<if><available file="mkdocs/user-guide/docs/GENERATED"/>
+			<then>
+				<delete includeemptydirs="true">
+			  		<fileset dir="mkdocs/user-guide/docs/GENERATED" includes="**/*"/>
+				</delete>
+			</then>
+		</if>
+		<exec executable="java">
+			<arg value="-cp"/>
+			<arg value="dist/BioLockJ.jar"/>
+			<arg value="biolockj.api.BuildDocs"/>
+			<arg value="mkdocs/user-guide/docs/GENERATED"/>
+		</exec>
+	</target>
+
+	<target name="userguide" depends="buildDocs,javadoc">
 		<exec executable="mkdocs" dir="mkdocs/user-guide">
 			<arg value="build"/>
 			<arg value="--site-dir"/>
