@@ -127,7 +127,7 @@ display_help_without_java(){
 	echo "Current java version:"
 	eval "java -version"
 	echo ""
-	echo "Requries BioLockJ (version 1.2.6 or higher)"
+	echo "Requries BioLockJ (version 1.2.8 or higher)"
 	echo "Current jar file version:"
 	eval "java -jar $BLJ/dist/BioLockJ.jar --version"
 	echo ""
