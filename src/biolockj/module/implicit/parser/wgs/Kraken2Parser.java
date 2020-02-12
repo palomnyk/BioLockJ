@@ -26,8 +26,6 @@ import biolockj.util.*;
  * @blj.web_desc Kraken2 Parser
  */
 public class Kraken2Parser extends KrakenParser {
-
-
 	
 	@Override
 	protected void parseSample( final File file ) throws Exception {
@@ -79,7 +77,7 @@ public class Kraken2Parser extends KrakenParser {
 		final List<String> levels = new ArrayList<>();
 		levels.add( TaxaUtil.bottomTaxaLevel() );
 
-		for( final String level: PARENT_TAXA_LEVELS ) {
+		for( final String level: getParentLevels() ) {
 			for( final String otu: leafCounts.keySet() ) {
 				if( !TaxaUtil.getLeafLevel( otu ).equals( level ) ) continue;
 				final Map<String, Long> levTaxa =
@@ -108,7 +106,7 @@ public class Kraken2Parser extends KrakenParser {
 	}
 	
 	private boolean discardOtu( final String line ) {
-		for( final String delim: DISCARD_TAXA_LEVEL_DELIMS )
+		for( final String delim: getDiscardLevelDelims() )
 			if( line.contains( delim ) ) {
 				Log.debug( getClass(), "Discard Line [" + line + "] - due to invalid level: " +
 					OtuNodeImpl.delimToLevelMap().get( delim ) );
@@ -200,6 +198,4 @@ public class Kraken2Parser extends KrakenParser {
 		return levels;
 	}
 
-	private static final List<String> DISCARD_TAXA_LEVEL_DELIMS = getDiscardLevelDelims();
-	private static final List<String> PARENT_TAXA_LEVELS = getParentLevels();
 }
