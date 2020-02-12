@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import biolockj.Properties;
+import biolockj.module.BioModule;
 import biolockj.util.ModuleUtil;
 
 public class BuildDocs {
@@ -19,9 +21,10 @@ public class BuildDocs {
 			System.err.println("Creating documentation for module: " + mod);
 			createUserGuidePage( mod );
 		}
+		
+		generateAllModulesPage();
 
 	}
-	
 	
 	private static void createUserGuidePage(String modulePath) throws Exception {
 		ApiModule tmp = (ApiModule) ModuleUtil.createModuleInstance( modulePath );
@@ -102,6 +105,13 @@ public class BuildDocs {
 		return file;
 	}
 	
+	private static String getInternalLink(String modPath) throws IOException {
+		File page = getPageLocation( modPath );
+		String parentDir = (new File(baseDir)).getAbsolutePath() + "/";
+		String link = page.getAbsolutePath().replaceFirst( parentDir, "" );
+		return link;
+	}
+	
 	private static List<String> getPrePostReqModules( ApiModule module, boolean pre ) {
 		List<String> mods = new ArrayList<>();
 		try {
@@ -130,12 +140,47 @@ public class BuildDocs {
 		}
 	}
 	
+	private static void generateAllModulesPage() throws Exception {
+		File file = new File(baseDir, ALL_MODS_DOC);
+		file.createNewFile();
+		FileWriter writer = new FileWriter( file );
+		System.err.println("Saving all-modules list to file: " + file );
+		writer.write( "# All Modules" + System.lineSeparator());
+		writer.write( "*Comprehensive list of all modules packaged with BioLockJ with links to auto-generated module documentation.*" + System.lineSeparator());
+		writer.write( System.lineSeparator());
+		
+		List<String> lines = new ArrayList<>();
+		for (String modulePath : BioLockJ_API.listModules()) {
+			BioModule module = ModuleUtil.createModuleInstance( modulePath );
+			String title, link, desc;
+			if (module instanceof ApiModule) {
+				title = ((ApiModule) module).getTitle();
+				desc = " - *" + ((ApiModule) module).getDescription() + "*";
+			}else {
+				title = ModuleUtil.displayName( module );
+				desc = "";
+			}
+			link = getInternalLink( modulePath );
+			lines.add( "[" + title + "](" + link + ")" + desc );
+		}
+		
+		Collections.sort(lines);
+		for (String line : lines ) {
+			writer.write(line + markDownReturn );
+		}
+		
+		writer.close();
+		System.err.println("Done writing all-modules list." );
+	}
+	
 
 	private static final String NONE = "*none*";
 	
 	private static final String markDownReturn = "                   " + System.lineSeparator();
 	
 	private static final String inCellReturn = "<br>";
+	
+	private static final String ALL_MODS_DOC = "all-modules.md";
 		
 	private static String baseDir;
 

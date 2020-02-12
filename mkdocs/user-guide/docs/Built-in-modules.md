@@ -42,7 +42,10 @@ BioLockJ comes packaged with several modules for sequence pre-processing.
   * [SeqFileValidator](GENERATED/biolockj.module.seq/SeqFileValidator.md)
   * [TrimPrimers](GENERATED/biolockj.module.seq/TrimPrimers.md)
 
-
 ### DIY modules  
 
   * [GenMod](module/diy/module.diy.md)
+
+
+## List All
+See generated docs for [all modules](GENERATED/all-modules.md).
