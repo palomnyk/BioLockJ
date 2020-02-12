@@ -45,7 +45,7 @@ To include a BioModule in your pipeline, add a `#BioModule` line to the top your
 #BioModule biolockj.module.report.r.R_PlotMds
 ```
 
-BioModules will be executed in the order they are listed in here.  A typical pipeline contians one [classifier module](../module/classifier/module.classifier).  Any number of [sequence pre-processing](../module/seq/module.seq) modules may come before the classifier module. Any number of [report modules](../module/report/module.report) may come after the classifier module.  In addition to the BioModules specified in the configuration file, BioLockJ may add [implicit modules](../module/implicit/module.implicit) that the are required by specified modules.  See [Example Pipeline](Example-Pipeline).
+BioModules will be executed in the order they are listed in here.  A typical pipeline contians one [classifier module](../module/classifier/module.classifier).  Any number of [sequence pre-processing](Build-in-modules#sequence-modules) modules may come before the classifier module. Any number of [report modules](../module/report/module.report) may come after the classifier module.  In addition to the BioModules specified in the configuration file, BioLockJ may add [implicit modules](../module/implicit/module.implicit) that the are required by specified modules.  See [Example Pipeline](Example-Pipeline).
 
 A module can be given an alias by using the `AS` keyword in its execution line:
 ```
@@ -155,7 +155,7 @@ If you are running a pipeline using docker, it is assumed that all file paths in
 | *input.trimPrefix* | For files named by Sample ID, provide the prefix preceding the ID to trim when extracting Sample ID.  For multiplexed sequences, provide any characters in the sequence header preceding the ID. For fastq, this value could be “@” if the sample ID was added to the header immediately after the "@" symbol. |
 | *input.trimSuffix* | For files named by Sample ID, provide the suffix after the ID, often this is just the file extension.  Do not include read direction indicators listed in *input.suffixFw/input.suffixRv*. For multiplexed sequences, provide 1st character in the sequence header found after every embedded Sample ID.  If undefined, “_” is used as the default end-of-sample-ID delimiter. |
 
-#### [kneaddata](../module/seq/module.seq#kneaddata)
+#### [kneaddata](GENERATED/biolockj.module.seq/KneadData.md)
 | Property| Description |
 | :--- | :--- |
 | *kneaddata.dbs* | Path to database for [KneadData program](https://bitbucket.org/biobakery/kneaddata/wiki/Home) |
@@ -199,7 +199,7 @@ If you are running a pipeline using docker, it is assumed that all file paths in
 | *metaphlan2.db* | Directory property containing alternate database. Must always be paired with *metaphlan2.mpa_pkl* |
 | *metaphlan2.mpa_pkl* | File property containing path to the mpa_pkl file used to reference an alternate DB.  Must always be paired with *metaphlan2.db* |
 
-#### [multiplexer](../module/seq/module.seq#multiplexer)
+#### [multiplexer](GENERATED/biolockj.module.seq/Multiplexer.md)
 | Property| Description |
 | :--- | :--- |
 | *multiplexer.gzip* | Options: Y/N.  If Y, gzip the multiplexed output |
@@ -209,8 +209,8 @@ If you are running a pipeline using docker, it is assumed that all file paths in
 | :--- | :--- |
 | *pipeline.copyInput* | Options: Y/N.  If Y, copy *input.dirPaths* into a new directory under the project root directory |
 | *pipeline.defaultDemultiplexer* | Assign module to demultiplex datasets.  Default = [Demultiplexer](../module.implicit#Demultiplexer) |
-| *pipeline.defaultFastaConverter* | Assign module to convert fastq sequence files into fasta format when required.  Default = [AwkFastaConverter](../module.seq#AwkFastaConverter) |
-| *pipeline.defaultSeqMerger* | Assign module to merge paired reads when required.  Default = [PearMergeReads](../module.seq#PearMergeReads) |
+| *pipeline.defaultFastaConverter* | Assign module to convert fastq sequence files into fasta format when required.  Default = [AwkFastaConverter](GENERATED/biolockj.module.seq/AwkFastaConverter.md) |
+| *pipeline.defaultSeqMerger* | Assign module to merge paired reads when required.  Default = [PearMergeReads](GENERATED/biolockj.module.seq/PearMergeReads.md) |
 | *pipeline.defaultStatsModule* | Java class name for default module used generate p-value and other stats |
 | *pipeline.defaultProps* | Path to a default BioLockJ configuration file containing default property values that are overridden if defined in the primary configuration file  |
 | *pipeline.deleteTempFiles* | Options: Y/N.  If Y, delete module temp dirs after execution |
@@ -285,7 +285,7 @@ If you are running a pipeline using docker, it is assumed that all file paths in
 | *rarefyOtuCounts.quantile* | Quantile for rarefication. The number of OTUs/sample are ordered, all samples with more OTUs than the quantile sample are subselected without replacement until they have the same number of OTUs as the quantile sample |
 | *rarefyOtuCounts.rmLowSamples* | Options: Y/N. If Y, all samples below the *rarefyOtuCounts.quantile* quantile sample are removed |
 
-#### [rarefySeqs](../module/seq/module.seq#rarefyseqs)
+#### [rarefySeqs](GENERATED/biolockj.module.seq/RarefySeqs.md)
 | Property| Description |
 | :--- | :--- |
 | *rarefySeqs.max* | Randomly select maximum number of sequences per sample |
@@ -318,18 +318,18 @@ If you are running a pipeline using docker, it is assumed that all file paths in
 | *script.permissions* | Set chmod command security bits on generated scripts (Ex. 770) |
 | *script.timeout* | Integer, time (minutes) before worker scripts times out. |
 
-#### [seqFileValidator](../module/seq/module.seq#seqfilevalidator)
+#### [seqFileValidator](GENERATED/biolockj.module.seq/SeqFileValidator.md)
 | Property| Description |
 | :--- | :--- |
 | *seqFileValidator.requireEqualNumPairs* | Options: Y/N. default Y. | 
 | *seqFileValidator.seqMaxLen* | maximum number of bases per read | 
 | *seqFileValidator.seqMinLen* | minimum number of bases per read | 
 
-#### [trimPrimers](../module/seq/module.seq#trimprimers)
+#### [trimPrimers](GENERATED/biolockj.module.seq/TrimPrimers.md)
 | Property| Description |
 | :--- | :--- |
 | *trimPrimers.filePath* | Path to file containing one primer sequence per line. | 
-| *trimPrimers.requirePrimer* | Options: Y/N. If Y, [TrimPrimers](../module.seq#TrimPrimers) will discard reads that do not include a primer sequence. |
+| *trimPrimers.requirePrimer* | Options: Y/N. If Y, [TrimPrimers](GENERATED/biolockj.module.seq/TrimPrimers.md) will discard reads that do not include a primer sequence. |
 
 #### [validation](../Validation)
 | Property| Description |

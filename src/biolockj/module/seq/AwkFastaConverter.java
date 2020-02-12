@@ -14,8 +14,10 @@ package biolockj.module.seq;
 import java.io.File;
 import java.util.*;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.exception.SequnceFormatException;
 import biolockj.module.SeqModuleImpl;
+import biolockj.util.BioLockJUtil;
 import biolockj.util.SeqUtil;
 
 /**
@@ -23,7 +25,12 @@ import biolockj.util.SeqUtil;
  * 
  * @blj.web_desc Awk Fastq to Fasta Converter
  */
-public class AwkFastaConverter extends SeqModuleImpl {
+public class AwkFastaConverter extends SeqModuleImpl implements ApiModule {
+	
+	public AwkFastaConverter(){
+		addGeneralProperty( Constants.EXE_GZIP );
+		addGeneralProperty( Constants.EXE_AWK );
+	}
 
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
@@ -154,5 +161,20 @@ public class AwkFastaConverter extends SeqModuleImpl {
 	 * Name of the bash function used to decompress gzipped files: {@value #FUNCTION_GUNZIP}
 	 */
 	protected static final String FUNCTION_GUNZIP = "decompressGzip";
+
+	@Override
+	public String getDescription() {
+		return "Convert fastq files into fasta format.";
+	}
+	
+	@Override
+	public String getDetails() {
+		return "This module was first introduced because it was required for [QIIME](http://qiime.org).";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "BioLockj " + BioLockJUtil.getVersion() + System.lineSeparator() + "Module developed by Mike Sioda";
+	}
 
 }
