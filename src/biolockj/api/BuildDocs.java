@@ -28,9 +28,12 @@ public class BuildDocs {
 			createUserGuidePage( mod );
 		}
 		
+		System.err.println("All Modules:");
 		generateAllModulesPage();
 		
+		System.err.println("Help menu pages:");
 		generateBiolockjHelpPage();
+		generateApiHelpPage();
 
 	}
 	
@@ -217,7 +220,7 @@ public class BuildDocs {
 	
 	private static void generateBiolockjHelpPage() throws IOException, InterruptedException {
 		File file = new File(baseDir, biolockj_help);
-		System.err.println("Creating file: " + biolockj_help);
+		System.err.println("Creating file: " + file.getPath() );
 		file.createNewFile();
 		FileWriter writer = new FileWriter(file);
 		String cmd = "biolockj --help";
@@ -230,6 +233,16 @@ public class BuildDocs {
 		writer.write( System.lineSeparator() );
 		writer.write( "```bash" + markDownReturn );
 		
+		writeCommandOutputToFile(cmd, writer);
+		
+		writer.write( System.lineSeparator() );
+		writer.write( "```" + markDownReturn );
+		writer.close();
+		
+		System.err.println("Done: " + file.getName());
+	}
+	
+	private static void writeCommandOutputToFile(String cmd, FileWriter writer) throws IOException, InterruptedException {
 		final Process p = Runtime.getRuntime().exec( cmd ); 
 		final BufferedReader br = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
 		String s = null;
@@ -239,12 +252,32 @@ public class BuildDocs {
 		}
 		p.waitFor();
 		p.destroy();
+	}
+	
+	private static void generateApiHelpPage() throws IOException, InterruptedException {
+		File file = new File(baseDir, biolockj_api_help);
+		System.err.println("Creating file: " + file.getPath() );
+		file.createNewFile();
+		FileWriter writer = new FileWriter(file);
+		String cmd = "biolockj-api help";		
 		
-		writer.write( System.lineSeparator() );
+		writer.write( "# BioLockJ API" + markDownReturn );
+		writer.write( "" + markDownReturn );
+		writer.write( "BioLockJ comes with an API." + markDownReturn );
+		writer.write( "" + markDownReturn );
+		writer.write( "For the most up-to-date information about how to use the API, see the help menu:" + markDownReturn );
+		writer.write( "`biolockj_api help`" + markDownReturn );
+		writer.write( "" + markDownReturn );
+		
+		writer.write( "```bash" + markDownReturn );
+		writeCommandOutputToFile(cmd, writer);
 		writer.write( "```" + markDownReturn );
+		
+		writeCommandOutputToFile("cat mkdocs/user-guide/docs/partials/BioLockJ-Api_footer.md", writer);
+
 		writer.close();
 		
-		System.err.println("Done: " + biolockj_help);
+		System.err.println("Done: " + file.getName());
 	}
 
 	private static final String NONE = "*none*";
@@ -255,6 +288,7 @@ public class BuildDocs {
 	
 	private static final String ALL_MODS_DOC = "all-modules.md";
 	private static final String biolockj_help = "biolockj-help.md";
+	private static final String biolockj_api_help = "BioLockJ-Api.md";
 		
 	private static String baseDir;
 
