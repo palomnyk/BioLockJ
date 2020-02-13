@@ -214,14 +214,14 @@ public class BioLockJ_API {
 	
 	/**
 	 * Return a list of all the modules on the class path.
-	 * @param args
+	 * @param prefix - Single argument passed to the constructor of the Reflections class.
 	 * @return
 	 * @throws Exception 
 	 */
-	public static List<String> listModules() throws Exception {
+	public static List<String> listModules(String prefix) throws Exception {
 		List<String> allBioModules = new ArrayList<>();
 
-		Reflections reflections = supressStdOut_createReflections();
+		Reflections reflections = supressStdOut_createReflections(prefix);
 		
 		Set<Class<? extends BioModule>> subTypes = reflections.getSubTypesOf( BioModule.class );
 		for (Class<? extends BioModule> st : subTypes ) {
@@ -236,8 +236,11 @@ public class BioLockJ_API {
 		Collections.sort(allBioModules);
 		return allBioModules;
 	}
+	public static List<String> listModules() throws Exception {
+		return listModules("");
+	}
 	
-	private static Reflections supressStdOut_createReflections() {
+	private static Reflections supressStdOut_createReflections(String prefix) {
 		PrintStream classicOut = System.out;
 		PrintStream classicErr = System.err;
 		
@@ -252,7 +255,7 @@ public class BioLockJ_API {
 				}));
 		}
 		
-		Reflections reflections = new Reflections("");
+		Reflections reflections = new Reflections(prefix);
 
 		System.setOut(classicOut);
 		System.setErr(classicErr);

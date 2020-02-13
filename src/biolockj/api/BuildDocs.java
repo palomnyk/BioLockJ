@@ -8,33 +8,83 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import biolockj.Config;
-import biolockj.Constants;
 import biolockj.Properties;
-import biolockj.exception.FatalExceptionHandler;
 import biolockj.module.BioModule;
 import biolockj.util.ModuleUtil;
-import biolockj.util.SummaryUtil;
 
+/**
+ * This class handles the components of the user guide that should not be manually maintained.
+ * For pages that show the help menu, this creates the page with the current help menu.
+ * For modules, it generates a user guide page based on the ApiModule methods.  
+ * For non-ApiModule BioModules, it creates a stub.
+ * For the BioLockJ team, this is part of the standard deploy process so that these user guide pages reflect the current code base.
+ * 
+ * For other module developers, this class be used to generate documentation for any and all modules.
+ * For example, if you create a package joes.modules with several BioModules, you could generate the user guide pages using:<br>
+ * java -cp $BLJ/dist/BioLockJ.jar:path/to/your/modules.jar biolockj.api.BuildDocs docs/GENERATED joes.modules
+ * 
+ * @author Ivory Blakley
+ *
+ */
 public class BuildDocs {
 
-	// pass in $BLJ/mkdocs/user-guide/docs/GENERATED
+	/**
+	 *  For standard use case, pass in $BLJ/mkdocs/user-guide/docs/GENERATED
+	 * @param args first art is baseDir - the folder where the output should be saved. 
+	 * If a second arg, it should be the package root for generating the documentation for a third-party package.
+	 * @throws Exception
+	 */
 	public static void main( String[] args ) throws Exception {
-		// set the base directory for the .md documentation
-		baseDir = args[0];
-		// for each api module, create a .md file for the user guide
-		for (String mod : BioLockJ_API.listApiModules()) {
-			System.err.println("Creating documentation for module: " + mod);
-			createUserGuidePage( mod );
+		
+		if (args.length == 0) {
+			throw new API_Exception( "At least one argument is required - the output directory where .md files shoudl bed saved" 
+							+ System.lineSeparator() + "Try: mkdocs/user-guide/docs/GENERATED");
+		}
+		// set the base directory for the .md outputs
+		baseDir = new File( args[0] );
+		if ( !baseDir.exists() ) {
+			throw new API_Exception( "Please supply a valid output directory." + System.lineSeparator() 
+			+ "Could not find location: \"" + baseDir.getAbsolutePath() + "\" "); 
+		}
+		if ( !baseDir.isDirectory() ) {
+			throw new API_Exception( "Please supply a valid output directory." + System.lineSeparator() 
+			+ "Supplied location is not a directory: \"" + baseDir.getAbsolutePath() + "\" "); 
 		}
 		
-		System.err.println("All Modules:");
-		generateAllModulesPage();
-		
-		System.err.println("Help menu pages:");
-		generateBiolockjHelpPage();
-		generateApiHelpPage();
-
+		if ( args.length == 1 ) {
+			//standard case
+			System.err.println("Will generate documentation for all in-scope modules and the help menu pages.");
+			makeModuleDocs( BioLockJ_API.listModules() );
+			
+			System.err.println("Help menu pages:");
+			generateBiolockjHelpPage();
+			generateApiHelpPage();
+			
+		}else if (args.length == 2) {
+			//rare case
+			basePackage = args[1];
+			System.err.println("Will generate documentation for modules with classpath beginning: " + basePackage);
+			List<String> allModules = BioLockJ_API.listModules(basePackage);
+			if (allModules.size() == 0 ) {
+				throw new API_Exception("No modules were found with classes beginning with \"" + basePackage + "\".");
+			}
+			makeModuleDocs( allModules );
+		}else {
+			throw new API_Exception("Too many args! args: " + args);
+		}
+	}
+	
+	private static void makeModuleDocs(List<String> allModules) throws Exception {
+		for (String mod : allModules) {
+			System.err.println("Creating documentation page for module: " + mod);
+			BioModule tmp = ModuleUtil.createModuleInstance( mod );
+			if (tmp instanceof ApiModule) {
+				createUserGuidePage( mod );
+			}else {
+				createStubPage( mod );
+			}
+		}
+		generateAllModulesPage(allModules);
 	}
 	
 	private static void createUserGuidePage(String modulePath) throws Exception {
@@ -108,9 +158,8 @@ public class BuildDocs {
 	}
 	
 	private static File getPageLocation(String modPath) throws IOException {
-		File base = new File( baseDir );		
 		int sep = modPath.lastIndexOf( "." );
-		File dir = new File(base, modPath.substring( 0, sep ));
+		File dir = new File(baseDir, modPath.substring( 0, sep ));
 		dir.mkdir();
 		File file = new File(dir, modPath.substring( sep + 1 ) + ".md");
 		return file;
@@ -118,7 +167,7 @@ public class BuildDocs {
 	
 	private static String getInternalLink(String modPath) throws IOException {
 		File page = getPageLocation( modPath );
-		String parentDir = (new File(baseDir)).getAbsolutePath() + "/";
+		String parentDir = (baseDir).getAbsolutePath() + "/";
 		String link = page.getAbsolutePath().replaceFirst( parentDir, "" );
 		return link;
 	}
@@ -151,17 +200,18 @@ public class BuildDocs {
 		}
 	}
 	
-	private static void generateAllModulesPage() throws Exception {
+	private static void generateAllModulesPage(List<String> allModules) throws Exception {
+		System.err.println("Module List Page:");
 		File file = new File(baseDir, ALL_MODS_DOC);
 		file.createNewFile();
 		FileWriter writer = new FileWriter( file );
 		System.err.println("Saving all-modules list to file: " + file );
 		writer.write( "# All Modules" + System.lineSeparator());
-		writer.write( "*Comprehensive list of all modules packaged with BioLockJ with links to auto-generated module documentation.*" + System.lineSeparator());
+		writer.write( "*This is an auto-generated list of all modules with links to auto-generated module documentation.*" + System.lineSeparator());
 		writer.write( System.lineSeparator());
 		
 		List<String> lines = new ArrayList<>();
-		for (String modulePath : BioLockJ_API.listModules()) {
+		for (String modulePath : allModules ) {
 			BioModule module = ModuleUtil.createModuleInstance( modulePath );
 			String title, link, desc;
 			if (module instanceof ApiModule) {
@@ -170,7 +220,6 @@ public class BuildDocs {
 			}else {
 				title = ModuleUtil.displayName( module );
 				desc = "";
-				createStubPage(modulePath);
 			}
 			link = getInternalLink( modulePath );
 			lines.add( "[" + title + "](" + link + ")" + desc );
@@ -186,7 +235,6 @@ public class BuildDocs {
 	}
 	
 	private static void createStubPage(String modulePath) throws Exception {
-		System.err.println("Creating stub for non-ApiModule BioModule: " + modulePath );
 		BioModule module = ModuleUtil.createModuleInstance( modulePath );
 		File dest = getPageLocation(modulePath);
 		System.err.println("Saving document to file: " + dest );
@@ -290,6 +338,7 @@ public class BuildDocs {
 	private static final String biolockj_help = "biolockj-help.md";
 	private static final String biolockj_api_help = "BioLockJ-Api.md";
 		
-	private static String baseDir;
+	private static File baseDir;
+	private static String basePackage = null;
 
 }
