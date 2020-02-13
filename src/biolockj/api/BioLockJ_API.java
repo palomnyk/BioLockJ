@@ -380,7 +380,11 @@ public class BioLockJ_API {
 	public static String propValue(String property, String config, BioModule module) throws Exception {
 		if (config != null) initConfig(config);
 		else initConfig();
-		return Config.getString( module, property );
+		String value = Config.getString( null, property );
+		if ( value == null && module != null && module instanceof ApiModule) {
+			value = ((ApiModule) module).getPropDefault( property ); //may still be null
+		}
+		return value;
 	}
 	public static String propValue(String property, BioModule module) throws Exception {
 		return propValue(property, null, module);
