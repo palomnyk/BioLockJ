@@ -82,31 +82,11 @@ public class MasterConfigUtil {
 
 			final Map<String, String> props = new HashMap<>();
 			final Map<String, String> usedProps = Config.getUsedProps();
-			final String defaultDemux = ModuleUtil.getDefaultDemultiplexer();
-			final String defaultFaCon = ModuleUtil.getDefaultFastaConverter();
-			final String defaultMerger = ModuleUtil.getDefaultMergePairedReadsConverter();
-			final String defaultStats = ModuleUtil.getDefaultStatsModule();
 			final Set<String> configMods = Config.getSet( null, Constants.INTERNAL_BLJ_MODULE );
 			boolean foundQiime = false;
 			for( final String mod: configMods )
 				if( mod.toLowerCase().contains( Constants.QIIME ) ) foundQiime = true;
 			if( !foundQiime ) usedProps.remove( Constants.QIIME_ALPHA_DIVERSITY_METRICS );
-
-			if( !ModuleUtil.moduleExists( defaultDemux ) && !configMods.contains( defaultDemux ) ) {
-				usedProps.remove( Constants.DEFAULT_MOD_DEMUX );
-				usedProps.remove( MetaUtil.META_BARCODE_COLUMN );
-				usedProps.remove( Constants.DEFAULT_MOD_DEMUX );
-				usedProps.remove( Constants.DEFAULT_MOD_DEMUX );
-			}
-
-			if( !ModuleUtil.moduleExists( defaultFaCon ) && !configMods.contains( defaultFaCon ) )
-				usedProps.remove( Constants.DEFAULT_MOD_FASTA_CONV );
-
-			if( !ModuleUtil.moduleExists( defaultMerger ) && !configMods.contains( defaultMerger ) )
-				usedProps.remove( Constants.DEFAULT_MOD_SEQ_MERGER );
-
-			if( !configMods.contains( defaultStats ) && !ModuleUtil.moduleExists( defaultStats ) )
-				usedProps.remove( Constants.DEFAULT_STATS_MODULE );
 
 			if( !Log.doDebug() ) {
 				Log.info( MasterConfigUtil.class,

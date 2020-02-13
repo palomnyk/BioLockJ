@@ -76,42 +76,6 @@ public class ModuleUtil {
 	}
 
 	/**
-	 * Get the Java Class name for the default Demultiplexer module
-	 * 
-	 * @return Demultiplexer module Java class name
-	 */
-	public static String getDefaultDemultiplexer() {
-		return getDefaultModule( Constants.DEFAULT_MOD_DEMUX, Demultiplexer.class.getName() );
-	}
-
-	/**
-	 * Get the Java Class name for the default Fasta converter module
-	 * 
-	 * @return Fasta converter module Java class name
-	 */
-	public static String getDefaultFastaConverter() {
-		return getDefaultModule( Constants.DEFAULT_MOD_FASTA_CONV, AwkFastaConverter.class.getName() );
-	}
-
-	/**
-	 * Get the Java Class name for the default Merge paired read module
-	 * 
-	 * @return Merge paired read module Java class name
-	 */
-	public static String getDefaultMergePairedReadsConverter() {
-		return getDefaultModule( Constants.DEFAULT_MOD_SEQ_MERGER, PearMergeReads.class.getName() );
-	}
-
-	/**
-	 * Return the class name of the default R statistics BioModule
-	 * 
-	 * @return default stats module
-	 */
-	public static String getDefaultStatsModule() {
-		return getDefaultModule( Constants.DEFAULT_STATS_MODULE, R_CalculateStats.class.getName() );
-	}
-
-	/**
 	 * Return the min number of samples that can be processed per worker script.
 	 * 
 	 * @param module BioModule
@@ -413,13 +377,6 @@ public class ModuleUtil {
 		for( final BioModule m: Pipeline.getModules() )
 			if( m instanceof ClassifierModule ) ids.add( m.getID() );
 		return ids;
-	}
-
-	private static String getDefaultModule( final String name, final String className ) {
-		String defaultModule = Config.getString( null, name );
-		if( defaultModule == null ) defaultModule = className;
-
-		return defaultModule;
 	}
 
 	private static List<Integer> getRModulesIds() {

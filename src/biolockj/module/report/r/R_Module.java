@@ -38,6 +38,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 		addGeneralProperty( Constants.R_DEBUG );
 		addGeneralProperty( Constants.R_SAVE_R_DATA );
 		addGeneralProperty( Constants.R_COLOR_FILE );
+		addGeneralProperty( Constants.DEFAULT_STATS_MODULE );
 	}
 	
 	/**
@@ -230,7 +231,7 @@ public abstract class R_Module extends ScriptModuleImpl {
 	protected List<String> getStatPreReqs() throws Exception {
 		final List<String> preReqs = super.getPreRequisiteModules();
 		if( !BioLockJUtil.pipelineInputType( BioLockJUtil.PIPELINE_STATS_TABLE_INPUT_TYPE ) )
-			preReqs.add( ModuleUtil.getDefaultStatsModule() );
+			preReqs.add( Config.getString( null, Constants.DEFAULT_STATS_MODULE ) );
 		return preReqs;
 	}
 

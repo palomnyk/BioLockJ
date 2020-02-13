@@ -33,6 +33,7 @@ public class RdpClassifier extends ClassifierModuleImpl implements ApiModule {
 		addNewProperty( RDP_JAR, Properties.FILE_PATH, "File path for RDP java executable JAR" );
 		addNewProperty( RDP_PARAMS, Properties.LIST_TYPE, "parameters to use when running rdp. (must include \"-f fixrank\")" );
 		addNewProperty( JAVA_PARAMS, Properties.LIST_TYPE, "the parameters to java when running rdp." );
+		addGeneralProperty( Constants.DEFAULT_MOD_SEQ_MERGER );
 	}
 
 	/**
@@ -102,7 +103,7 @@ public class RdpClassifier extends ClassifierModuleImpl implements ApiModule {
 	@Override
 	public List<String> getPreRequisiteModules() throws Exception {
 		final List<String> preReqs = new ArrayList<>();
-		if( SeqUtil.hasPairedReads() ) preReqs.add( ModuleUtil.getDefaultMergePairedReadsConverter() );
+		if( SeqUtil.hasPairedReads() ) preReqs.add( Config.getString( null, Constants.DEFAULT_MOD_SEQ_MERGER ) );
 		preReqs.addAll( super.getPreRequisiteModules() );
 		return preReqs;
 	}

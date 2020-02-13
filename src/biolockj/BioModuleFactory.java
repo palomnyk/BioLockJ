@@ -135,8 +135,8 @@ public class BioModuleFactory {
 		int i = -1;
 		final boolean addMod = requireCountMod();
 		if( addMod ) if( this.moduleCache.size() == 1 ||
-			!this.moduleCache.get( 1 ).equals( ModuleUtil.getDefaultDemultiplexer() ) ) i = 1;
-		else if( this.moduleCache.get( 1 ).equals( ModuleUtil.getDefaultDemultiplexer() ) ) i = 2;
+			!this.moduleCache.get( 1 ).equals( Config.getString( null, Constants.DEFAULT_MOD_DEMUX) ) ) i = 1;
+		else if( this.moduleCache.get( 1 ).equals( Config.getString( null, Constants.DEFAULT_MOD_DEMUX ) ) ) i = 2;
 
 		Log.debug( getClass(), addMod ? "ADD count module at index: " + i: "No need to add count mdoule" );
 
@@ -244,16 +244,16 @@ public class BioModuleFactory {
 			modules.add( ImportMetadata.class.getName() );
 
 			if( SeqUtil.isMultiplexed() ) {
-				info( "Set required 2nd module (for multiplexed data): " + ModuleUtil.getDefaultDemultiplexer() );
-				configModules.remove( ModuleUtil.getDefaultDemultiplexer() );
-				modules.add( ModuleUtil.getDefaultDemultiplexer() );
+				info( "Set required 2nd module (for multiplexed data): " + Config.getString( null, Constants.DEFAULT_MOD_DEMUX ) );
+				configModules.remove( Config.getString(null, Constants.DEFAULT_MOD_DEMUX) );
+				modules.add( Config.getString(null, Constants.DEFAULT_MOD_DEMUX) );
 			}
 
 			if( Config.getBoolean( null, Constants.INTERNAL_IS_MULTI_LINE_SEQ ) ) {
 				info(
-					"Set required module (for multi seq-line fasta files ): " + ModuleUtil.getDefaultFastaConverter() );
-				configModules.remove( ModuleUtil.getDefaultFastaConverter() );
-				modules.add( ModuleUtil.getDefaultFastaConverter() );
+					"Set required module (for multi seq-line fasta files ): " + Config.getString( null, Constants.DEFAULT_MOD_FASTA_CONV) );
+				configModules.remove( Config.getString( null, Constants.DEFAULT_MOD_FASTA_CONV) );
+				modules.add( Config.getString( null, Constants.DEFAULT_MOD_FASTA_CONV) );
 			}
 		}
 

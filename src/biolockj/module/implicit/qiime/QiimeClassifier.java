@@ -42,6 +42,8 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 		addNewProperty( QIIME_REF_SEQ_DB, Properties.FILE_PATH, "path to define ~/.qiime_config pick_otus_reference_seqs_fp and assign_taxonomy_reference_seqs_fp" );
 		addNewProperty( QIIME_REMOVE_CHIMERAS, Properties.BOOLEAN_TYPE, "if vsearch is needed for chimera removal" );
 		addNewProperty( QIIME_TAXA_DB, Properties.FILE_PATH, "path to define ~/.qiime_config assign_taxonomy_id_to_taxonomy_fp" );
+		addGeneralProperty( Constants.DEFAULT_MOD_SEQ_MERGER );
+		addGeneralProperty( Constants.DEFAULT_MOD_FASTA_CONV );
 	}
 
 	/**
@@ -273,8 +275,8 @@ public class QiimeClassifier extends ClassifierModuleImpl {
 	public List<String> getPreRequisiteModules() throws Exception {
 		final List<String> preReqs = new ArrayList<>();
 		preReqs.addAll( super.getPreRequisiteModules() );
-		if( SeqUtil.hasPairedReads() ) preReqs.add( ModuleUtil.getDefaultMergePairedReadsConverter() );
-		if( SeqUtil.piplineHasSeqInput() && !SeqUtil.isFastA() ) preReqs.add( ModuleUtil.getDefaultFastaConverter() );
+		if( SeqUtil.hasPairedReads() ) preReqs.add( Config.getString( null, Constants.DEFAULT_MOD_SEQ_MERGER ) );
+		if( SeqUtil.piplineHasSeqInput() && !SeqUtil.isFastA() ) preReqs.add( Config.getString( null, Constants.DEFAULT_MOD_FASTA_CONV) );
 		if( !getClass().getName().equals( QiimeClassifier.class.getName() ) )
 			preReqs.add( BuildQiimeMapping.class.getName() );
 		return preReqs;
