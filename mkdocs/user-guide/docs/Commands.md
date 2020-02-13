@@ -1,5 +1,5 @@
 
-The BioLockJ program is launched through the `biolockj` script. See [`biolockj --help`](help-biolockj.md).
+The BioLockJ program is launched through the `biolockj` script. See [`biolockj --help`](GENERATED/biolockj-help.md).
 
 Support programs can access information about BioLockJ modules and properties through [`biolockj-api`](BioLockJ-Api.md). 
 

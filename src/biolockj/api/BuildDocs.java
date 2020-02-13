@@ -1,14 +1,20 @@
 package biolockj.api;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import biolockj.Config;
+import biolockj.Constants;
 import biolockj.Properties;
+import biolockj.exception.FatalExceptionHandler;
 import biolockj.module.BioModule;
 import biolockj.util.ModuleUtil;
+import biolockj.util.SummaryUtil;
 
 public class BuildDocs {
 
@@ -23,6 +29,8 @@ public class BuildDocs {
 		}
 		
 		generateAllModulesPage();
+		
+		generateBiolockjHelpPage();
 
 	}
 	
@@ -207,6 +215,37 @@ public class BuildDocs {
 		writer.close();
 	}
 	
+	private static void generateBiolockjHelpPage() throws IOException, InterruptedException {
+		File file = new File(baseDir, biolockj_help);
+		System.err.println("Creating file: " + biolockj_help);
+		file.createNewFile();
+		FileWriter writer = new FileWriter(file);
+		String cmd = "biolockj --help";
+		
+		writer.write( "The `biolockj` help menu:" + markDownReturn );
+		writer.write( System.lineSeparator() );
+		writer.write( "```bash" + markDownReturn );
+		writer.write( cmd + markDownReturn );
+		writer.write( "```" + markDownReturn );
+		writer.write( System.lineSeparator() );
+		writer.write( "```bash" + markDownReturn );
+		
+		final Process p = Runtime.getRuntime().exec( cmd ); 
+		final BufferedReader br = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
+		String s = null;
+		while( ( s = br.readLine() ) != null )
+		{
+			writer.write( s.replaceAll( System.lineSeparator(), markDownReturn ) + markDownReturn );
+		}
+		p.waitFor();
+		p.destroy();
+		
+		writer.write( System.lineSeparator() );
+		writer.write( "```" + markDownReturn );
+		writer.close();
+		
+		System.err.println("Done: " + biolockj_help);
+	}
 
 	private static final String NONE = "*none*";
 	
@@ -215,6 +254,7 @@ public class BuildDocs {
 	private static final String inCellReturn = "<br>";
 	
 	private static final String ALL_MODS_DOC = "all-modules.md";
+	private static final String biolockj_help = "biolockj-help.md";
 		
 	private static String baseDir;
 
