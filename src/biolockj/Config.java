@@ -334,10 +334,10 @@ public class Config {
 	 * @param property {@link biolockj.Config} file property name
 	 * @return String or null
 	 */
-	public static String getString( final BioModule module, final String property ) {
+	public static String getString( final BioModule module, final String property, final String defaultVal ) {
 		if( props == null ) return null;
 		String prop = getModulePropName( module, property );
-		String val = props.getProperty( prop );
+		String val = props.getProperty( prop, defaultVal );
 		if ( val == null && module != null) {
 			val=module.getPropDefault( prop );
 			if (val != null) {
@@ -351,6 +351,9 @@ public class Config {
 		if( val != null && val.isEmpty() ) val = null;
 		usedProps.put( prop, val );
 		return val;
+	}
+	public static String getString( final BioModule module, final String property ) {
+		return getString( module, property, null );
 	}
 
 	/**
