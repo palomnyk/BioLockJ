@@ -112,7 +112,7 @@ public class BuildDocs {
 		return link;
 	}
 	
-	private static List<String> getPrePostReqModules( ApiModule module, boolean pre ) {
+	private static List<String> getPrePostReqModules( final BioModule module, boolean pre ) {
 		List<String> mods = new ArrayList<>();
 		try {
 			if (pre) {
@@ -159,6 +159,7 @@ public class BuildDocs {
 			}else {
 				title = ModuleUtil.displayName( module );
 				desc = "";
+				createStubPage(modulePath);
 			}
 			link = getInternalLink( modulePath );
 			lines.add( "[" + title + "](" + link + ")" + desc );
@@ -171,6 +172,39 @@ public class BuildDocs {
 		
 		writer.close();
 		System.err.println("Done writing all-modules list." );
+	}
+	
+	private static void createStubPage(String modulePath) throws Exception {
+		System.err.println("Creating stub for non-ApiModule BioModule: " + modulePath );
+		BioModule module = ModuleUtil.createModuleInstance( modulePath );
+		File dest = getPageLocation(modulePath);
+		System.err.println("Saving document to file: " + dest );
+		FileWriter writer = new FileWriter( dest );
+		
+		writer.write( "# " + ModuleUtil.displayName( module ) + System.lineSeparator() );
+		writer.write( "Add to module run order: " + markDownReturn );
+		writer.write( "`#BioModule " + modulePath + "`" + System.lineSeparator() );
+		writer.write( System.lineSeparator() );
+		
+		writer.write( "*This page is a place holder.*" + markDownReturn);
+		writer.write( "*This module does not have a properly generated user guide page because it does not implement the ApiModule interface.*" + markDownReturn );
+		writer.write( "*There may be a manually created page elsewhere.*" + System.lineSeparator() );
+		writer.write( System.lineSeparator() );
+		
+		writer.write( "## Adds modules " + System.lineSeparator() );
+		writer.write( "**pre-requisit modules** " + markDownReturn );
+		List<String> preMods = getPrePostReqModules(module, true);
+		for (String mod : preMods ) {
+			writer.write( mod + markDownReturn );
+		}
+		writer.write( "**post-requisit modules** " + markDownReturn );
+		List<String> postMods = getPrePostReqModules(module, false);
+		for (String mod : postMods ) {
+			writer.write( mod + markDownReturn );
+		}
+		writer.write( System.lineSeparator() );
+		
+		writer.close();
 	}
 	
 
