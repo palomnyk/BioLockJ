@@ -61,8 +61,10 @@
 	</target>
 	
 	<target name="build-jar" depends="compile-source,git.revision">
-		<jar basedir="bin" destfile="dist/BioLockJ.jar">
+		<jar destfile="dist/BioLockJ.jar">
 			<zipgroupfileset dir="lib" includes="*.jar"/>
+			<fileset dir="bin"/>
+			<fileset dir="src" includes="biolockj/module/**/*.md"/>
 			<manifest>
 				<attribute name="Specification-Title" value="BioLockJ"/>
 				<attribute name="Specification-Version" value="${blj_version}"/>
