@@ -2,13 +2,17 @@ package biolockj.api;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import biolockj.Constants;
 import biolockj.Properties;
 import biolockj.module.BioModule;
 import biolockj.util.ModuleUtil;
@@ -55,21 +59,34 @@ public class BuildDocs {
 		if ( args.length == 1 ) {
 			//standard case
 			System.err.println("Will generate documentation for all in-scope modules and the help menu pages.");
-			makeModuleDocs( BioLockJ_API.listModules() );
+			AllModules = BioLockJ_API.listModules();
+			makeModuleDocs( AllModules );
 			
 			System.err.println("Help menu pages:");
 			generateBiolockjHelpPage();
 			generateApiHelpPage();
 			
+			System.err.println("Building from 'partials' pages for user guide:");
+			makePageFromPartials(CLUSTER_PAGE, "cluster_header.md", "cluster", "cluster_footer.md");
+			makePageFromPartials(DOCKER_PAGE, "docker_header.md", "docker", "docker_footer.md");
+			makePageFromPartials(INPUT_PAGE, "input_header.md", "input", "input_footer.md");
+			makePageFromPartials(METADATA_PAGE, "metadata_header.md", "metadata", "metadata_footer.md");
+			makePageFromPartials(R_PAGE, "r_header.md", "r", "r_footer.md");
+			makePageFromPartials(SCRIPT_PAGE, "script_header.md", "script", "script_footer.md");
+			makePageFromPartials(VALIDATION_PAGE, "validation_header.md", "validation", "validation_footer.md");
+			
+			System.err.println("Properties menu page:");
+			generatePropertiespage();
+			
 		}else if (args.length == 2) {
-			//rare case
+			// external developers case
 			basePackage = args[1];
 			System.err.println("Will generate documentation for modules with classpath beginning: " + basePackage);
-			List<String> allModules = BioLockJ_API.listModules(basePackage);
-			if (allModules.size() == 0 ) {
+			AllModules = BioLockJ_API.listModules(basePackage);
+			if (AllModules.size() == 0 ) {
 				throw new API_Exception("No modules were found with classes beginning with \"" + basePackage + "\".");
 			}
-			makeModuleDocs( allModules );
+			makeModuleDocs( AllModules );
 		}else {
 			throw new API_Exception("Too many args! args: " + args);
 		}
@@ -118,8 +135,12 @@ public class BuildDocs {
 			}
 		}
 		writer.write( "## Properties " + System.lineSeparator() );
-		writer.write( "*Properties are the `name=value` pairs in the configuration file.*" + markDownReturn );
-		writer.write( "*These control how the pipeline is executed.*" + System.lineSeparator() );
+		String configuration = "configuration";
+		if ( (new File(baseDir.getParentFile(), "Configuration.md")).exists() ) {
+			configuration = "[" + configuration + "](../../../Configuration#properties)";
+		}
+		writer.write( "*Properties are the `name=value` pairs in the " + configuration + " file.*" + markDownReturn );
+		writer.write( "" + System.lineSeparator() );
 		writer.write( "### " + tmp.getTitle() + " properties: " + System.lineSeparator() );
 		if (moduleProps.size()==0) writer.write( NONE + System.lineSeparator() );
 		else writePropsTable(moduleProps, tmp, writer);
@@ -137,12 +158,12 @@ public class BuildDocs {
 		writer.write( System.lineSeparator() );
 		
 		writer.write( "## Adds modules " + System.lineSeparator() );
-		writer.write( "**pre-requisit modules** " + markDownReturn );
+		writer.write( "**pre-requisite modules** " + markDownReturn );
 		List<String> preMods = getPrePostReqModules(tmp, true);
 		for (String mod : preMods ) {
 			writer.write( mod + markDownReturn );
 		}
-		writer.write( "**post-requisit modules** " + markDownReturn );
+		writer.write( "**post-requisite modules** " + markDownReturn );
 		List<String> postMods = getPrePostReqModules(tmp, false);
 		for (String mod : postMods ) {
 			writer.write( mod + markDownReturn );
@@ -166,14 +187,13 @@ public class BuildDocs {
 		return file;
 	}
 	
-	private static String getInternalLink(String modPath) throws IOException {
-		File page = getPageLocation( modPath );
+	private static String getInternalLink(File page) throws IOException {
 		String parentDir = (baseDir).getAbsolutePath() + "/";
 		String link = page.getAbsolutePath().replaceFirst( parentDir, "" );
 		return link;
 	}
 	
-	private static List<String> getPrePostReqModules( final BioModule module, boolean pre ) {
+	private static List<String> getPrePostReqModules( final BioModule module, boolean pre ) throws Exception {
 		List<String> mods = new ArrayList<>();
 		try {
 			if (pre) {
@@ -186,6 +206,13 @@ public class BuildDocs {
 		}finally {
 			if (mods.size() == 0) {
 				mods.add( "*none found*" );
+			}else {
+				for (String mod : mods) {
+					if (AllModules.contains( mod )) {
+						String link = getPageLocation( mod ).getPath();
+						mod = "[" + mod + "](" + link + ")"; 
+					}
+				}
 			}
 		}
 		return mods;
@@ -195,9 +222,15 @@ public class BuildDocs {
 		writer.write( "| Property| Description |" + System.lineSeparator() );
 		writer.write( "| :--- | :--- |" + System.lineSeparator() );
 		for ( String prop : props ) {
-			writer.write( "| *" + prop + "* | *" + module.getPropType( prop ) + "* " + inCellReturn
-				+ module.getDescription(prop) + inCellReturn
-				+ "*default:  " + BioLockJ_API.propValue( prop, null, module) + "* |" + System.lineSeparator() );	
+			String type = module == null ? Properties.getPropertyType( prop ) : module.getPropType( prop ) ;
+			String description = module == null ? Properties.getDescription( prop ) : module.getDescription(prop) ;
+			String defaultValue = BioLockJ_API.propValue( prop, null, module) ;
+			if (defaultValue == null) { 
+				defaultValue = "*null*"; 
+			}
+			writer.write( "| *" + prop + "* | _" + type + "_ " + inCellReturn
+				+ description + inCellReturn
+				+ "*default:*  " + defaultValue + " |" + System.lineSeparator() ) ;	
 		}
 	}
 	
@@ -222,7 +255,7 @@ public class BuildDocs {
 				title = ModuleUtil.displayName( module );
 				desc = "";
 			}
-			link = getInternalLink( modulePath );
+			link = getInternalLink( getPageLocation(modulePath) );
 			lines.add( "[" + title + "](" + link + ")" + desc );
 		}
 		
@@ -268,7 +301,7 @@ public class BuildDocs {
 	}
 	
 	private static void generateBiolockjHelpPage() throws IOException, InterruptedException {
-		File file = new File(baseDir, biolockj_help);
+		File file = new File(baseDir, BIOLOCKJ_HELP_PAGE);
 		System.err.println("Creating file: " + file.getPath() );
 		file.createNewFile();
 		FileWriter writer = new FileWriter(file);
@@ -304,12 +337,21 @@ public class BuildDocs {
 	}
 	
 	public static String copyFromModuleResource(BioModule module, String name) throws API_Exception {
-		StringBuffer sb = new StringBuffer();
 		InputStream in = module.getClass().getResourceAsStream(name); 
 		if (in == null) {
 			throw new API_Exception( "Searching for resource \"" + name + "\" for module [" + module + "] returned null" );
 		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		return readToString(br);
+	}
+	
+	public static String copyFromFile(File file) throws API_Exception, FileNotFoundException {
+		BufferedReader br = new BufferedReader( new FileReader( file ) );
+		return readToString(br);
+	}
+	
+	private static String readToString(BufferedReader br) throws API_Exception {
+		StringBuffer sb = new StringBuffer();
 		String s = null;
 		try {
 			while( ( s = br.readLine() ) != null )
@@ -317,37 +359,94 @@ public class BuildDocs {
 				sb.append( s.replaceAll( System.lineSeparator(), markDownReturn ) + markDownReturn );
 			}
 		}catch(IOException ex) {
-			throw new API_Exception( "A problem was encountered while reading from module resource: " + in.toString());
+			throw new API_Exception( "A problem was encountered while reading from module resource: " + br.toString());
 		}
 		
 		return sb.toString();
 	}
 	
-	private static void generateApiHelpPage() throws IOException, InterruptedException {
-		File file = new File(baseDir, biolockj_api_help);
+	private static void generateApiHelpPage() throws IOException, InterruptedException, API_Exception {
+		File file = new File(baseDir, BIOLOCKJ_API_PAGE);
 		System.err.println("Creating file: " + file.getPath() );
 		file.createNewFile();
 		FileWriter writer = new FileWriter(file);
-		String cmd = "biolockj-api help";		
-		
-		writer.write( "# BioLockJ API" + markDownReturn );
+
+		writer.write( copyFromFile(new File(pathToPartials + "BioLockJ-Api_header.md")) );
 		writer.write( "" + markDownReturn );
-		writer.write( "BioLockJ comes with an API." + markDownReturn );
+		String cmd = "biolockj-api help";
+		writer.write( "`" + cmd + "`" + markDownReturn );
 		writer.write( "" + markDownReturn );
-		writer.write( "For the most up-to-date information about how to use the API, see the help menu:" + markDownReturn );
-		writer.write( "`biolockj_api help`" + markDownReturn );
-		writer.write( "" + markDownReturn );
-		
-		writer.write( "```bash" + markDownReturn );
+		writer.write( "```" + markDownReturn );
 		writeCommandOutputToFile(cmd, writer);
 		writer.write( "```" + markDownReturn );
 		
-		writeCommandOutputToFile("cat mkdocs/user-guide/docs/partials/BioLockJ-Api_footer.md", writer);
+		writer.write( copyFromFile(new File(pathToPartials + "BioLockJ-Api_footer.md")) );
 
 		writer.close();
 		
 		System.err.println("Done: " + file.getName());
 	}
+	
+	private static void generatePropertiespage() throws Exception {
+		propGroupLink.put("exe", "../../Configuration/#exe-properties" );
+		
+		File file = new File(baseDir, PROPERTIES_PAGE);
+		System.err.println("Creating file: " + file.getPath() );
+		file.createNewFile();
+		FileWriter writer = new FileWriter(file);
+		
+		List<String> props = BioLockJ_API.listProps();
+		HashMap<String, List<String>> subsets = new HashMap<>();
+		List<String> subsetNames = new ArrayList<>();
+		for (String prop : props) {
+			String sub = prop.substring( 0 , prop.indexOf( "." ) );
+			if ( ! subsets.keySet().contains( sub )) {
+				subsets.put(sub, new ArrayList<>());
+				subsetNames.add( sub );
+			}
+			subsets.get( sub ).add( prop );
+		}
+		
+		// put aws at the bottom of the page, not the top, until we have more descriptions.
+		subsetNames.remove( "aws" );
+		subsetNames.add( "aws" );
+		
+		for (String sub : subsetNames ) {
+			writer.write(System.lineSeparator());
+			if (propGroupLink.keySet().contains( sub )) {
+				writer.write( "### [" + sub + "](" + propGroupLink.get( sub ) + ") "+ markDownReturn );
+			}else {
+				System.err.println(Constants.DEVELOPER_NOTE + "The [" + sub + "] subgroup of properties don't have any linked details!");
+				writer.write( "### " + sub + markDownReturn );
+			}
+			writePropsTable(subsets.get( sub ), null, writer);
+		}
+				
+		writer.close();
+	}
+	
+	private static void makePageFromPartials(String output, String header, String prefix, String footer) throws Exception {
+		File file = new File(baseDir, output);
+		System.err.println("Creating file: " + file.getPath() );
+		file.createNewFile();
+		FileWriter writer = new FileWriter(file);
+		
+		writer.write( copyFromFile(new File(pathToPartials + header)) );
+
+		List<String> allProps = BioLockJ_API.listProps();
+		List<String> props = new ArrayList<>();
+		for (String prop : allProps ) {
+			if ( prop.startsWith( prefix + "." )) props.add( prop );
+		}
+		writePropsTable(props, null, writer);
+		
+		writer.write( copyFromFile(new File(pathToPartials + footer)) );
+		
+		writer.close();
+		propGroupLink.put(prefix, output);
+	}
+	
+	private static List<String> AllModules;
 
 	private static final String NONE = "*none*";
 	
@@ -356,10 +455,21 @@ public class BuildDocs {
 	private static final String inCellReturn = "<br>";
 	
 	private static final String ALL_MODS_DOC = "all-modules.md";
-	private static final String biolockj_help = "biolockj-help.md";
-	private static final String biolockj_api_help = "BioLockJ-Api.md";
-		
+	private static final String BIOLOCKJ_HELP_PAGE = "biolockj-help.md";
+	private static final String BIOLOCKJ_API_PAGE = "BioLockJ-Api.md";
+	private static final String CLUSTER_PAGE = "Cluster.md";
+	private static final String DOCKER_PAGE = "Docker.md";
+	private static final String METADATA_PAGE = "Metadata.md";
+	private static final String INPUT_PAGE = "Input.md";
+	private static final String R_PAGE = "R.md";
+	private static final String SCRIPT_PAGE = "Script.md";
+	private static final String VALIDATION_PAGE = "Validation.md";
+	private static final String PROPERTIES_PAGE = "General-Properties.md";
+	
+	private static final HashMap<String, String> propGroupLink = new HashMap<>();
+			
 	private static File baseDir;
 	private static String basePackage = null;
+	private static String pathToPartials = "mkdocs/user-guide/docs/partials/";
 
 }

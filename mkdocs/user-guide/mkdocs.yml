@@ -18,6 +18,8 @@ extra_javascript:
     - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 markdown_extensions:
+    - toc:
+        permalink: "#"
     - mdx_math
 
 theme:
@@ -27,18 +29,30 @@ theme:
 nav:
     - Home: index.md
     - Getting Started: Getting-Started.md
-    - Commands: Commands.md
     - Pipeline Componenets:
         - Configuration: Configuration.md
+        - General Properties: GENERATED/General-Properties.md
         - Modules: Built-in-modules.md
         - Metadata: The-Metadata-File.md
         - Dependencies: Dependencies.md
+        - Configuration Details:
+            - cluster: GENERATED/Cluster.md
+            - docker: GENERATED/Docker.md
+            - input: GENERATED/Input.md
+            - metadata: GENERATED/Metadata.md
+            - r: GENERATED/R.md
+            - report: GENERATED/Report.md
+            - script: GENERATED/Script.md
+            - validation: GENERATED/Validation.md
     - Features:
+        - Commands: Commands.md
         - Check Dependencies: Check-Dependencies.md
         - Failure Recovery: Failure-Recovery.md
-        - Validation: Validation.md
+        - Validation: GENERATED/Validation.md
         - Building Modules: Building-Modules.md
         - BioLockJ API: GENERATED/BioLockJ-Api.md
+        - BioLockJ help menu: GENERATED/biolockj-help.md
+    - Environments: Supported-Environments.md
     - Example Pipeline: Example-Pipeline.md
     - FAQ: FAQ.md
     # - more:

@@ -87,13 +87,9 @@
 	</target>
 
 	<target name="buildDocs" depends="build-jar">
-		<if><available file="mkdocs/user-guide/docs/GENERATED"/>
-			<then>
-				<delete includeemptydirs="true">
-			  		<fileset dir="mkdocs/user-guide/docs/GENERATED" includes="**/*"/>
-				</delete>
-			</then>
-		</if>
+		<delete includeemptydirs="true">
+			  <fileset dir="mkdocs/user-guide/docs/GENERATED" includes="**/*"/>
+		</delete>
 		<exec executable="java">
 			<arg value="-cp"/>
 			<arg value="dist/BioLockJ.jar"/>
@@ -113,7 +109,7 @@
 	
 	<target name="deploy" depends="userguide">
 		<delete>
-			<fileset dir="dist" includes="*.tgz"/>
+			<fileset dir="dist" includes="*gz"/>
 		</delete>
 		<if><available file="bin"/>
 			<then>

@@ -267,7 +267,9 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
 		return "Randomly sub-sample sequences to reduce all samples to the configured maximum `" + INPUT_RAREFYING_MAX 
 							+ "`.  Samples with less than the minimum number of reads `" + INPUT_RAREFYING_MIN + "` are discarded." 
 						+ "<br>This module will add **" + RegisterNumReads.class.getName() + "** if there is not already a module to count starting reads per sample."
-						+ "<br>If the input data are paired reads, this module will add a sequence merger, based on property `" + Constants.DEFAULT_MOD_SEQ_MERGER + "`.";
+						+ "<br>If the input data are paired reads, this module will add a sequence merger, based on property `" 
+						+ Constants.DEFAULT_MOD_SEQ_MERGER + "` (currently: " 
+						+ Config.getString( this, Constants.DEFAULT_MOD_SEQ_MERGER ) + ").";
 	}
 	
 	@Override

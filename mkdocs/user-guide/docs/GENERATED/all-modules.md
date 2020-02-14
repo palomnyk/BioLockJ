@@ -1,5 +1,5 @@
 # All Modules
-*Comprehensive list of all modules packaged with BioLockJ with links to auto-generated module documentation.*
+*This is an auto-generated list of all modules with links to auto-generated module documentation.*
 
 [AddMetadataToPathwayTables](biolockj.module.report.humann2/AddMetadataToPathwayTables.md)                   
 [AddMetadataToTaxaTables](biolockj.module.report.taxa/AddMetadataToTaxaTables.md)                   
@@ -9,7 +9,7 @@
 [BuildTaxaTables](biolockj.module.report.taxa/BuildTaxaTables.md)                   
 [CompileOtuCounts](biolockj.module.report.otu/CompileOtuCounts.md)                   
 [Demultiplexer](biolockj.module.implicit/Demultiplexer.md) - *Demultiplex samples into separate files for each sample.*                   
-[Email](biolockj.module.report/Email.md) - *Send user an email containing the pipeline summary when the pipeline either completes or fails.*                   
+[Email](biolockj.module.report/Email.md) - *Send an email containing the pipeline summary when the pipeline either completes or fails.*                   
 [GenMod](biolockj.module.diy/GenMod.md) - *Allows user to add their own scripts into the BioLockJ pipeline.*                   
 [GenomeAssembly](biolockj.module.assembly/GenomeAssembly.md)                   
 [Gunzipper](biolockj.module.seq/Gunzipper.md) - *Decompress gzipped files.*                   
@@ -41,7 +41,7 @@
 [R_PlotOtus](biolockj.module.report.r/R_PlotOtus.md) - *Generate OTU-metadata box-plots and scatter-plots for each reportable metadata field and each *report.taxonomyLevel* configured*                   
 [R_PlotPvalHistograms](biolockj.module.report.r/R_PlotPvalHistograms.md) - *Generate p-value histograms for each reportable metadata field and each *report.taxonomyLevel* configured*                   
 [RarefyOtuCounts](biolockj.module.report.otu/RarefyOtuCounts.md) - *Applies a mean iterative post-OTU classification rarefication algorithm so that each output sample will have approximately the same number of OTUs.*                   
-[RarefySeqs](biolockj.module.seq/RarefySeqs.md) - *Randomly select samples to reduce all samples to the configured maximum.<br> Samples with less than the minimum number of reads are discarded. *                   
+[RarefySeqs](biolockj.module.seq/RarefySeqs.md) - *Randomly sub-sample sequences to reduce all samples to the configured maximum.*                   
 [RdpClassifier](biolockj.module.classifier.r16s/RdpClassifier.md) - *Classify 16s samples with [RDP](http://rdp.cme.msu.edu/classifier/classifier.jsp).*                   
 [RdpParser](biolockj.module.implicit.parser.r16s/RdpParser.md) - *Build OTU tables from [RDP](http://rdp.cme.msu.edu/classifier/classifier.jsp) reports.*                   
 [RegisterNumReads](biolockj.module.implicit/RegisterNumReads.md)                   
@@ -50,4 +50,5 @@
 [RemoveScarceOtuCounts](biolockj.module.report.otu/RemoveScarceOtuCounts.md)                   
 [RemoveScarcePathwayCounts](biolockj.module.report.humann2/RemoveScarcePathwayCounts.md)                   
 [SeqFileValidator](biolockj.module.seq/SeqFileValidator.md) - *This BioModule validates fasta/fastq file formats are valid and enforces min/max read lengths.*                   
+[SraDownload](biolockj.module.getData/SraDownload.md) - *SraDownload downloads and compresses short read archive (SRA) files to fastq.gz*                   
 [TrimPrimers](biolockj.module.seq/TrimPrimers.md) - *Remove primers from reads, option to discard reads unless primers are attached to both forward and reverse reads.*                   

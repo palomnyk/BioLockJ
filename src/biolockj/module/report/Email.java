@@ -253,7 +253,7 @@ public class Email extends BioModuleImpl implements ApiModule {
 
 	@Override
 	public String getDescription() {
-		return "Send user an email containing the pipeline summary when the pipeline either completes or fails.";
+		return "Send an email containing the pipeline summary when the pipeline either completes or fails.";
 	}
 
 	@Override

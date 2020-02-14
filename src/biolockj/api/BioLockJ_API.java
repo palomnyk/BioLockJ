@@ -496,12 +496,12 @@ public class BioLockJ_API {
 		sb.append( System.lineSeparator() );
 		sb.append( "For some uses, redirecting stderr is recommended:" +System.lineSeparator() );
 		sb.append( BASH_ENTRY + " <query> [options...]  2> /dev/null" +System.lineSeparator() );
+		sb.append( "Options shown in [ ] are optional for a given query." +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
 		sb.append( "Use " + BASH_ENTRY + " without args to get help menu." +System.lineSeparator() );
 		sb.append( System.lineSeparator() );
 		sb.append( "Options:" + System.lineSeparator() );
 		sb.append( System.lineSeparator() );
-		sb.append( "Options shown in [ ] are optional for a given query." +System.lineSeparator() );
 		sb.append( "  " + EXT_MODS_OPTION +System.lineSeparator() );
 		sb.append( "        path to a directory containing additional modules" +System.lineSeparator() );
 		sb.append( "  " + MODULE_OPTION +System.lineSeparator() );
