@@ -51,7 +51,7 @@ public interface ApiModule extends BioModule {
 	 * the interaction between properties.
 	 * @return
 	 */
-	public String getDetails();
+	public String getDetails() throws API_Exception;
 	
 	/**
 	 * Get the type for a given property.

@@ -405,7 +405,7 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 		return isValid;
 	}	
 	
-	public String getDetails() {
+	public String getDetails() throws API_Exception {
 		return "";
 	}
 

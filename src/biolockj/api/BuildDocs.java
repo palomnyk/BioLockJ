@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -300,6 +301,26 @@ public class BuildDocs {
 		}
 		p.waitFor();
 		p.destroy();
+	}
+	
+	public static String copyFromModuleResource(BioModule module, String name) throws API_Exception {
+		StringBuffer sb = new StringBuffer();
+		InputStream in = module.getClass().getResourceAsStream(name); 
+		if (in == null) {
+			throw new API_Exception( "Searching for resource \"" + name + "\" for module [" + module + "] returned null" );
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String s = null;
+		try {
+			while( ( s = br.readLine() ) != null )
+			{
+				sb.append( s.replaceAll( System.lineSeparator(), markDownReturn ) + markDownReturn );
+			}
+		}catch(IOException ex) {
+			throw new API_Exception( "A problem was encountered while reading from module resource: " + in.toString());
+		}
+		
+		return sb.toString();
 	}
 	
 	private static void generateApiHelpPage() throws IOException, InterruptedException {
