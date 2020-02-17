@@ -8,8 +8,8 @@ const fs = require('fs'),
   path = require('path'),
   indexAux = require('../lib/indexAux.js'),
   errorLogger = require('./errorLogger.js'),
-  bljProjDir = process.env.BLJ_PROJ, //path to blj_proj
-  bljDir = process.env.BLJ,
+  BLJ_PROJ = process.env.BLJ_PROJ, //path to blj_proj
+  BLJ = process.env.BLJ,
   BLJ_CONFIG = process.env.BLJ_CONFIG,
   HOST_BLJ = process.env.HOST_BLJ,
   events = require('events'),
@@ -42,7 +42,7 @@ exports.launch = function(req, res, next) {
     switch (req.body.launchAction) {
       case 'restartFromCheckPoint':
         console.log('restart request: ', req.body.restartProjectPath);
-        const fullRestartPath = path.join(bljDir,req.body.restartProjectPath);
+        const fullRestartPath = path.join(BLJ,req.body.restartProjectPath);
         console.log(fullRestartPath);
         launchCommand = createLaunchCommand(configPath, paramKeys, paramValues, fullRestartPath);
         //configPath, keys, params, restartPath
@@ -134,7 +134,7 @@ exports.streamProgress = function(req, res, next){
 }
 
 runLaunchCommand = function(command, eventEmitter) {
-  const bljProjDir = process.env.BLJ_PROJ; //path to blj_proj
+  const BLJ_PROJ = process.env.BLJ_PROJ; //path to blj_proj
   const { spawn } = require('child_process');//for running child processes
   const first = command.shift();
   console.log(first);

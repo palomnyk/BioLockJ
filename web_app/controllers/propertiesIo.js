@@ -8,8 +8,8 @@ const fs = require('fs'),
   path = require('path'),
   indexAux = require('../lib/indexAux.js'),
   errorLogger = require('./errorLogger.js'),
-  bljProjDir = process.env.BLJ_PROJ, //path to blj_proj
-  bljDir = process.env.BLJ,
+  BLJ_PROJ = process.env.BLJ_PROJ, //path to blj_proj
+  BLJ = process.env.BLJ,
   BLJ_CONFIG = process.env.BLJ_CONFIG,
   HOST_BLJ = process.env.HOST_BLJ;
 
@@ -95,7 +95,7 @@ exports.getDefaultProperties = function(req, res, next) {
     console.log(req.body.file);
     var filePath = req.body.file;
     filePath = filePath.replace(/^\$BLJ/g, '');//replace BASH var with path
-    const datum = fs.readFileSync(path.join(bljDir, filePath), 'utf8');
+    const datum = fs.readFileSync(path.join(BLJ, filePath), 'utf8');
     res.setHeader("Content-Type", "text/html");
     res.write(datum);
     res.end();

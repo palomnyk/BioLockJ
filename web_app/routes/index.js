@@ -24,9 +24,9 @@ let express = require('express'),
 
 const { spawn } = require('child_process');//for running child processes
 const Stream = new events.EventEmitter(); // my event emitter instance
-const bljProjDir = process.env.BLJ_PROJ; //path to blj_proj
-const bljDir = process.env.BLJ;
-console.log('bljDir ', bljDir);
+const BLJ_PROJ = process.env.BLJ_PROJ; //path to blj_proj
+const BLJ = process.env.BLJ;
+console.log('BLJ ', BLJ);
 const HOST_BLJ = process.env.HOST_BLJ;
 
 /* GET home page. */
@@ -369,7 +369,7 @@ router.post('/retrieveAwsStackLists', function(req, res, next) {
 // })
 module.exports = router;
 
-// fs.watch(bljDir, (eventType, filename) => {
+// fs.watch(BLJ, (eventType, filename) => {
 //   console.log(`Filename: ${filename}, Event: ${eventType}`);
 //   console.log(fs.lstatSync('/Users/aaronyerke/Desktop/fodor_lab/blj_testing/' + filename).isDirectory());
 // // could be either 'rename' or 'change'. new file event and delete

@@ -7,7 +7,7 @@ Notes: Backend server functions
 const path = require('path'),
   fs = require('fs'),
   errorLogger = require('./errorLogger.js'),
-  bljDir = process.env.BLJ;
+  BLJ = process.env.BLJ;
 
 exports.javaDocsModGetter =  function(req, res, next) {
   try {
@@ -15,7 +15,7 @@ exports.javaDocsModGetter =  function(req, res, next) {
     modPathString = modPathString.concat('.java');
     const modPathArray = modPathString.split('/');
     // console.log(path.join.apply(null, modPathArray));
-    const datum = fs.readFileSync(path.join(bljDir, 'src', path.join.apply(null, modPathArray)), 'utf8');
+    const datum = fs.readFileSync(path.join(BLJ, 'src', path.join.apply(null, modPathArray)), 'utf8');
       res.setHeader("Content-Type", "text/html");
       res.write(datum);
       res.end();
