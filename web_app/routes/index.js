@@ -8,19 +8,15 @@ Notes:
 let express = require('express'),
   router = express.Router(),
   path = require('path'),
-  indexAux = require('../lib/indexAux.js'),
-  fs = require('fs'),
   events = require('events'),
-  eventEmitter = new events.EventEmitter();//for making an event emitter,
-  sys = require('util'),
-  exec = require('child_process').exec,
   pipelineIo = require(path.join('..','controllers','pipelineIo.js')),
   errorLogger = require(path.join('..','controllers','errorLogger.js')),
   propertiesIo = require(path.join('..','controllers','propertiesIo.js')),
   awsUtil = require(path.join('..','controllers','awsUtil.js')),
   launcher = require(path.join('..','controllers','launcher.js')),
   dockerUtil = require(path.join('..','controllers','dockerUtil.js')),
-  javaDocs = require(path.join('..','controllers','javaDocs.js'));
+  javaDocs = require(path.join('..','controllers','javaDocs.js')),
+  bljApi = require(path.join("..", "controllers", "bljApi.js"));
 
 const { spawn } = require('child_process');//for running child processes
 const Stream = new events.EventEmitter(); // my event emitter instance
@@ -44,7 +40,6 @@ router.get('/config/:configPath', function(req, res, next) {
   if (configPath === "" || configPath === " "){
     res.redirect('/config');
   }
-  console.log("__dirname: ", __dirname);
   res.render('config', { title: 'Configuration', configPath : configPath });
 });
 
@@ -80,6 +75,8 @@ router.post('/listEc2InstanceIds', awsUtil.listEc2InstanceIds);
 router.post('/verifyHostDir', dockerUtil.verifyHostDir);
 
 router.post('/verifyHostFile', dockerUtil.verifyHostFile);
+
+router.get('/bljApiListModules', bljApi.listModules)
 
 // source ~/.batchawsdeploy/config ; getcloudformationstack.sh testing2
 
