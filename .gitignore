@@ -15,3 +15,9 @@ BioLockJ.jar
 /mkdocs/user-guide/site/*
 /**/__*__
 /javadocs/*
+
+# produced by react.js
+web_app/react_app/.pnp
+.pnp.js
+web_app/react_app/coverage
+.env.local
