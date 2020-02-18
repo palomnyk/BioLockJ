@@ -20,10 +20,7 @@ let express = require('express'),
 
 const { spawn } = require('child_process');//for running child processes
 const Stream = new events.EventEmitter(); // my event emitter instance
-const BLJ_PROJ = process.env.BLJ_PROJ; //path to blj_proj
-const BLJ = process.env.BLJ;
-console.log('BLJ ', BLJ);
-const HOST_BLJ = process.env.HOST_BLJ;
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -76,7 +73,17 @@ router.post('/verifyHostDir', dockerUtil.verifyHostDir);
 
 router.post('/verifyHostFile', dockerUtil.verifyHostFile);
 
-router.get('/bljApiListModules', bljApi.listModules)
+router.post('/bljApiListModules', bljApi.listModules);
+
+router.post('/bljApiListApiModules', bljApi.listApiModules);
+
+// router.get('/bljApiListProps', bljApi.listProps);
+
+// router.get('/bljApiListAllProps', bljApi.listAllProps);
+
+
+
+
 
 // source ~/.batchawsdeploy/config ; getcloudformationstack.sh testing2
 
