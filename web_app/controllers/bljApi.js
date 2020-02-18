@@ -57,13 +57,13 @@ and for each prop the type, descrption and default.
 
 exports.listModules = function (req, res, next) {
   try {
-    console.log(`get req params: ${String(req.body.dirPath)}`);
-    let param = req.params.path ? req.body.dirPath != undefined : "";
+    console.log(`get req params: ${String(req.body.jsonParam)}`);
+    let param = req.params.path ? req.body.jsonParam != undefined : "";
     let bljApi = spawn(`biolockj-api listModules ${param}`, {shell: '/bin/bash'});
     bljApi.stdout.on('data', function (data) {
       console.log('stdout: ' + data.toString());
       res.setHeader('Content-Type', 'text/html');
-      res.write((JSON.stringify(String(data))));
+      res.write((JSON.stringify(data.toString())));
       res.end();
       return;
     });
@@ -81,14 +81,39 @@ exports.listModules = function (req, res, next) {
 
 exports.listApiModules = function (req, res, next) {
   try {
-    console.log(`get req params: ${String(req.path)}`);
-    let param = req.params.path ? req.params.path != undefined : "";
-    console.log(param);
-    let bljApi = spawn(`biolockj-api listApiModules`, {shell: '/bin/bash'});
+    console.log(`get req params: ${String(req.body.jsonParam)}`);
+    let param = req.params.path ? req.body.jsonParam != undefined : "";
+    let bljApi = spawn(`biolockj-api listApiModules ${param}`, {shell: '/bin/bash'});
     bljApi.stdout.on('data', function (data) {
+      console.log('stdout: ' + data.toString());
       res.setHeader('Content-Type', 'text/html');
-      res.write((JSON.stringify(String(data))));
+      res.write((JSON.stringify(data.toString())));
       res.end();
+      return;
+    });
+    bljApi.stderr.on('data', function (data) {
+      console.log('stderr: ' + data.toString());
+    });
+    bljApi.on('exit', function (code) {
+      console.log('child process exited with code ' + code.toString());
+    });
+  } catch (error) {
+    console.error(error);
+    errorLogger.writeError(e.stack);
+  }
+}
+
+exports.listProps = function (req, res, next) {
+  try {
+    console.log(`get req params: ${String(req.body.jsonParam)}`);
+    let param = req.params.path ? req.body.jsonParam != undefined : "";
+    let bljApi = spawn(`biolockj-api listProps ${param}`, {shell: '/bin/bash'});
+    bljApi.stdout.on('data', function (data) {
+      console.log('stdout: ' + data.toString());
+      res.setHeader('Content-Type', 'text/html');
+      res.write((JSON.stringify(data.toString())));
+      res.end();
+      return;
     });
     bljApi.stderr.on('data', function (data) {
       console.log('stderr: ' + data.toString());
