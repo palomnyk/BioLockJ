@@ -21,3 +21,9 @@ web_app/react_app/.pnp
 .pnp.js
 web_app/react_app/coverage
 .env.local
+
+# to quiet git during development (should be removed for production)
+web_app/react_app/node_modules/
+web_app/react_app/public/
+
+ 
