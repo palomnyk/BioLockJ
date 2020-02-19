@@ -16,6 +16,12 @@ let testProp1 = {
   extPath: ""
 }
 
+let testPropValue = {
+  prop: "input.dirPaths",
+  config: "",
+  // extPath: ""
+}
+
 promiseFromNode('/bljApiListModules', JSON.stringify({jsonParam: "/dev/null"}))
   .then((modules) => {
     console.log(modules.output);
@@ -28,6 +34,12 @@ promiseFromNode('/bljApiPropType', JSON.stringify(testProp))
 });
 
 promiseFromNode('/bljApiDescribeProp', JSON.stringify(testProp))
+  .then((modules) => {
+    let mods = JSON.parse(modules);
+    console.log(mods.output);
+});
+
+promiseFromNode('/bljApiPropValue', JSON.stringify(testPropValue))
   .then((modules) => {
     let mods = JSON.parse(modules);
     console.log(mods.output);
