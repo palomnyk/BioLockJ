@@ -1,34 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-
-function promiseFromNode(address, jsonParam, method = 'POST') {
-  return new Promise((resolve, reject) => {
-    const request = new XMLHttpRequest();
-    request.open(method, address, true);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.send(jsonParam);
-    request.onreadystatechange = function() {
-      if (request.readyState === XMLHttpRequest.DONE) {
-        try {
-          if(this.status === 200 && request.readyState === 4){
-            resolve(this.responseText);
-          }else{
-            reject(this.status + " " + this.statusText)
-          }
-        } catch (e) {
-          reject (e.message)
-        }
-      }
-    }
-  });
-}
-
-let test = promiseFromNode('/bljApiListModules', JSON.stringify({jsonParam: "/dev/null"}));
-test.then((modules) => {
-  console.log(modules);
-});
-
+import './tests/apiTests.js'
 
 
 function App() {
