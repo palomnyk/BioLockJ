@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
+import logo from './images/BioLockJ_NoBG_green.svg';
 import './App.css';
 import './tests/apiTests.js'
 
 
-function App() {
+class App extends React.Component{
   /*Rules for building state:
       Unfinished configs and finished pipelines will count as pipelines
       Finished configs of finished pipelines are not editable
@@ -84,25 +84,16 @@ function App() {
   //   },
   //   ]
   // }
-  return (
-    <div className="App">
-      <header className="App-header">
+  render(){
+    return (
+      <div className="App">
         <img src={logo} className="App-logo" alt="logo" />
-        <p></p>
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+        <header className="App-header">
+          App
+        </header>
+      </div>
+    );
+  }
 }
 
 export default App;
