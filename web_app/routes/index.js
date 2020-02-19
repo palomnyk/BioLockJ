@@ -21,7 +21,6 @@ let express = require('express'),
 const { spawn } = require('child_process');//for running child processes
 const Stream = new events.EventEmitter(); // my event emitter instance
 
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Welcome to BioLockJ' });
@@ -77,14 +76,16 @@ router.post('/bljApiListModules', bljApi.listModules);
 
 router.post('/bljApiListApiModules', bljApi.listApiModules);
 
-// router.get('/bljApiListProps', bljApi.listProps);
+router.post('/bljApiListProps', bljApi.listProps);
 
-// router.get('/bljApiListAllProps', bljApi.listAllProps);
+router.post('/bljApiListAllProps', bljApi.listAllProps);
 
-
-
-
-
+router.post('/bljApiProptype', bljApi.propType);
+router.post('/bljApiDescribeProp', bljApi.describeProp);
+router.post('/bljApiPropValue', bljApi.propValue);
+router.post('/bljApiIsValidProp', bljApi.isValidProp);
+router.post('/bljApiPropInfo', bljApi.propInfo);
+router.post('/bljApiModuleInfo', bljApi.moduleInfo);
 // source ~/.batchawsdeploy/config ; getcloudformationstack.sh testing2
 
 const batchAwsConfigFile = "~/.batchawsdeploy/config"; //find a good place to put this
