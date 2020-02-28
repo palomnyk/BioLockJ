@@ -358,7 +358,15 @@ public abstract class BioModuleImpl implements BioModule, Comparable<BioModule> 
 	}
 	
 	public List<String> getMenuPlacement() {
-		return Arrays.asList( this.getClass().toString().split( "." ) );
+		String classPath = this.getClass().getName();
+		StringTokenizer st = new StringTokenizer( classPath, "." );
+		ArrayList<String> arrayList = new ArrayList<>();
+		String part;
+		while (st.hasMoreElements()) {
+			part = st.nextToken();
+			arrayList.add(part);
+		}
+		return arrayList ;
 	}
 
 
