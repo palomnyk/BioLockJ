@@ -439,6 +439,7 @@ public class BioLockJ_API {
 				modAtts.put("details", ((ApiModule) tmp).getDetails() );
 				modAtts.put("citation", ((ApiModule) tmp).getCitationString() );
 				modAtts.put("title", ((ApiModule) tmp).getTitle() );
+				modAtts.put("menuPlacement", ((ApiModule) tmp).getMenuPlacement() );
 				
 				List<String> props = listModuleProps( mod );
 				JSONArray modProps = new JSONArray();
