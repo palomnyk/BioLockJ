@@ -41,8 +41,10 @@ exports.listModules = function (req, res, next) {
     let param = req.body.jsonParam != undefined ? ` --external-modules ${req.body.jsonParam}` : "";
     console.log(`get req params: ${param}`);
     let bljApi = spawn(`biolockj-api listModules ${param}`, {shell: '/bin/bash'});
-    bljApi.stdout.on('data', function (data) {
-      return(res.end(JSON.stringify({output: String(data)})));
+    bljApi.stdout.on('data', function (data) {      
+      let modules = String(data).split(/[\n,]/g);
+      console.log(modules);
+      return(res.end(JSON.stringify({output: modules})));
     });
     bljApi.stderr.on('data', function (data) {
       console.log('stderr: ' + data.toString());
