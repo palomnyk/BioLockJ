@@ -1,7 +1,5 @@
 import React from 'react';
 import logo from '../images/BioLockJ_NoBG_green.svg';
-import '../App.css';
-import '../tests/apiTests.js'
 import ModulesUnselected from './bljModule/modulesUnselected.js'
 import ModulesSelected from './bljModule/modulesSelected';
 
@@ -47,8 +45,8 @@ class ConfigGenerator extends React.Component{
 
   render(){
     return (
-      <div className="App">
-          <ModulesUnselected />
+      <div>
+          <ModulesUnselected modules = {this.state.modules} />
           <ModulesSelected/>
       </div>
     );
