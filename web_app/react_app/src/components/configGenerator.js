@@ -18,6 +18,7 @@ class ConfigGenerator extends React.Component{
   }
   async fetchModList() {
     try {
+      console.log("in fetchModList");
       const fetchParams = {
         method: 'post',
         headers: {
@@ -26,27 +27,27 @@ class ConfigGenerator extends React.Component{
         //TODO: add external module in body
        // body: JSON.stringify({jsonParam: "/dev/null"}),
       }
-      const modules = await fetch('/bljApiListModules', fetchParams)
-      let ml = await modules.json();
-      console.log(ml.output);
-      return ml;
+      const fetchModules = await fetch('/bljApiModuleInfo', fetchParams);
+      let ml = await fetchModules.json();
+      // console.log(JSON.parse(ml.output));
+      return JSON.parse(ml.output);
     } catch (error) {
       console.error(error);
     }
   }
-  async componentDidMount(){
-    this.setState({modules: await this.fetchModList()});
-    console.log(this.modules);
-    
+
+  componentDidMount(){
+    this.fetchModList().then(
+    (op) => {
+      this.setState({modules: op});
+      console.log(this.state.modules);
+    });
+    // this.setState({modules: this.fetchModList()});
   }
 
   render(){
     return (
       <div className="App">
-        <img src={logo} className="App-logo" alt="logo" />
-        <header className="App-header">
-          App 
-        </header>
           <ModulesUnselected />
           <ModulesSelected/>
       </div>
