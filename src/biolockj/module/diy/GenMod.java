@@ -11,8 +11,11 @@
  */
 package biolockj.module.diy;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -20,7 +23,9 @@ import biolockj.Config;
 import biolockj.Constants;
 import biolockj.Log;
 import biolockj.Properties;
+import biolockj.api.API_Exception;
 import biolockj.api.ApiModule;
+import biolockj.api.BuildDocs;
 import biolockj.exception.ConfigPathException;
 import biolockj.module.ScriptModuleImpl;
 import biolockj.util.BioLockJUtil;
@@ -37,6 +42,7 @@ public class GenMod extends ScriptModuleImpl implements ApiModule {
 		addNewProperty( LAUNCHER, Properties.STRING_TYPE, LAUNCHER_DESC );
 		addNewProperty( PARAM, Properties.STRING_TYPE, PARAM_DESC );
 		addNewProperty( SCRIPT, Properties.FILE_PATH, SCRIPT_DESC );
+		addGeneralProperty( Constants.DOCKER_CONTAINER_NAME );
 	}
 
 	@Override
@@ -92,6 +98,11 @@ public class GenMod extends ScriptModuleImpl implements ApiModule {
 	@Override
 	public String getDescription() {
 		return "Allows user to add their own scripts into the BioLockJ pipeline.";
+	}
+	
+	@Override
+	public String getDetails() throws API_Exception {
+		return BuildDocs.copyFromModuleResource( this, "GenModDetails.md" );
 	}
 
 	@Override

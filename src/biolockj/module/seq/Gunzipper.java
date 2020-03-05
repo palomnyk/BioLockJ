@@ -15,7 +15,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import biolockj.*;
+import biolockj.api.ApiModule;
 import biolockj.module.SeqModuleImpl;
+import biolockj.util.BioLockJUtil;
 import biolockj.util.SeqUtil;
 
 /**
@@ -23,8 +25,11 @@ import biolockj.util.SeqUtil;
  * 
  * @blj.web_desc Decompress .gz Files
  */
-public class Gunzipper extends SeqModuleImpl {
+public class Gunzipper extends SeqModuleImpl implements ApiModule {
 
+	public Gunzipper() {
+		addGeneralProperty( Constants.EXE_GZIP );
+	}
 	@Override
 	public List<List<String>> buildScript( final List<File> files ) throws Exception {
 		final List<List<String>> data = new ArrayList<>();
@@ -69,4 +74,14 @@ public class Gunzipper extends SeqModuleImpl {
 	 * Name of the bash function used to decompress gzipped files: {@value #FUNCTION_GUNZIP}
 	 */
 	protected static final String FUNCTION_GUNZIP = "openZip";
+
+	@Override
+	public String getDescription() {
+		return "Decompress gzipped files.";
+	}
+
+	@Override
+	public String getCitationString() {
+		return "BioLockj " + BioLockJUtil.getVersion() + System.lineSeparator() + "Module developed by Mike Sioda";
+	}
 }

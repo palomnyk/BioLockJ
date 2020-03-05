@@ -117,7 +117,7 @@ The BioLockJ documentation is stored in markdown files and rendered into html us
 
 Override the `getCitationString()` method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.
 
-Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).
+Override the `getDescription()` method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the `getDetails()` method (optional).  If your module has any pre-requisit modules or post-requisit modules, the modules Details should include the names of these modules and information about when and why these modules are added.
 
 ### Documenting Properties
 
@@ -177,6 +177,47 @@ public Boolean isValidProp( String property ) throws Exception {
 }
 ```
 In the example above, the Humann2Parser module uses two properties that are not used by any super class. The call to `super.isValidProp( property )` tests the property if it is used by a super class.  This class only adds checks for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the `checkDependencies()` method.
+
+### Generate user guide pages
+For modules in the main BioLockJ project, the user guide pages are generated using the ApiModule methods as part of the deploy process.
+Third party developers can use the same utilities to create matching documentation.
+
+Suppose you have created one or more modules in a package `com.joesCode` and saved the compiled code in a jar file, `/Users/joe/dev/JoesMods.jar`.  
+Set up a [mkdocs](https://www.mkdocs.org/) project:
+```bash 
+# See https://www.mkdocs.org/#installation
+pip install mkdocs
+mkdocs --version
+mkdocs new joes-modules
+mkdir joes-modules/docs/GENERATED
+```
+This mkdocs project will render markdown (.md) files into an html site.  Mkdocs supports a lot of really nice features, including a very nice default template.
+
+Generate the .md files from your modules:
+```bash
+java -cp $BLJ/dist/BioLockJ.jar:/Users/joe/dev/JoesMods.jar \
+    biolockj.api.BuildDocs \
+    joes-modules/docs/GENERATED \
+    com.joesCode
+```
+
+Put a link to your list of modules in the main index page.
+```bash
+cd joes-modules
+echo "[view module list](GENERATED/all-modules.md)" >> docs/index.md 
+```
+The BuildDocs utility creates the .md files, but it assumes that these are part of a larger project, and you will need to make appropriate links to the generated pages from your main page.
+
+Preview your user guide:
+```bash
+mkdocs serve
+```
+Open up `http://127.0.0.1:8000/` in your browser, and you'll see the default home page being displayed, with a link at the bottom to `view module list`, which links to a page listing all of the modules in the `joes.modules` pacakge. 
+
+You can build this documentation locally using `mkdocs build` and then push to your prefered hosting site, or set up a service such as [ReadTheDocs](https://readthedocs.org/) to render and host your documentation from your `docs` folder.
+
+
+Even if you choose not to build user guide pages for your module, you should still implement the ApiModule interface.  Anyone who uses your module can generate the user guide pages if they want them, and even incorporate them into a custom copy of the main BioLockJ user guide.  Any other support program, such as a GUI, could make use the the ApiModule methods as well.
 
 
 ## Using External Modules

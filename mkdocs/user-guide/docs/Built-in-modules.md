@@ -29,8 +29,23 @@ In all cases, add modules to your [BioModule order section](../Configuration#bio
   * [report by taxon](module/report/module.report.taxa.md)
   * [R reports](module/report/module.report.r.md)
 
-### [sequence modules](module/seq/module.seq.md)
+### sequence modules
+
+BioLockJ comes packaged with several modules for sequence pre-processing.
+
+  * [AwkFastaConverter](GENERATED/biolockj.module.seq/AwkFastaConverter.md)
+  * [Gunzipper](GENERATED/biolockj.module.seq/Gunzipper.md)
+  * [KneadData](GENERATED/biolockj.module.seq/KneadData.md)
+  * [Multiplexer](GENERATED/biolockj.module.seq/Multiplexer.md)
+  * [PearMergeReads](GENERATED/biolockj.module.seq/PearMergeReads.md)
+  * [RarefySeqs](GENERATED/biolockj.module.seq/RarefySeqs.md)
+  * [SeqFileValidator](GENERATED/biolockj.module.seq/SeqFileValidator.md)
+  * [TrimPrimers](GENERATED/biolockj.module.seq/TrimPrimers.md)
 
 ### DIY modules  
 
-  * [GenMod](module/diy/module.diy.md)
+  * [GenMod](GENERATED/biolockj.module.diy/GenMod.md)
+
+
+## List All
+See generated docs for [all modules](GENERATED/all-modules.md).

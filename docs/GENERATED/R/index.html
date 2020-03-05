@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ivory Blakley">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>r - BioLockJ User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "r";
+    var mkdocs_page_input_path = "GENERATED/R.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> BioLockJ User Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Getting-Started/">Getting Started</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Pipeline Componenets</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../General-Properties/">General Properties</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Built-in-modules/">Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../The-Metadata-File/">Metadata</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Dependencies/">Dependencies</a>
+                </li>
+                <li class=" current">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3 current">
+                    
+    <a class="current" href="./">r</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l4"><a href="#r-properties">r properties</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Commands/">Commands</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Check-Dependencies/">Check Dependencies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Failure-Recovery/">Failure Recovery</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Validation/">Validation</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Building-Modules/">Building Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../biolockj-help/">BioLockJ help menu</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Supported-Environments/">Environments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Example-Pipeline/">Example Pipeline</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../FAQ/">FAQ</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">BioLockJ User Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Configuration Details &raquo;</li>
+        
+      
+        
+          <li>Pipeline Componenets &raquo;</li>
+        
+      
+    
+    <li>r</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="r-properties">r properties<a class="headerlink" href="#r-properties" title="Permanent link">#</a></h1>
+<p>These properties are directed to R modules.                   </p>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>r.colorBase</em></td>
+<td align="left"><em>string</em> <br>base color used for labels &amp; headings in the PDF report; Must be a valid color in R.<br><em>default:</em>  black</td>
+</tr>
+<tr>
+<td align="left"><em>r.colorFile</em></td>
+<td align="left"><em>file path</em> <br>path to a tab-delimited file giving the color to use for each value of each metadata field plotted.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.colorHighlight</em></td>
+<td align="left"><em>string</em> <br>color is used to highlight significant OTUs in plot<br><em>default:</em>  red</td>
+</tr>
+<tr>
+<td align="left"><em>r.colorPalette</em></td>
+<td align="left"><em>string</em> <br>palette argument passed to <a href="https://www.rdocumentation.org/packages/ggpubr/versions/0.2/topics/get_palette">get_palette {ggpubr}</a> to select colors for some output visualiztions<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.colorPoint</em></td>
+<td align="left"><em>string</em> <br>default color of scatterplot and strip-chart plot points<br><em>default:</em>  black</td>
+</tr>
+<tr>
+<td align="left"><em>r.debug</em></td>
+<td align="left"><em>boolean</em> <br>Options: Y/N. If Y, will generate R Script log files<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>r.excludeFields</em></td>
+<td align="left"><em>list</em> <br>Fields from the metadata that will be excluded from any auto-determined typing, or plotting; R reports must contain at least one valid nominal or numeric metadata field.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.nominalFields</em></td>
+<td align="left"><em>list</em> <br>Override default property type by explicitly listing it as nominal.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.numericFields</em></td>
+<td align="left"><em>list</em> <br>Override default property type by explicitly listing it as numeric.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.pch</em></td>
+<td align="left"><em>integer</em> <br>Sets R plot pch parameter for PDF report<br><em>default:</em>  21</td>
+</tr>
+<tr>
+<td align="left"><em>r.pvalCutoff</em></td>
+<td align="left"><em>numeric</em> <br>p-value cutoff used to assign label <em>r.colorHighlight</em><br><em>default:</em>  0.05</td>
+</tr>
+<tr>
+<td align="left"><em>r.rareOtuThreshold</em></td>
+<td align="left"><em>numeric</em> <br>If &gt;=1, R will filter OTUs found in fewer than this many samples. If &lt;1, R will interperate the value as a percentage and discard OTUs not found in at least that percentage of samples<br><em>default:</em>  1</td>
+</tr>
+<tr>
+<td align="left"><em>r.reportFields</em></td>
+<td align="left"><em>list</em> <br>Metadata fields to include in reports; Fields listed here must exist in the metadata file. R reports must contain at least one valid field.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.saveRData</em></td>
+<td align="left"><em>boolean</em> <br>If Y, all R script generating BioModules will save R Session data to the module output directory to a file using the extension ".RData"<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.timeout</em></td>
+<td align="left"><em>integer</em> <br>the # minutes before R Script will time out and fail; If undefined, no timeout is used.<br><em>default:</em>  10</td>
+</tr>
+<tr>
+<td align="left"><em>r.useUniqueColors</em></td>
+<td align="left"><em>boolean</em> <br>force to use a unique color for every value in every field plotted; only recommended for low numbers of metadata columns/values.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<p>Several plotting options are available.                   </p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Script/" class="btn btn-neutral float-right" title="script">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Metadata/" class="btn btn-neutral" title="metadata"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>2019 Fodor Lab</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Metadata/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Script/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>

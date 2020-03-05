@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../../../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../../../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../../../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../Validation/">Validation</a>
+    <a class="" href="../../../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -108,9 +149,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../../../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -155,10 +205,10 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="whole-genome-sequence-classifiers">Whole Genome Sequence Classifiers</h1>
+                <h1 id="whole-genome-sequence-classifiers">Whole Genome Sequence Classifiers<a class="headerlink" href="#whole-genome-sequence-classifiers" title="Permanent link">#</a></h1>
 <p><strong>biolockj.module.classifier.wgs</strong> is a sub-package of module.classifier.<br><br>Package modules categorize whole genome sequence micbrobial samples into Operational Taxonomic Units (OTUs) either by reference or with clustering algorithms.<br></p>
 <hr />
-<h4 id="humann2classifier">Humann2Classifier</h4>
+<h4 id="humann2classifier">Humann2Classifier<a class="headerlink" href="#humann2classifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.wgs.Humann2Classifier</code></p>
 <p><strong>Description:</strong>  Use the Biobakery <a href="https://bitbucket.org/biobakery/humann2">HumanN2</a> program to generate the HMP Unified Metabolic Analysis Network.</p>
 <p><strong>Options:</strong></p>
@@ -170,7 +220,7 @@
 <li><em>humann2.protDB</em></li>
 </ul>
 <hr />
-<h4 id="krakenclassifier">KrakenClassifier</h4>
+<h4 id="krakenclassifier">KrakenClassifier<a class="headerlink" href="#krakenclassifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.wgs.KrakenClassifier</code></p>
 <p><strong>Description:</strong>  Classify WGS samples with <a href="http://ccb.jhu.edu/software/kraken/">KRAKEN</a>.</p>
 <p><strong>Options:</strong></p>
@@ -178,7 +228,7 @@
 <li><em>kraken.db</em> </li>
 </ul>
 <hr />
-<h4 id="kraken2classifier">Kraken2Classifier</h4>
+<h4 id="kraken2classifier">Kraken2Classifier<a class="headerlink" href="#kraken2classifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.wgs.Kraken2Classifier</code></p>
 <p><strong>Description:</strong>  Classify WGS samples with <a href="https://ccb.jhu.edu/software/kraken2/">KRAKEN 2</a>.</p>
 <p><strong>Options:</strong></p>
@@ -186,7 +236,7 @@
 <li><em>kraken2.db</em> </li>
 </ul>
 <hr />
-<h4 id="metaphlan2classifier">Metaphlan2Classifier</h4>
+<h4 id="metaphlan2classifier">Metaphlan2Classifier<a class="headerlink" href="#metaphlan2classifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.wgs.Metaphlan2Classifier</code></p>
 <p><strong>Description:</strong>  Classify WGS samples with <a href="http://bitbucket.org/biobakery/metaphlan2">MetaPhlAn</a>.</p>
 <p><strong>Options:</strong></p>

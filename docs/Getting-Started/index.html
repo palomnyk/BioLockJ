@@ -93,16 +93,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -116,6 +115,44 @@
                     
     <a class="" href="../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -123,6 +160,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Check-Dependencies/">Check Dependencies</a>
@@ -133,7 +174,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../Validation/">Validation</a>
+    <a class="" href="../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -141,9 +182,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -188,18 +238,18 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="installation-and-test">Installation and test</h2>
-<h3 id="basic-installation">Basic installation</h3>
+                <h2 id="installation-and-test">Installation and test<a class="headerlink" href="#installation-and-test" title="Permanent link">#</a></h2>
+<h3 id="basic-installation">Basic installation<a class="headerlink" href="#basic-installation" title="Permanent link">#</a></h3>
 <p>The basic installation assumes a unix-like environment and a <strong>bash</strong> shell.
 To see what shell you currently using, run <code>echo $0</code>.
 <strong>If</strong> you are not in a bash shell, you can change your current session to a bash shell, run <code>chsh -s /bin/bash</code>.</p>
-<h4 id="1-download-the-latest-release-unpack-the-tarball">1. Download the <a href="https://github.com/BioLockJ-Dev-Team/BioLockJ/releases/latest">latest release</a> &amp; unpack the tarball.</h4>
+<h4 id="1-download-the-latest-release-unpack-the-tarball">1. Download the <a href="https://github.com/BioLockJ-Dev-Team/BioLockJ/releases/latest">latest release</a> &amp; unpack the tarball.<a class="headerlink" href="#1-download-the-latest-release-unpack-the-tarball" title="Permanent link">#</a></h4>
 <pre><code class="bash">tar -zxf BioLockJ-v1.2.8.tar.gz
 </code></pre>
 
 <p>Save the folder wherever you like to keep executables.
 <strong>If</strong> you choose to download the source code, you will need to compile it by running <code>ant</code> with the <code>build.xml</code> file in the <code>resources</code> folder. </p>
-<h4 id="2-run-the-install-script">2. Run the install script</h4>
+<h4 id="2-run-the-install-script">2. Run the install script<a class="headerlink" href="#2-run-the-install-script" title="Permanent link">#</a></h4>
 <p>The <code>install</code> script updates the $USER bash profile to call <strong><a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_config?raw=true">blj_config</a></strong>.  See <strong><a href="../Commands">Commands</a></strong> for a full description of <strong><a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_config?raw=true">blj_config</a></strong></p>
 <pre><code class="bash">cd BioLockJ*
 ./install
@@ -217,7 +267,7 @@ To see what shell you currently using, run <code>echo $0</code>.
 biolockj --help
 </code></pre>
 
-<h4 id="3-run-the-test-pipeline">3. Run the test pipeline</h4>
+<h4 id="3-run-the-test-pipeline">3. Run the test pipeline<a class="headerlink" href="#3-run-the-test-pipeline" title="Permanent link">#</a></h4>
 <pre><code class="bash">echo $BLJ
 # /path/to/BioLockJ
 biolockj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
@@ -235,8 +285,8 @@ biolockj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
 <p>Notice the use of the <code>$BLJ</code> variable. This variable is created by the installation process; it points to the BioLockJ folder.</p>
 <p>The myFirstPipeline project is the first in the tutorial series designed to introduce new users to the layout of a BioLockJ pipeline.</p>
 <p>You should take a moment to <a href="../Getting-Started#review-your-first-pipeline">review your first pipeline</a>.</p>
-<h3 id="docker-installation">Docker installation</h3>
-<h4 id="1-install-docker">1. Install docker</h4>
+<h3 id="docker-installation">Docker installation<a class="headerlink" href="#docker-installation" title="Permanent link">#</a></h3>
+<h4 id="1-install-docker">1. Install docker<a class="headerlink" href="#1-install-docker" title="Permanent link">#</a></h4>
 <p>See the current instructions for installing docker on your system: https://docs.docker.com/get-started/
 <br>You'll need to be able to run the docker hello world example:</p>
 <pre><code class="bash">docker run hello-world
@@ -246,12 +296,12 @@ biolockj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
 
 </code></pre>
 
-<h4 id="2-turn-on-file-sharing">2. Turn on file sharing</h4>
+<h4 id="2-turn-on-file-sharing">2. Turn on file sharing<a class="headerlink" href="#2-turn-on-file-sharing" title="Permanent link">#</a></h4>
 <p>Depending on your system and docker installation, this may be on by default.</p>
 <p>File sharing, also called volume sharing, is what allows programs inside docker containers to interact with files stored on your computer. Dependong on your version of Docker Desktop, this setting may be under <code>Docker &gt; Prefernces &gt; File Sharing</code>, or <code>Preferences &gt; Resources &gt; File Sharing</code> or something similar. Make sure this feature is enabled.  Any file that must be read by any part of the BioLockJ pipeline must be under one of the share-enabled folders.  The BioLockJ Projects directory (BLJ_PROJ) must also be under one of these share-enabled folders.</p>
-<h4 id="3-download-and-install-biolockj">3. Download and install BioLockj</h4>
+<h4 id="3-download-and-install-biolockj">3. Download and install BioLockj<a class="headerlink" href="#3-download-and-install-biolockj" title="Permanent link">#</a></h4>
 <p>Follow the download and install steps in the <a href="../Getting-Started#Basic-Installation">Basic Installation</a> instructions.</p>
-<h4 id="4-run-the-test-pipeline-in-docker">4. Run the test pipeline <em>in docker</em></h4>
+<h4 id="4-run-the-test-pipeline-in-docker">4. Run the test pipeline <em>in docker</em><a class="headerlink" href="#4-run-the-test-pipeline-in-docker" title="Permanent link">#</a></h4>
 <pre><code class="bash">biolockj --docker --blj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
 # 
 # Created &quot;/Users/ieclabau/runDockerClone.sh&quot; 
@@ -270,9 +320,9 @@ biolockj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
 </code></pre>
 
 <p>You should take a moment to <a href="../Getting-Started#review-your-first-pipeline">review your first pipeline</a>.</p>
-<h3 id="cluster-installation">Cluster installation</h3>
+<h3 id="cluster-installation">Cluster installation<a class="headerlink" href="#cluster-installation" title="Permanent link">#</a></h3>
 <p>Installing BioLockJ on a cluster follows the same process as the <a href="../Getting-Started#Basic-Installation">Basic Installation</a>.  EACH USER must run the <code>install</code> script in order to run the BioLockJ launch scripts.  Use the property <code>pipeline.env=cluster</code> in your pipeline configuration to take advantage of parallell computing through the cluster.</p>
-<h2 id="review-your-first-pipeline">Review your first pipeline</h2>
+<h2 id="review-your-first-pipeline">Review your first pipeline<a class="headerlink" href="#review-your-first-pipeline" title="Permanent link">#</a></h2>
 <p>The variable <code>$BLJ_PROJ</code> points to your projects folder. See a list of all of the pipelines in your projects folder.  </p>
 <pre><code class="bash">ls $BLJ_PROJ
 </code></pre>
@@ -295,7 +345,7 @@ biolockj ${BLJ}/templates/myFirstPipeline/myFirstPipeline.properties
 <p>The pipeline log file <code>"myFirstPipeline_&lt;DATE&gt;.log"</code> is an excellend resource for troubleshooting.</p>
 <p>The <code>validation</code> has tables recording the MD5 sum for each output from each module.  If the pipeline is run again, this folder can be used to determine if the results in the new run are an exact match for this run.</p>
 <p>Within each module's folder, we see the "biolockjComplete" flag (the same flags are used in modules and at the top level).  All output-procuing modules have a subfolder called <code>output</code>.  Most modules also have folders <code>script</code> and <code>temp</code>.  The output folder is used as input to down-stream modules.  Modules are the building blocks of pipelines.  For more information about modules, see <a href="../Built-in-modules/">Built-in BioModules</a>.</p>
-<h2 id="making-your-own-pipline">Making your own pipline</h2>
+<h2 id="making-your-own-pipline">Making your own pipline<a class="headerlink" href="#making-your-own-pipline" title="Permanent link">#</a></h2>
 <p>Now that you have a working example, you can make your own pipeline.<br />
 You may want to modify the example above, or look at others under <code>/templates</code>.</p>
 <p>Things are seldom perfect the first time.  Its safe to assume you will make iterative changes to your pipeline configuration.  BioLockJ offers some tools to facilitate this process.</p>
@@ -311,10 +361,10 @@ You may want to modify the example above, or look at others under <code>/templat
 </li>
 </ul>
 <p>A recommended practice is to make a subset of your data, and use that to develope your pipeline. </p>
-<h2 id="other-notes-for-starting-out">Other notes for starting out</h2>
+<h2 id="other-notes-for-starting-out">Other notes for starting out<a class="headerlink" href="#other-notes-for-starting-out" title="Permanent link">#</a></h2>
 <p><strong>Install any/all software <a href="../Dependencies">Dependencies</a> required by the modules you wish to include in your pipeline.</strong></p>
 <p>BioLockJ is a pipeline manager, desigend to integrate and manage external tools.  These external tools are not packaged into the BioLockJ program.  BioLockJ must run in an environment where these other tools have been installed <strong>OR</strong> run through docker using the docker images that have the tools installed.  The core program, and all modules packaged with it, have corresponding docker images.</p>
-<h3 id="notes-about-environments">Notes about environments</h3>
+<h3 id="notes-about-environments">Notes about environments<a class="headerlink" href="#notes-about-environments" title="Permanent link">#</a></h3>
 <p>The main BioLockJ program can be used in these environments: </p>
 <ul>
 <li>a local machine with a unix-like system</li>
@@ -330,7 +380,7 @@ You may want to modify the example above, or look at others under <code>/templat
 <p>If you are using BioLockJ on a shared system where another user has already installed BioLockJ, <strong>you will need to run the install script</strong> to create the required variables in your own user profile.</p>
 <p>There is also the option to run purely in docker, without installing even the launch scripts on your local machine.  However this is considered a nitch case scenario and not well supported.</p>
 <p>For more information about the how/why to use each environment, see <a href="../Supported-Environments/">Supported Environments</a></p>
-<h3 id="shutting-down-a-pipeline">Shutting down a pipeline</h3>
+<h3 id="shutting-down-a-pipeline">Shutting down a pipeline<a class="headerlink" href="#shutting-down-a-pipeline" title="Permanent link">#</a></h3>
 <p>BioLockJ will shut down appropriately on its own when a pipeline either completes or fails.  </p>
 <p><em>Sometimes</em>, it is necessary to shut down the program pre-maturely.</p>
 <p>This is not an ideal exit and the steps depend on your environment.  The main program is terminated by killing the java process.  Any worker-processes that are still in progress will need to be shut down directly (or allowed to time out).</p>
@@ -362,7 +412,7 @@ If you need to distinguish the BioLockJ containers from other docker containers 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../Commands/" class="btn btn-neutral float-right" title="Commands">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../Configuration/" class="btn btn-neutral float-right" title="Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -396,7 +446,7 @@ If you need to distinguish the BioLockJ containers from other docker containers 
         <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../Commands/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../Configuration/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

@@ -8,7 +8,7 @@
   
   <meta name="author" content="Ivory Blakley">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Supported Environments - BioLockJ User Guide</title>
+  <title>Environments - BioLockJ User Guide</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,7 +17,7 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Supported Environments";
+    var mkdocs_page_name = "Environments";
     var mkdocs_page_input_path = "Supported-Environments.md";
     var mkdocs_page_url = null;
   </script>
@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../Validation/">Validation</a>
+    <a class="" href="../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -108,8 +149,26 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../GENERATED/BioLockJ-Api/">BioLockJ API</a>
                 </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/biolockj-help/">BioLockJ help menu</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Environments</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#what-environements-are-supported">What environements are supported</a></li>
+    
+
+    <li class="toctree-l2"><a href="#choosing-an-environment">Choosing an environment</a></li>
+    
+
     </ul>
 	    </li>
           
@@ -145,7 +204,7 @@
     
       
     
-    <li>Supported Environments</li>
+    <li>Environments</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -155,7 +214,7 @@
           <div role="main">
             <div class="section">
               
-                <h2 id="what-environements-are-supported">What environements are supported</h2>
+                <h2 id="what-environements-are-supported">What environements are supported<a class="headerlink" href="#what-environements-are-supported" title="Permanent link">#</a></h2>
 <p>The main BioLockJ program can be used in these environments: </p>
 <ul>
 <li>a local machine with a unix-like system</li>
@@ -167,7 +226,7 @@
 <p>AWS is currently experimental. To ty it, see <a href="../Pure-Docker/">Working in Pure Docker</a></p>
 <p>In all cases, the launch process requires a unix-like environment.  This includes linux, macOS, or an ubuntu environment running on Windows.</p>
 <p>There is also the option to run purely in docker, without installing even the launch scripts on your local machine.  However this is considered a nitch case scenario and not well supported.</p>
-<h2 id="choosing-an-environment">Choosing an environment</h2>
+<h2 id="choosing-an-environment">Choosing an environment<a class="headerlink" href="#choosing-an-environment" title="Permanent link">#</a></h2>
 <p>The major resources that come together in a pipeline are:</p>
 <ul>
 <li>data (project data and reference data)</li>
@@ -184,6 +243,15 @@ The underlying tools for all modules packaged with the main BioLockJ program are
             </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Example-Pipeline/" class="btn btn-neutral float-right" title="Example Pipeline">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../GENERATED/biolockj-help/" class="btn btn-neutral" title="BioLockJ help menu"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -209,6 +277,10 @@ The underlying tools for all modules packaged with the main BioLockJ program are
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
+        <span><a href="../GENERATED/biolockj-help/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Example-Pipeline/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>

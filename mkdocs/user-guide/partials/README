@@ -1,0 +1,22 @@
+README - partials
+
+These are parts of user guide files.
+
+Most follow a general pattern like this:
+
+* The BuildDocs class in the BioLockJ api package builds a document:
+GENERATED/Input.md
+* That document is built by:
+   * copying the partials/input_header.md file
+   * adding the properties table with the _input_ properties
+   * copying the partials/input_footer.md file
+
+To edit any of the GENERATED files, you can edit the file in place while running `mkdocs serve` to quickly preview your changes.  Once you like what you have:
+copy whatever is above the properties table into partials/<subject>_header.md 
+copy whatever is below the properties table into partials/<subject>_footer.md
+
+Run:
+cd $BLJ/resources
+ant buildDocs
+
+Look at your preview and make sure the newly generated file still produces the appearance you want.  Save the partials/*.md files.

@@ -199,6 +199,13 @@ public class Constants {
 	private static final String DETACH_JAVA_MODULES_DESC = "If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.";
 
 	/**
+	 * A prefix used for some messages.  
+	 * These are messages to alert a developer about changes that may be needed.
+	 * These notes should only appear in debug mode (Log.debug()).
+	 */
+	public static final String DEVELOPER_NOTE = "Developer note: ";
+	
+	/**
 	 * {@link biolockj.Config} {@value biolockj.Properties#BOOLEAN_TYPE} property: {@value #DISABLE_ADD_IMPLICIT_MODULES}<br>
 	 * {@value #DISABLE_ADD_IMPLICIT_MODULES_DESC}
 	 */

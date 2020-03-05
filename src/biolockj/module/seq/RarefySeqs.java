@@ -35,8 +35,9 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
 
 	public RarefySeqs() {
 		super();
-		addNewProperty( INPUT_RAREFYING_MAX, Properties.NUMERTIC_TYPE, "Randomly select maximum number of sequences per sample" );
-		addNewProperty( INPUT_RAREFYING_MIN, Properties.NUMERTIC_TYPE, "Discard samples without minimum number of sequences" );
+		addNewProperty( INPUT_RAREFYING_MAX, Properties.NUMERTIC_TYPE, "Randomly select this number of sequences to keep in each sample" );
+		addNewProperty( INPUT_RAREFYING_MIN, Properties.NUMERTIC_TYPE, "Discard samples with less than minimum number of sequences", "1" );
+		addGeneralProperty( Constants.DEFAULT_MOD_SEQ_MERGER );
 	}
 
 	/**
@@ -76,7 +77,7 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
 	@Override
 	public List<String> getPreRequisiteModules() throws Exception {
 		final List<String> preReqs = super.getPreRequisiteModules();
-		if( SeqUtil.hasPairedReads() ) preReqs.add( ModuleUtil.getDefaultMergePairedReadsConverter() );
+		if( SeqUtil.hasPairedReads() ) preReqs.add( Config.getString( null, Constants.DEFAULT_MOD_SEQ_MERGER ) );
 		else if( SeqUtil.piplineHasSeqInput() && needsCountModule() ) preReqs.add( RegisterNumReads.class.getName() );
 
 		return preReqs;
@@ -178,14 +179,11 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
 		final Integer maxConfig = Config.getNonNegativeInteger( this, INPUT_RAREFYING_MAX );
 		final Integer minConfig = Config.getNonNegativeInteger( this, INPUT_RAREFYING_MIN );
 		Long max = 0L;
-		Long min = 0L;
+		Long min = minConfig.longValue();
 		final String sampleId = SeqUtil.getSampleId( seqFile.getName() );
 		final long numReads = getCount( sampleId, RegisterNumReads.getNumReadFieldName() );
 
 		if( maxConfig != null ) max = numReads < maxConfig.longValue() ? numReads: maxConfig.longValue();
-
-		if( minConfig == null ) min = 1L;
-		else min = minConfig.longValue();
 
 		Log.debug( getClass(), "min = " + min );
 		Log.debug( getClass(), "max = " + max );
@@ -261,9 +259,19 @@ public class RarefySeqs extends JavaModuleImpl implements SeqModule, ApiModule {
 
 	@Override
 	public String getDescription() {
-		return "Randomly select samples to reduce all samples to the configured maximum.<br> Samples with less than the minimum number of reads are discarded. ";
+		return "Randomly sub-sample sequences to reduce all samples to the configured maximum.";
 	}
 
+	@Override
+	public String getDetails() {
+		return "Randomly sub-sample sequences to reduce all samples to the configured maximum `" + INPUT_RAREFYING_MAX 
+							+ "`.  Samples with less than the minimum number of reads `" + INPUT_RAREFYING_MIN + "` are discarded." 
+						+ "<br>This module will add **" + RegisterNumReads.class.getName() + "** if there is not already a module to count starting reads per sample."
+						+ "<br>If the input data are paired reads, this module will add a sequence merger, based on property `" 
+						+ Constants.DEFAULT_MOD_SEQ_MERGER + "` (currently: " 
+						+ Config.getString( this, Constants.DEFAULT_MOD_SEQ_MERGER ) + ").";
+	}
+	
 	@Override
 	public String getCitationString() {
 		return "Module developed by Mike Sioda" + System.lineSeparator() + "BioLockj " + BioLockJUtil.getVersion();

@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../../../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../../../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../../../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../Validation/">Validation</a>
+    <a class="" href="../../../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -108,9 +149,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../../../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -155,16 +205,16 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="otu-report-modules">OTU report modules</h1>
+                <h1 id="otu-report-modules">OTU report modules<a class="headerlink" href="#otu-report-modules" title="Permanent link">#</a></h1>
 <p>Modules in the <strong><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/report/package-summary.html">biolockj.module.report</a></strong> sub-pakcage normalize <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModule.html">ParserModule</a> output, merge the OTU tables with the metadata, or process OTU tables.</p>
 <hr />
-<h4 id="compileotucounts">CompileOtuCounts</h4>
+<h4 id="compileotucounts">CompileOtuCounts<a class="headerlink" href="#compileotucounts" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.report.otu.CompileOtuCounts</code></p>
 <p><strong>Description:</strong>  Compiles the counts from all OTU count files into a single summary OTU count file containing OTU counts for the entire dataset.</p>
 <p><strong>Options:</strong></p>
 <p><em>none</em></p>
 <hr />
-<h4 id="rarefyotucounts">RarefyOtuCounts</h4>
+<h4 id="rarefyotucounts">RarefyOtuCounts<a class="headerlink" href="#rarefyotucounts" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.report.otu.RarefyOtuCounts</code></p>
 <p><strong>Description:</strong>  Applies a mean iterative post-OTU classification rarefication algorithm so that each output sample will have approximately the same number of OTUs.</p>
 <p><strong>Options:</strong></p>
@@ -175,7 +225,7 @@
 <li><em>rarefyOtuCounts.removeSamplesBelowQuantile</em></li>
 </ul>
 <hr />
-<h4 id="removelowotucounts">RemoveLowOtuCounts</h4>
+<h4 id="removelowotucounts">RemoveLowOtuCounts<a class="headerlink" href="#removelowotucounts" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.report.otu.RemoveLowOtuCounts</code></p>
 <p><strong>Description:</strong>  Removes OTUs with counts below <em>report.minCount</em>.</p>
 <p><strong>Options:</strong></p>
@@ -184,7 +234,7 @@
 <li><em>report.numHits</em></li>
 </ul>
 <hr />
-<h4 id="removescarceotucounts">RemoveScarceOtuCounts</h4>
+<h4 id="removescarceotucounts">RemoveScarceOtuCounts<a class="headerlink" href="#removescarceotucounts" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.report.otu.RemoveScarceOtuCounts</code></p>
 <p><strong>Description:</strong>  Removes OTUs that are not found in enough samples.</p>
 <p><strong>Options:</strong></p>

@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../Validation/">Validation</a>
+    <a class="" href="../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class=" current">
                     
@@ -128,6 +169,8 @@
         
             <li><a class="toctree-l4" href="#documenting-properties">Documenting Properties</a></li>
         
+            <li><a class="toctree-l4" href="#generate-user-guide-pages">Generate user guide pages</a></li>
+        
         </ul>
     
 
@@ -141,9 +184,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -192,14 +244,14 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="building-new-modules">Building New Modules</h1>
+                <h1 id="building-new-modules">Building New Modules<a class="headerlink" href="#building-new-modules" title="Permanent link">#</a></h1>
 <p><strong>Any Java class that implements the <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a> interface can be added to a BioLockJ pipeline.</strong></p>
 <p>The BioLockJ v1.0 implementation is currently focused on metagenomics analysis, but the generalized application framework is not limited to this domain.  Users can implement new BioModules to automate a wide variety of bioinformatics and report analytics.  The <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a> interface was designed so that users can develop new modules on their own.  </p>
-<h2 id="beginners">Beginners</h2>
+<h2 id="beginners">Beginners<a class="headerlink" href="#beginners" title="Permanent link">#</a></h2>
 <p>See the BioModule hello world tutorial.</p>
-<h2 id="coding-your-module">Coding your module</h2>
+<h2 id="coding-your-module">Coding your module<a class="headerlink" href="#coding-your-module" title="Permanent link">#</a></h2>
 <p>To create a new <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModule.html">BioModule</a>, simply extend one of the abstract Java superclasses, code it's abstract methods, and add it to your pipeline with #BioModule tag your Config file: </p>
-<h3 id="_1"></h3>
+<h3 id="_1"><a class="headerlink" href="#_1" title="Permanent link">#</a></h3>
 <ol>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a>: Extend if a more specific interface does not apply</li>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: Extend if your module generates and executes bash scripts</li>
@@ -208,13 +260,13 @@
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModuleImpl.html">ParserModuleImpl</a>: Extend to parse output of a new classifier program</li>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/report/r/R_Module.html">R_Module</a>: Extend if your module generates and executes R scripts</li>
 </ol>
-<h4 id="to-support-a-new-classifier-create-3-modules-that-implement-the-following-interfaces">To support a new classifier, create 3 modules that implement the following interfaces:</h4>
+<h4 id="to-support-a-new-classifier-create-3-modules-that-implement-the-following-interfaces">To support a new classifier, create 3 modules that implement the following interfaces:<a class="headerlink" href="#to-support-a-new-classifier-create-3-modules-that-implement-the-following-interfaces" title="Permanent link">#</a></h4>
 <ol>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModule.html">ClassifierModule</a>: Implement to generate bash scripts needed to call classifier program</li>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModule.html">ParserModule</a>: Implement to parse classifier output, configure as classifier post-requisite </li>
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNode.html">OtuNode</a>: Classifier specific implementation holds OTU information for 1 sequence</li>
 </ol>
-<h4 id="biomoduleimpl-is-the-top-level-superclass-for-all-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a> is the top-level superclass for all modules.</h4>
+<h4 id="biomoduleimpl-is-the-top-level-superclass-for-all-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a> is the top-level superclass for all modules.<a class="headerlink" href="#biomoduleimpl-is-the-top-level-superclass-for-all-modules" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -269,7 +321,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="scriptmoduleimpl-extends-biomoduleimpl-superclass-for-script-generating-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a>:  superclass for script-generating modules.</h4>
+<h4 id="scriptmoduleimpl-extends-biomoduleimpl-superclass-for-script-generating-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/BioModuleImpl.html">BioModuleImpl</a>:  superclass for script-generating modules.<a class="headerlink" href="#scriptmoduleimpl-extends-biomoduleimpl-superclass-for-script-generating-modules" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -312,7 +364,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="javamoduleimpl-extends-scriptmoduleimpl-superclass-for-pure-java-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: superclass for pure Java modules.</h4>
+<h4 id="javamoduleimpl-extends-scriptmoduleimpl-superclass-for-pure-java-modules"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: superclass for pure Java modules.<a class="headerlink" href="#javamoduleimpl-extends-scriptmoduleimpl-superclass-for-pure-java-modules" title="Permanent link">#</a></h4>
 <p>To avoid running code on the cluster head node, a temporary instance of BioLockJ is spawned on a cluster node which is launched by the sole worker script from the job queue. </p>
 <table>
 <thead>
@@ -348,7 +400,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="classifiermoduleimpl-extends-scriptmoduleimpl-biolockjmoduleclassifier-superclass"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModuleImpl.html">ClassifierModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: biolockj.module.classifier superclass.</h4>
+<h4 id="classifiermoduleimpl-extends-scriptmoduleimpl-biolockjmoduleclassifier-superclass"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModuleImpl.html">ClassifierModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/ScriptModuleImpl.html">ScriptModuleImpl</a>: biolockj.module.classifier superclass.<a class="headerlink" href="#classifiermoduleimpl-extends-scriptmoduleimpl-biolockjmoduleclassifier-superclass" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -387,7 +439,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="parsermoduleimpl-extends-javamoduleimpl-biolockjmoduleimplicitparser-superclass"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModuleImpl.html">ParserModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a>: biolockj.module.implicit.parser superclass.</h4>
+<h4 id="parsermoduleimpl-extends-javamoduleimpl-biolockjmoduleimplicitparser-superclass"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/implicit/parser/ParserModuleImpl.html">ParserModuleImpl</a> extends <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/JavaModuleImpl.html">JavaModuleImpl</a>: biolockj.module.implicit.parser superclass.<a class="headerlink" href="#parsermoduleimpl-extends-javamoduleimpl-biolockjmoduleimplicitparser-superclass" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -426,7 +478,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="otunodeimpl-is-the-superclass-for-the-biolockjnode-package"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNodeImpl.html">OtuNodeImpl</a> is the superclass for the <a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/package-summary.html">biolockj.node</a> package.</h4>
+<h4 id="otunodeimpl-is-the-superclass-for-the-biolockjnode-package"><a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNodeImpl.html">OtuNodeImpl</a> is the superclass for the <a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/package-summary.html">biolockj.node</a> package.<a class="headerlink" href="#otunodeimpl-is-the-superclass-for-the-biolockjnode-package" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -477,15 +529,15 @@
 <li><a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNodeImpl.html">OtuNodeImpl</a> methods do not need to be overridden.  </li>
 <li>New <a href="https://msioda.github.io/BioLockJ/docs/biolockj/node/OtuNode.html">OtuNode</a> implementations should call existing methods from their constructor.</li>
 </ul>
-<h2 id="document-your-module">Document your module</h2>
+<h2 id="document-your-module">Document your module<a class="headerlink" href="#document-your-module" title="Permanent link">#</a></h2>
 <p>The BioLockJ API allows outside resources to get information about the BioLockJ program and any available modules.  </p>
 <p>To interface with the API, your module will need to implement the <strong>ApiModule interface</strong>.</p>
-<h3 id="api-generated-html-documentation">API-generated html documentation</h3>
+<h3 id="api-generated-html-documentation">API-generated html documentation<a class="headerlink" href="#api-generated-html-documentation" title="Permanent link">#</a></h3>
 <p>The BioLockJ documentation is stored in markdown files and rendered into html using mkdocs.  The BioLockJ API is designed to generate a markdown document, which is ready to be rendered into an html file using mkdocs.  </p>
-<h3 id="built-in-descriptions">Built-in descriptions</h3>
+<h3 id="built-in-descriptions">Built-in descriptions<a class="headerlink" href="#built-in-descriptions" title="Permanent link">#</a></h3>
 <p>Override the <code>getCitationString()</code> method.  This should include citation information for any tool that your module wraps and a credit to yourself for creating the wrapper.</p>
-<p>Override the <code>getDescription()</code> method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the <code>getDetails()</code> method (optional).</p>
-<h3 id="documenting-properties">Documenting Properties</h3>
+<p>Override the <code>getDescription()</code> method to return a short description of what your module does, this should be one to two sentences.  For a more extensive description, including details about properties, expected inputs, assumptions, etc; override the <code>getDetails()</code> method (optional).  If your module has any pre-requisit modules or post-requisit modules, the modules Details should include the names of these modules and information about when and why these modules are added.</p>
+<h3 id="documenting-properties">Documenting Properties<a class="headerlink" href="#documenting-properties" title="Permanent link">#</a></h3>
 <p>If your module introduces any NEW configuration properties, those properties should registered to the module so the API can retrieve them.  Register properties using the <code>addNewProperty()</code> method in the modules constructor.  For example, the GenMod module defines three properties:</p>
 <pre><code class="java">public GenMod() {
     super();
@@ -538,7 +590,40 @@ public Boolean isValidProp( String property ) throws Exception {
 </code></pre>
 
 <p>In the example above, the Humann2Parser module uses two properties that are not used by any super class. The call to <code>super.isValidProp( property )</code> tests the property if it is used by a super class.  This class only adds checks for its newly defined properties.  Any property that is not tested, but is registered in the modules constructor will return true. This method is called through the API, and should be used to test one property at a time as if that is the only property in the config file. Tests to make sure that multiple properties are compatiable with each other should go in the <code>checkDependencies()</code> method.</p>
-<h2 id="using-external-modules">Using External Modules</h2>
+<h3 id="generate-user-guide-pages">Generate user guide pages<a class="headerlink" href="#generate-user-guide-pages" title="Permanent link">#</a></h3>
+<p>For modules in the main BioLockJ project, the user guide pages are generated using the ApiModule methods as part of the deploy process.
+Third party developers can use the same utilities to create matching documentation.</p>
+<p>Suppose you have created one or more modules in a package <code>com.joesCode</code> and saved the compiled code in a jar file, <code>/Users/joe/dev/JoesMods.jar</code>.<br />
+Set up a <a href="https://www.mkdocs.org/">mkdocs</a> project:</p>
+<pre><code class="bash"># See https://www.mkdocs.org/#installation
+pip install mkdocs
+mkdocs --version
+mkdocs new joes-modules
+mkdir joes-modules/docs/GENERATED
+</code></pre>
+
+<p>This mkdocs project will render markdown (.md) files into an html site.  Mkdocs supports a lot of really nice features, including a very nice default template.</p>
+<p>Generate the .md files from your modules:</p>
+<pre><code class="bash">java -cp $BLJ/dist/BioLockJ.jar:/Users/joe/dev/JoesMods.jar \
+    biolockj.api.BuildDocs \
+    joes-modules/docs/GENERATED \
+    com.joesCode
+</code></pre>
+
+<p>Put a link to your list of modules in the main index page.</p>
+<pre><code class="bash">cd joes-modules
+echo &quot;[view module list](GENERATED/all-modules.md)&quot; &gt;&gt; docs/index.md 
+</code></pre>
+
+<p>The BuildDocs utility creates the .md files, but it assumes that these are part of a larger project, and you will need to make appropriate links to the generated pages from your main page.</p>
+<p>Preview your user guide:</p>
+<pre><code class="bash">mkdocs serve
+</code></pre>
+
+<p>Open up <code>http://127.0.0.1:8000/</code> in your browser, and you'll see the default home page being displayed, with a link at the bottom to <code>view module list</code>, which links to a page listing all of the modules in the <code>joes.modules</code> pacakge. </p>
+<p>You can build this documentation locally using <code>mkdocs build</code> and then push to your prefered hosting site, or set up a service such as <a href="https://readthedocs.org/">ReadTheDocs</a> to render and host your documentation from your <code>docs</code> folder.</p>
+<p>Even if you choose not to build user guide pages for your module, you should still implement the ApiModule interface.  Anyone who uses your module can generate the user guide pages if they want them, and even incorporate them into a custom copy of the main BioLockJ user guide.  Any other support program, such as a GUI, could make use the the ApiModule methods as well.</p>
+<h2 id="using-external-modules">Using External Modules<a class="headerlink" href="#using-external-modules" title="Permanent link">#</a></h2>
 <p>To use a module that you have created yourself or aquired from a third party, you need to:</p>
 <ol>
 <li>Save the compiled code in a folder on your machine, for example: <code>/Users/joe/biolockjModules/JoesMods.jar</code> </li>
@@ -549,7 +634,7 @@ public Boolean isValidProp( String property ) throws Exception {
 <code>biolockj --external-modules /Users/joe/biolockjModules myPipeline.properties</code></li>
 </ol>
 <p>Any other modules you have made or aquired can also be in the <code>/Users/joe/biolockjModules</code> folder.</p>
-<h2 id="finding-and-sharing-modules">Finding and Sharing Modules</h2>
+<h2 id="finding-and-sharing-modules">Finding and Sharing Modules<a class="headerlink" href="#finding-and-sharing-modules" title="Permanent link">#</a></h2>
 <p>The official repository for external BioLockJ modules is <a href="https://github.com/IvoryC/blj_ext_modules">blj_ext_modules</a>.  Each module has a folder at the top level of the repository and should include the java code as well a config file to test the module alone, a test file to run a multi-module pipeline that includes the module, and (where applicable) a dockerfile.  This is work in progress.</p>
               
             </div>
@@ -558,10 +643,10 @@ public Boolean isValidProp( String property ) throws Exception {
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../BioLockJ-Api/" class="btn btn-neutral float-right" title="BioLockJ API">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../GENERATED/BioLockJ-Api/" class="btn btn-neutral float-right" title="BioLockJ API">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../Validation/" class="btn btn-neutral" title="Validation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../GENERATED/Validation/" class="btn btn-neutral" title="Validation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -589,10 +674,10 @@ public Boolean isValidProp( String property ) throws Exception {
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../Validation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../GENERATED/Validation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
-        <span style="margin-left: 15px"><a href="../BioLockJ-Api/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../GENERATED/BioLockJ-Api/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
