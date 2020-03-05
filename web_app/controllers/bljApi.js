@@ -258,14 +258,18 @@ exports.moduleInfo = function (req, res, next) {
   try {
     let extPath = req.body.extPath != undefined ? ` --external-modules ${req.body.extPath}` : "";
     let bljApi = spawn(`biolockj-api moduleInfo ${extPath}`, {shell: '/bin/bash'});
+    let resp = [];
     bljApi.stdout.on('data', function (data) {
-      return(res.end(JSON.stringify({output: String(data)})));
+      resp.push(data);
     });
     bljApi.stderr.on('data', function (data) {
       console.log('stderr: ' + data.toString());
     });
     bljApi.on('exit', function (code) {
       console.log('child process exited with code ' + code.toString());
+      const respJoin = resp.join('')
+      console.log(`Joined data: ${respJoin}`);
+      return(res.end(JSON.stringify({output: String(respJoin)})));
     });
   } catch (e) {
     console.error(e);
