@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../Validation/">Validation</a>
+    <a class="" href="../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -108,9 +149,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1 current">
@@ -178,7 +228,7 @@
               
                 <p>In our example analysis, we investigate the differences between the microbiome of 20 rural and 20 recently urbanized subjects from the Chinese province of Hunan.  For more information on this dataset, please review the analysis Fodor Lab published in the Sep 2017 issue of the journal Microbiome: 
 https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-017-0338-7</p>
-<h4 id="step-1-prepare-biolockj-config-file">Step 1: Prepare BioLockJ Config File</h4>
+<h4 id="step-1-prepare-biolockj-config-file">Step 1: Prepare BioLockJ Config File<a class="headerlink" href="#step-1-prepare-biolockj-config-file" title="Permanent link">#</a></h4>
 <p>The BioLockJ project Config chinaKrakenFullDB.properties lists 5 BioModules to run (lines 3-7) + 13 properties:  </p>
 <pre><code>  #BioModule biolockj.module.implicit.RegisterNumReads
   #BioModule biolockj.module.classifier.wgs.KrakenClassifier
@@ -260,7 +310,7 @@ https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-017-0338-7</
 <p>Sample IDs from 1st column of the metadata file: 081A, 082A, 083A...etc.<br />
 Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
 <p>The default Config file, copperhead.properties, has its own default Config file <a href="https://github.com/msioda/BioLockJ/blob/master/resources/config/default/standard.properties?raw=true">standard.properties</a> which defines the property <em>input.suffixFw=_R1</em>.  As a result, all characters starting with (and including) “_R1” are ignored when matching the file name to the metadata sample ID. </p>
-<h4 id="step-2-run-biolockj-pipeline">Step 2: Run BioLockJ Pipeline</h4>
+<h4 id="step-2-run-biolockj-pipeline">Step 2: Run BioLockJ Pipeline<a class="headerlink" href="#step-2-run-biolockj-pipeline" title="Permanent link">#</a></h4>
 <pre><code>  &gt; biolockj ~/chinaKrakenFullDB.properties
 </code></pre>
 <ul>
@@ -268,7 +318,7 @@ Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
 <li>The 5 configured modules have run in order, with the addition of 2 implicit modules (1st and last) which are added to all pipelines automatically.</li>
 <li>The biolockjComplete file indicates the pipeline ran successfully.</li>
 </ul>
-<h4 id="step-3-review-pipeline-summary">Step 3: Review Pipeline Summary</h4>
+<h4 id="step-3-review-pipeline-summary">Step 3: Review Pipeline Summary<a class="headerlink" href="#step-3-review-pipeline-summary" title="Permanent link">#</a></h4>
 <ul>
 <li>
 <p>Run the <a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_summary?raw=true">blj_summary</a>  command to review the pipeline execution summary.</p>
@@ -279,14 +329,14 @@ Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
 <p><a href="https://github.com/msioda/BioLockJ/blob/master/docs/example/sampleSummary.txt?raw=true">Pipeline Summary</a> </p>
 </li>
 </ul>
-<h4 id="step-4-download-r-reports">Step 4: Download R Reports</h4>
+<h4 id="step-4-download-r-reports">Step 4: Download R Reports<a class="headerlink" href="#step-4-download-r-reports" title="Permanent link">#</a></h4>
 <ul>
 <li>Run the <a href="https://github.com/msioda/BioLockJ/blob/master/script/blj_download?raw=true">blj_download</a> command to get the command needed to download the analysis. <pre><code>&gt; blj_download
 &gt; rsync
 </code></pre>
 </li>
 </ul>
-<h4 id="step-5-analyze-r-reports">Step 5: Analyze R Reports</h4>
+<h4 id="step-5-analyze-r-reports">Step 5: Analyze R Reports<a class="headerlink" href="#step-5-analyze-r-reports" title="Permanent link">#</a></h4>
 <ul>
 <li>Open <em>downloadDir</em> on your local filesystem to review the analysis.  This directory contains:</li>
 </ul>
@@ -335,7 +385,7 @@ Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
 <ul>
 <li>Each R module generates a report for each <em>report.taxonomyLevel</em> configured:</li>
 </ul>
-<h4 id="open-chinakrakenfulldb_log10_genuspdf">Open chinaKrakenFullDB_Log10_genus.pdf</h4>
+<h4 id="open-chinakrakenfulldb_log10_genuspdf">Open chinaKrakenFullDB_Log10_genus.pdf<a class="headerlink" href="#open-chinakrakenfulldb_log10_genuspdf" title="Permanent link">#</a></h4>
 <ul>
 <li>The report begins with the unadjusted P-Value Distributions:</li>
 <li>Since <em>r.numHistogramBreaks=20</em> so the 1st bar represents the p-values &lt; 0.05.  The ruralUrban attribute appears significant, as indicated by the high number p-values &lt; 0.05.</li>
@@ -354,7 +404,7 @@ Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
         <a href="../FAQ/" class="btn btn-neutral float-right" title="FAQ">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../BioLockJ-Api/" class="btn btn-neutral" title="BioLockJ API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Supported-Environments/" class="btn btn-neutral" title="Environments"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -382,7 +432,7 @@ Sequence file names: 081A_R1.fq.gz, 082A_R1.fq.gz, 083A_R1.fq.gz...etc.  </p>
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../BioLockJ-Api/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../Supported-Environments/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../FAQ/" style="color: #fcfcfc">Next &raquo;</a></span>

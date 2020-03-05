@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class=" current">
                     
@@ -81,6 +80,8 @@
         <ul>
         
             <li><a class="toctree-l4" href="#built-in-biomodules">Built-in BioModules:</a></li>
+        
+            <li><a class="toctree-l4" href="#list-all">List All</a></li>
         
         </ul>
     
@@ -95,6 +96,44 @@
                     
     <a class="" href="../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -102,6 +141,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../Check-Dependencies/">Check Dependencies</a>
@@ -112,7 +155,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../Validation/">Validation</a>
+    <a class="" href="../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -120,9 +163,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -171,37 +223,50 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="biomodules">BioModules</h1>
+                <h1 id="biomodules">BioModules<a class="headerlink" href="#biomodules" title="Permanent link">#</a></h1>
 <p>Some modules are packaged with BioLockJ (see below).</p>
 <p>To use modules created by a third-party, add the compiled files (jar file) to your biolockj extentions folder.  When you call <code>biolockj</code>, use the <code>--external-modules</code> arg to pass in the location of the extra modules:                <br />
 <code>biolockj --external-modules &lt;/path/to/extentions/folder&gt; &lt;config.properties&gt;</code></p>
 <p>To create your own modules, see <a href="../Building-Modules">Building-Modules</a>.</p>
 <p>In all cases, add modules to your <a href="../Configuration#biomodule-execution-order">BioModule order section</a> to include them in your pipeline.</p>
-<h2 id="built-in-biomodules">Built-in BioModules:</h2>
-<h3 id="classifiers"><a href="../module/classifier/module.classifier/">classifiers</a></h3>
+<h2 id="built-in-biomodules">Built-in BioModules:<a class="headerlink" href="#built-in-biomodules" title="Permanent link">#</a></h2>
+<h3 id="classifiers"><a href="../module/classifier/module.classifier/">classifiers</a><a class="headerlink" href="#classifiers" title="Permanent link">#</a></h3>
 <ul>
 <li><a href="../module/classifier/module.classifier.r16s/">r16s classifiers</a></li>
 <li><a href="../module/classifier/module.classifier.wgs/">wgs classifiers</a></li>
 </ul>
-<h3 id="implicit-modules"><a href="../module/implicit/module.implicit/">implicit modules</a></h3>
+<h3 id="implicit-modules"><a href="../module/implicit/module.implicit/">implicit modules</a><a class="headerlink" href="#implicit-modules" title="Permanent link">#</a></h3>
 <ul>
 <li><a href="../module/implicit/module.implicit.parser/">implicit parsers</a></li>
 <li><a href="../module/implicit/module.implicit.parser.r16s/">module.implicit.parser.r16s.md</a></li>
 <li><a href="../module/implicit/module.implicit.parser.wgs/">module.implicit.parser.wgs.md</a></li>
 <li><a href="../module/implicit/module.implicit.qiime/">implicit qiime modules</a></li>
 </ul>
-<h3 id="report-modules"><a href="../module/report/module.report/">report modules</a></h3>
+<h3 id="report-modules"><a href="../module/report/module.report/">report modules</a><a class="headerlink" href="#report-modules" title="Permanent link">#</a></h3>
 <ul>
 <li><a href="../module/report/module.report.humann2/">humann2</a></li>
 <li><a href="../module/report/module.report.otu/">report by otu</a></li>
 <li><a href="../module/report/module.report.taxa/">report by taxon</a></li>
 <li><a href="../module/report/module.report.r/">R reports</a></li>
 </ul>
-<h3 id="sequence-modules"><a href="../module/seq/module.seq/">sequence modules</a></h3>
-<h3 id="diy-modules">DIY modules</h3>
+<h3 id="sequence-modules">sequence modules<a class="headerlink" href="#sequence-modules" title="Permanent link">#</a></h3>
+<p>BioLockJ comes packaged with several modules for sequence pre-processing.</p>
 <ul>
-<li><a href="../module/diy/module.diy/">GenMod</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/AwkFastaConverter/">AwkFastaConverter</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/Gunzipper/">Gunzipper</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/KneadData/">KneadData</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/Multiplexer/">Multiplexer</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/PearMergeReads/">PearMergeReads</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/RarefySeqs/">RarefySeqs</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/SeqFileValidator/">SeqFileValidator</a></li>
+<li><a href="../GENERATED/biolockj.module.seq/TrimPrimers/">TrimPrimers</a></li>
 </ul>
+<h3 id="diy-modules">DIY modules<a class="headerlink" href="#diy-modules" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="../GENERATED/biolockj.module.diy/GenMod/">GenMod</a></li>
+</ul>
+<h2 id="list-all">List All<a class="headerlink" href="#list-all" title="Permanent link">#</a></h2>
+<p>See generated docs for <a href="../GENERATED/all-modules/">all modules</a>.</p>
               
             </div>
           </div>
@@ -212,7 +277,7 @@
         <a href="../The-Metadata-File/" class="btn btn-neutral float-right" title="Metadata">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../Configuration/" class="btn btn-neutral" title="Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../GENERATED/General-Properties/" class="btn btn-neutral" title="General Properties"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -240,7 +305,7 @@
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../Configuration/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../GENERATED/General-Properties/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../The-Metadata-File/" style="color: #fcfcfc">Next &raquo;</a></span>

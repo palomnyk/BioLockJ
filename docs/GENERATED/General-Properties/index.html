@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Ivory Blakley">
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>General Properties - BioLockJ User Guide</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "General Properties";
+    var mkdocs_page_input_path = "GENERATED/General-Properties.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> BioLockJ User Guide</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Getting-Started/">Getting Started</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Pipeline Componenets</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Configuration/">Configuration</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">General Properties</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#cluster">cluster</a></li>
+    
+
+    <li class="toctree-l3"><a href="#docker">docker</a></li>
+    
+
+    <li class="toctree-l3"><a href="#exe">exe</a></li>
+    
+
+    <li class="toctree-l3"><a href="#genmod">genMod</a></li>
+    
+
+    <li class="toctree-l3"><a href="#humann2">humann2</a></li>
+    
+
+    <li class="toctree-l3"><a href="#input">input</a></li>
+    
+
+    <li class="toctree-l3"><a href="#metadata">metadata</a></li>
+    
+
+    <li class="toctree-l3"><a href="#pipeline">pipeline</a></li>
+    
+
+    <li class="toctree-l3"><a href="#qiime">qiime</a></li>
+    
+
+    <li class="toctree-l3"><a href="#r">r</a></li>
+    
+
+    <li class="toctree-l3"><a href="#r_plotmds">r_PlotMds</a></li>
+    
+
+    <li class="toctree-l3"><a href="#report">report</a></li>
+    
+
+    <li class="toctree-l3"><a href="#script">script</a></li>
+    
+
+    <li class="toctree-l3"><a href="#validation">validation</a></li>
+    
+
+    <li class="toctree-l3"><a href="#aws">aws</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Built-in-modules/">Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../The-Metadata-File/">Metadata</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Dependencies/">Dependencies</a>
+                </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Features</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../Commands/">Commands</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Check-Dependencies/">Check Dependencies</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Failure-Recovery/">Failure Recovery</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Validation/">Validation</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../Building-Modules/">Building Modules</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../biolockj-help/">BioLockJ help menu</a>
+                </li>
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Supported-Environments/">Environments</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../Example-Pipeline/">Example Pipeline</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../FAQ/">FAQ</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">BioLockJ User Guide</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Pipeline Componenets &raquo;</li>
+        
+      
+    
+    <li>General Properties</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h3 id="cluster"><a href="../Cluster/">cluster</a><a class="headerlink" href="#cluster" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>cluster.batchCommand</em></td>
+<td align="left"><em>string</em> <br>Terminal command used to submit jobs on the cluster<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>cluster.host</em></td>
+<td align="left"><em>string</em> <br>The remote cluster host URL (used for ssh, scp, rsync, etc)<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>cluster.jobHeader</em></td>
+<td align="left"><em>string</em> <br>Header written at top of worker scripts<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>cluster.modules</em></td>
+<td align="left"><em>list</em> <br>List of cluster modules to load at start of worker scripts<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>cluster.prologue</em></td>
+<td align="left"><em>string</em> <br>To run at the start of every script after loading cluster modules (if any)<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>cluster.statusCommand</em></td>
+<td align="left"><em>string</em> <br>Terminal command used to submit jobs on the cluster<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="docker"><a href="../Docker/">docker</a><a class="headerlink" href="#docker" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>docker.imgVersion</em></td>
+<td align="left"><em>string</em> <br>indicate specific version of Docker images<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>docker.saveContainerOnExit</em></td>
+<td align="left"><em>boolean</em> <br>if ture, docker run command will NOT include the --rm flag<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>docker.user</em></td>
+<td align="left"><em>string</em> <br>name of the Docker Hub user for getting docker containers<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="exe"><a href="../../Configuration/#exe-properties">exe</a><a class="headerlink" href="#exe" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>exe.Rscript</em></td>
+<td align="left"><em>executable</em> <br>Path for the "Rscript" executable; if not supplied, any script that needs the Rscript command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>exe.awk</em></td>
+<td align="left"><em>executable</em> <br>Path for the "awk" executable; if not supplied, any script that needs the awk command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>exe.docker</em></td>
+<td align="left"><em>executable</em> <br>Path for the "docker" executable; if not supplied, any script that needs the docker command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>exe.gzip</em></td>
+<td align="left"><em>executable</em> <br>Path for the "gzip" executable; if not supplied, any script that needs the gzip command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>exe.java</em></td>
+<td align="left"><em>executable</em> <br>Path for the "java" executable; if not supplied, any script that needs the java command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>exe.python</em></td>
+<td align="left"><em>executable</em> <br>Path for the "python" executable; if not supplied, any script that needs the python command will assume it is on the PATH.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="genmod">genMod<a class="headerlink" href="#genmod" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>genMod.dockerContainerName</em></td>
+<td align="left"><em>string</em> <br>Name of the docker container to use when executing an instance of the GenMod module.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="humann2">humann2<a class="headerlink" href="#humann2" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>humann2.disableGeneFamilies</em></td>
+<td align="left"><em>boolean</em> <br>disable HumanN2 Gene Family report<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>humann2.disablePathAbundance</em></td>
+<td align="left"><em>boolean</em> <br>disable HumanN2 Pathway Abundance report<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>humann2.disablePathCoverage</em></td>
+<td align="left"><em>boolean</em> <br>disable HumanN2 Pathway Coverage report<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="input"><a href="../Input/">input</a><a class="headerlink" href="#input" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>input.dirPaths</em></td>
+<td align="left"><em>list of file paths</em> <br>List of one or more directories containing the pipeline input data.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>input.ignoreFiles</em></td>
+<td align="left"><em>list</em> <br>file names to ignore if found in input directories<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>input.requireCompletePairs</em></td>
+<td align="left"><em>boolean</em> <br>Require all sequence input files have matching paired reads<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>input.suffixFw</em></td>
+<td align="left"><em>regex</em> <br>file suffix used to identify forward reads ininput.dirPaths<br><em>default:</em>  _R1</td>
+</tr>
+<tr>
+<td align="left"><em>input.suffixRv</em></td>
+<td align="left"><em>regex</em> <br>file suffix used to identify reverse reads ininput.dirPaths<br><em>default:</em>  _R2</td>
+</tr>
+<tr>
+<td align="left"><em>input.trimPrefix</em></td>
+<td align="left"><em>string</em> <br>prefix to trim from sequence file names or headers to obtain Sample ID<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>input.trimSuffix</em></td>
+<td align="left"><em>string</em> <br>suffix to trim from sequence file names or headers to obtain Sample ID<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="metadata"><a href="../Metadata/">metadata</a><a class="headerlink" href="#metadata" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>metadata.barcodeColumn</em></td>
+<td align="left"><em>string</em> <br>metadata column with identifying barcodes<br><em>default:</em>  BarcodeSequence</td>
+</tr>
+<tr>
+<td align="left"><em>metadata.columnDelim</em></td>
+<td align="left"><em>string</em> <br>defines how metadata columns are separated; Typically files are tab or comma separated.<br><em>default:</em>  \t</td>
+</tr>
+<tr>
+<td align="left"><em>metadata.commentChar</em></td>
+<td align="left"><em>string</em> <br>metadata file comment indicator; Empty string is a valid option indicating no comments in metadata file.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>metadata.fileNameColumn</em></td>
+<td align="left"><em>string</em> <br>name of the metadata column with input file names<br><em>default:</em>  InputFileName</td>
+</tr>
+<tr>
+<td align="left"><em>metadata.filePath</em></td>
+<td align="left"><em>string</em> <br>If absolute file path, use file as metadata.<br>If directory path, must find exactly 1 file within, to use as metadata.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>metadata.nullValue</em></td>
+<td align="left"><em>string</em> <br>metadata cells with this value will be treated as empty<br><em>default:</em>  NA</td>
+</tr>
+<tr>
+<td align="left"><em>metadata.required</em></td>
+<td align="left"><em>boolean</em> <br>If Y, require metadata row for each sample with sequence data in input dirs; If N, samples without metadata are ignored.<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>metadata.useEveryRow</em></td>
+<td align="left"><em>boolean</em> <br>If Y, require a sequence file for every SampleID (every row) in metadata file; If N, metadata can include extraneous SampleIDs.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="pipeline">pipeline<a class="headerlink" href="#pipeline" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>pipeline.copyInput</em></td>
+<td align="left"><em>boolean</em> <br>copy input files into pipeline root directory<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.defaultDemultiplexer</em></td>
+<td align="left"><em>string</em> <br>Java class name for default module used to demultiplex data<br><em>default:</em>  biolockj.module.implicit.Demultiplexer</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.defaultFastaConverter</em></td>
+<td align="left"><em>string</em> <br>Java class name for default module used to convert files into fasta format<br><em>default:</em>  biolockj.module.seq.AwkFastaConverter</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.defaultProps</em></td>
+<td align="left"><em>list of file paths</em> <br>file path of default property file(s); Nested default properties are supported (so the default property file can also have a default, and so on).<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.defaultSeqMerger</em></td>
+<td align="left"><em>string</em> <br>Java class name for default module used combined paired read files<br><em>default:</em>  biolockj.module.seq.PearMergeReads</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.defaultStatsModule</em></td>
+<td align="left"><em>string</em> <br>Java class name for default module used generate p-value and other stats<br><em>default:</em>  biolockj.module.report.r.R_CalculateStats</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.deleteTempFiles</em></td>
+<td align="left"><em>boolean</em> <br>delete files in temp directories<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.detachJavaModules</em></td>
+<td align="left"><em>boolean</em> <br>If true Java modules do not run with main BioLockJ Java application. Instead they run on compute nodes on the CLUSTER or AWS environments.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.disableAddImplicitModules</em></td>
+<td align="left"><em>boolean</em> <br>If set to true, implicit modules will not be added to the pipeline.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.disableAddPreReqModules</em></td>
+<td align="left"><em>boolean</em> <br>If set to true, prerequisite modules will not be added to the pipeline.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.downloadDir</em></td>
+<td align="left"><em>file path</em> <br>local directory used as the destination in the download command<br><em>default:</em>  $HOME/projects/downloads</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.env</em></td>
+<td align="left"><em>string</em> <br>Environment in which a pipeline is run. Options: cluster, aws, local<br><em>default:</em>  local</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.limitDebugClasses</em></td>
+<td align="left"><em>list</em> <br>limit classes that log debug statements<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.logLevel</em></td>
+<td align="left"><em>string</em> <br>Options: DEBUG, INFO, WARN, ERROR<br><em>default:</em>  INFO</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.permissions</em></td>
+<td align="left"><em>string</em> <br>Set chmod -R command security bits on pipeline root directory (Ex. 770)<br><em>default:</em>  770</td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.setSeed</em></td>
+<td align="left"><em>integer</em> <br>set the seed for a random process. Must be positive integer.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>pipeline.userProfile</em></td>
+<td align="left"><em>file path</em> <br>Bash profile - may be ~/.bash_profile or ~/.bashrc or others<br><em>default:</em>  ${HOME}/.bash_profile</td>
+</tr>
+</tbody>
+</table>
+<h3 id="qiime">qiime<a class="headerlink" href="#qiime" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>qiime.alphaMetrics</em></td>
+<td align="left"><em>list</em> <br>alpha diversity metrics to calculate through qiime; For complete list of skbio.diversity.alpha options, see <a href= "http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html" target="_top">http://scikit-bio.org/docs/latest/generated/skbio.diversity.alpha.html</a><br><em>default:</em>  shannon</td>
+</tr>
+<tr>
+<td align="left"><em>qiime.plotAlphaMetrics</em></td>
+<td align="left"><em>boolean</em> <br><br><em>default:</em>  Y</td>
+</tr>
+</tbody>
+</table>
+<h3 id="r"><a href="../R/">r</a><a class="headerlink" href="#r" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>r.colorBase</em></td>
+<td align="left"><em>string</em> <br>base color used for labels &amp; headings in the PDF report; Must be a valid color in R.<br><em>default:</em>  black</td>
+</tr>
+<tr>
+<td align="left"><em>r.colorFile</em></td>
+<td align="left"><em>file path</em> <br>path to a tab-delimited file giving the color to use for each value of each metadata field plotted.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.colorHighlight</em></td>
+<td align="left"><em>string</em> <br>color is used to highlight significant OTUs in plot<br><em>default:</em>  red</td>
+</tr>
+<tr>
+<td align="left"><em>r.colorPalette</em></td>
+<td align="left"><em>string</em> <br>palette argument passed to <a href="https://www.rdocumentation.org/packages/ggpubr/versions/0.2/topics/get_palette">get_palette {ggpubr}</a> to select colors for some output visualiztions<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.colorPoint</em></td>
+<td align="left"><em>string</em> <br>default color of scatterplot and strip-chart plot points<br><em>default:</em>  black</td>
+</tr>
+<tr>
+<td align="left"><em>r.debug</em></td>
+<td align="left"><em>boolean</em> <br>Options: Y/N. If Y, will generate R Script log files<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>r.excludeFields</em></td>
+<td align="left"><em>list</em> <br>Fields from the metadata that will be excluded from any auto-determined typing, or plotting; R reports must contain at least one valid nominal or numeric metadata field.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.nominalFields</em></td>
+<td align="left"><em>list</em> <br>Override default property type by explicitly listing it as nominal.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.numericFields</em></td>
+<td align="left"><em>list</em> <br>Override default property type by explicitly listing it as numeric.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.pch</em></td>
+<td align="left"><em>integer</em> <br>Sets R plot pch parameter for PDF report<br><em>default:</em>  21</td>
+</tr>
+<tr>
+<td align="left"><em>r.pvalCutoff</em></td>
+<td align="left"><em>numeric</em> <br>p-value cutoff used to assign label <em>r.colorHighlight</em><br><em>default:</em>  0.05</td>
+</tr>
+<tr>
+<td align="left"><em>r.rareOtuThreshold</em></td>
+<td align="left"><em>numeric</em> <br>If &gt;=1, R will filter OTUs found in fewer than this many samples. If &lt;1, R will interperate the value as a percentage and discard OTUs not found in at least that percentage of samples<br><em>default:</em>  1</td>
+</tr>
+<tr>
+<td align="left"><em>r.reportFields</em></td>
+<td align="left"><em>list</em> <br>Metadata fields to include in reports; Fields listed here must exist in the metadata file. R reports must contain at least one valid field.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.saveRData</em></td>
+<td align="left"><em>boolean</em> <br>If Y, all R script generating BioModules will save R Session data to the module output directory to a file using the extension ".RData"<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>r.timeout</em></td>
+<td align="left"><em>integer</em> <br>the # minutes before R Script will time out and fail; If undefined, no timeout is used.<br><em>default:</em>  10</td>
+</tr>
+<tr>
+<td align="left"><em>r.useUniqueColors</em></td>
+<td align="left"><em>boolean</em> <br>force to use a unique color for every value in every field plotted; only recommended for low numbers of metadata columns/values.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="r_plotmds">r_PlotMds<a class="headerlink" href="#r_plotmds" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>r_PlotMds.reportFields</em></td>
+<td align="left"><em>list</em> <br>Metadata column names indicating fields to include in the MDS report; Fields listed here must exist in the metadata file.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="report">report<a class="headerlink" href="#report" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>report.logBase</em></td>
+<td align="left"><em>string</em> <br>Options: 10,e,null. If e, use natural log (base e); if 10, use log base 10; if not set, counts will not be converted to a log scale.<br><em>default:</em>  10</td>
+</tr>
+<tr>
+<td align="left"><em>report.minCount</em></td>
+<td align="left"><em>integer</em> <br>minimum table count allowed, if a count less that this value is found, it is set to 0.<br><em>default:</em>  2</td>
+</tr>
+<tr>
+<td align="left"><em>report.numHits</em></td>
+<td align="left"><em>boolean</em> <br>Options: Y/N. If Y, and add Num_Hits to metadata<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>report.numReads</em></td>
+<td align="left"><em>boolean</em> <br>Options: Y/N. If Y, and add Num_Reads to metadata<br><em>default:</em>  Y</td>
+</tr>
+<tr>
+<td align="left"><em>report.scarceCountCutoff</em></td>
+<td align="left"><em>numeric</em> <br>Minimum percentage of samples that must contain a count value for it to be kept.<br><em>default:</em>  0.25</td>
+</tr>
+<tr>
+<td align="left"><em>report.scarceSampleCutoff</em></td>
+<td align="left"><em>numeric</em> <br>Minimum percentage of data columns that must be non-zero to keep the sample.<br><em>default:</em>  0.25</td>
+</tr>
+<tr>
+<td align="left"><em>report.taxonomyLevels</em></td>
+<td align="left"><em>list</em> <br>Options: domain,phylum,class,order,family,genus,species. Generate reports for listed taxonomy levels<br><em>default:</em>  phylum,class,order,family,genus</td>
+</tr>
+<tr>
+<td align="left"><em>report.unclassifiedTaxa</em></td>
+<td align="left"><em>boolean</em> <br>report unclassified taxa<br><em>default:</em>  Y</td>
+</tr>
+</tbody>
+</table>
+<h3 id="script"><a href="../Script/">script</a><a class="headerlink" href="#script" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>script.defaultHeader</em></td>
+<td align="left"><em>string</em> <br>Store default script header for MAIN script and locally run WORKER scripts.<br><em>default:</em>  #!/bin/bash</td>
+</tr>
+<tr>
+<td align="left"><em>script.numThreads</em></td>
+<td align="left"><em>integer</em> <br>Used to reserve cluster resources and passed to any external application call that accepts a numThreads parameter.<br><em>default:</em>  8</td>
+</tr>
+<tr>
+<td align="left"><em>script.numWorkers</em></td>
+<td align="left"><em>integer</em> <br>Set number of samples to process per script (if parallel processing)<br><em>default:</em>  1</td>
+</tr>
+<tr>
+<td align="left"><em>script.permissions</em></td>
+<td align="left"><em>string</em> <br>Used as chmod permission parameter (ex: 774)<br><em>default:</em>  770</td>
+</tr>
+<tr>
+<td align="left"><em>script.timeout</em></td>
+<td align="left"><em>integer</em> <br>Sets # of minutes before worker scripts times out.<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="validation"><a href="../Validation/">validation</a><a class="headerlink" href="#validation" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>validation.compareOn</em></td>
+<td align="left"><em>list</em> <br>Which columns in the expectation file should be used for the comparison. Options: name, size, md5. Default: use all columns in the expectation file.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>validation.disableValidation</em></td>
+<td align="left"><em>boolean</em> <br>Turn off validation. No validation file output is produced. Options: Y/N. default: N<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>validation.expectationFile</em></td>
+<td align="left"><em>file path</em> <br>file path that gives the expected values for file metrics (probably generated by a previous run of the same pipeline)<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>validation.reportOn</em></td>
+<td align="left"><em>list</em> <br>Which attributes of the file should be included in the validation report file. Options: name, size, md5<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>validation.sizeWithinPercent</em></td>
+<td align="left"><em>numeric</em> <br>What percentage difference is permitted between an output file and its expectation. Options: any positive number<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>validation.stopPipeline</em></td>
+<td align="left"><em>boolean</em> <br>If enabled, the validation utlility will stop the pipeline if any module fails validation. Options: Y/N<br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="aws">aws<a class="headerlink" href="#aws" title="Permanent link">#</a></h3>
+<table>
+<thead>
+<tr>
+<th align="left">Property</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>aws.copyDbToS3</em></td>
+<td align="left"><em>boolean</em> <br>If true, save all input files to S3<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.copyPipelineToS3</em></td>
+<td align="left"><em>boolean</em> <br>If enabled save pipeline to S3<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.copyReportsToS3</em></td>
+<td align="left"><em>boolean</em> <br>If enabled save reports to S3<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ec2AcquisitionStrategy</em></td>
+<td align="left"><em>string</em> <br>The AWS acquisition strategy (SPOT or DEMAND) sets the service SLA for procuring new EC2 instances<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ec2InstanceID</em></td>
+<td align="left"><em>string</em> <br>ID of an existing ec2 instance to use as the head node<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ec2InstanceType</em></td>
+<td align="left"><em>string</em> <br>AWS instance type determines initial resource class (t2.micro is common)<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ec2SpotPer</em></td>
+<td align="left">__ <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ec2TerminateHead</em></td>
+<td align="left"><em>boolean</em> <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.profile</em></td>
+<td align="left"><em>file path</em> <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.purgeEfsInputs</em></td>
+<td align="left"><em>boolean</em> <br>If enabled delete all EFS dirs (except pipelines)<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.purgeEfsOutput</em></td>
+<td align="left"><em>boolean</em> <br>If enabled delete all EFS/pipelines<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.ram</em></td>
+<td align="left"><em>string</em> <br>AWS memory set in Nextflow main.nf<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.region</em></td>
+<td align="left"><em>string</em> <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.s3</em></td>
+<td align="left"><em>string</em> <br>AWS S3 pipeline output directory used by Nextflow main.nf<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.s3TransferTimeout</em></td>
+<td align="left"><em>integer</em> <br>Set the max number of minutes to allow for S3 transfers to complete.<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.saveCloud</em></td>
+<td align="left"><em>boolean</em> <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.stack</em></td>
+<td align="left"><em>string</em> <br>An existing aws cloud stack ID<br><em>default:</em>  <em>null</em></td>
+</tr>
+<tr>
+<td align="left"><em>aws.walltime</em></td>
+<td align="left">__ <br><br><em>default:</em>  <em>null</em></td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../Built-in-modules/" class="btn btn-neutral float-right" title="Modules">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../../Configuration/" class="btn btn-neutral" title="Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+      <p>2019 Fodor Lab</p>
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../../Configuration/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../Built-in-modules/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" defer></script>
+      <script src="../../search/main.js" defer></script>
+
+</body>
+</html>

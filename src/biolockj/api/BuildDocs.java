@@ -470,6 +470,6 @@ public class BuildDocs {
 			
 	private static File baseDir;
 	private static String basePackage = null;
-	private static String pathToPartials = "mkdocs/user-guide/docs/partials/";
+	private static String pathToPartials = "mkdocs/user-guide/partials/";
 
 }

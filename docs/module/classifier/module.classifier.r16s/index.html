@@ -60,16 +60,15 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../../../Commands/">Commands</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
     <span class="caption-text">Pipeline Componenets</span>
     <ul class="subnav">
                 <li class="">
                     
     <a class="" href="../../../Configuration/">Configuration</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/General-Properties/">General Properties</a>
                 </li>
                 <li class="">
                     
@@ -83,6 +82,44 @@
                     
     <a class="" href="../../../Dependencies/">Dependencies</a>
                 </li>
+                <li class="">
+                    
+    <span class="caption-text">Configuration Details</span>
+    <ul class="subnav">
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Cluster/">cluster</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Docker/">docker</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Input/">input</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Metadata/">metadata</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/R/">r</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Report.md">report</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Script/">script</a>
+                </li>
+                <li class="toctree-l3">
+                    
+    <a class="" href="../../../GENERATED/Validation/">validation</a>
+                </li>
+    </ul>
+                </li>
     </ul>
 	    </li>
           
@@ -90,6 +127,10 @@
 		
     <span class="caption-text">Features</span>
     <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="../../../Commands/">Commands</a>
+                </li>
                 <li class="">
                     
     <a class="" href="../../../Check-Dependencies/">Check Dependencies</a>
@@ -100,7 +141,7 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../Validation/">Validation</a>
+    <a class="" href="../../../GENERATED/Validation/">Validation</a>
                 </li>
                 <li class="">
                     
@@ -108,9 +149,18 @@
                 </li>
                 <li class="">
                     
-    <a class="" href="../../../BioLockJ-Api/">BioLockJ API</a>
+    <a class="" href="../../../GENERATED/BioLockJ-Api/">BioLockJ API</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../../../GENERATED/biolockj-help/">BioLockJ help menu</a>
                 </li>
     </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../../../Supported-Environments/">Environments</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -157,7 +207,7 @@
               
                 <p><strong>biolockj.module.classifier.r16s</strong> is a sub-package of module.classifier.<br><br>Package modules extend <a href="https://msioda.github.io/BioLockJ/docs/biolockj/module/classifier/ClassifierModuleImpl.html">ClassifierModuleImpl</a> to cluster and classify 16S micbrobial samples for taxonomy assignment.</p>
 <hr />
-<h4 id="qiimeclosedrefclassifier">QiimeClosedRefClassifier</h4>
+<h4 id="qiimeclosedrefclassifier">QiimeClosedRefClassifier<a class="headerlink" href="#qiimeclosedrefclassifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.r16s.QiimeClosedRefClassifier</code></p>
 <p><strong>Description:</strong>  This module picks OTUs using a closed reference database and constructs an OTU table via the QIIME script <a href="http://qiime.org/scripts/pick_closed_reference_otus.html">pick_closed_reference_otus.py</a>.  Taxonomy is assigned using a pre-defined taxonomy map of reference sequence OTU to taxonomy.  This is the fastest OTU picking method since samples can be processed in parallel batches.  Before the QIIME script is run, batches are prepared in the temp directory, with each batch directory containing a fasta directory with <em>script.batchSize</em> fasta files and a QIIME mapping file, created with awk, called batchMapping.tsv for the batch of samples.   Inherits from <a href="../../../module.implicit.qiime#QiimeClassifier">QiimeClassifier</a>.</p>
 <p><strong>Options:</strong></p>
@@ -165,7 +215,7 @@
 <li><em>exe.awk</em> </li>
 </ul>
 <hr />
-<h4 id="qiimedenovoclassifier">QiimeDeNovoClassifier</h4>
+<h4 id="qiimedenovoclassifier">QiimeDeNovoClassifier<a class="headerlink" href="#qiimedenovoclassifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.r16s.QiimeDeNovoClassifier</code></p>
 <p><strong>Description:</strong>  This module runs the QIIME <a href="http://qiime.org/scripts/pick_de_novo_otus.html">pick_de_novo_otus.py</a> script on all fasta sequence files in a single script since OTUs are assigned by a clustering algorithm.  Additional parameters for this script are set using <em>exe.classifierParams</em>.  If <em>qiime.removeChimeras</em> = "Y", vsearch is used to find chimeric sequences in the output and the QIIME script <a href="http://qiime.org/scripts/filter_otus_from_otu_table.html">filter_otus_from_otu_table.py</a> is run to remove them from ./output/otu_table.biom.  Inherits from <a href="../../../module.implicit.qiime#QiimeClassifier">QiimeClassifier</a>.</p>
 <p><strong>Options:</strong></p>
@@ -175,7 +225,7 @@
 <li><em>qiime.removeChimeras</em> </li>
 </ul>
 <hr />
-<h4 id="qiimeopenrefclassifier">QiimeOpenRefClassifier</h4>
+<h4 id="qiimeopenrefclassifier">QiimeOpenRefClassifier<a class="headerlink" href="#qiimeopenrefclassifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.r16s.QiimeOpenRefClassifier</code></p>
 <p><strong>Description:</strong>  This module runs the QIIME <a href="http://qiime.org/scripts/pick_open_reference_otus.html">pick_open_reference_otus.py</a> script on all fasta sequence files in a single script since clusters not identified in the reference database are assigned by a clustering algorithm.  Additional parameters for this script are set using <em>exe.classifierParams</em>.  If <em>qiime.removeChimeras</em> = "Y", vsearch is used to find chimeric sequences in the output and the QIIME script <a href="http://qiime.org/scripts/filter_otus_from_otu_table.html">filter_otus_from_otu_table.py</a> is run to remove them from ./output/otu_table.biom.  Inherits from <a href="../../../module.implicit.qiime#QiimeClassifier">QiimeClassifier</a>.</p>
 <p><strong>Options:</strong></p>
@@ -185,7 +235,7 @@
 <li><em>qiime.removeChimeras</em> </li>
 </ul>
 <hr />
-<h4 id="rdpclassifier">RdpClassifier</h4>
+<h4 id="rdpclassifier">RdpClassifier<a class="headerlink" href="#rdpclassifier" title="Permanent link">#</a></h4>
 <p><code>#BioModule biolockj.module.classifier.r16s.RdpClassifier</code></p>
 <p><strong>Description:</strong>  Classify 16s samples with <a href="http://rdp.cme.msu.edu/classifier/classifier.jsp">RDP</a>.   </p>
 <p><strong>Options:</strong></p>
