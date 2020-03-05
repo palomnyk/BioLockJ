@@ -19,7 +19,7 @@ export class ModuleTile extends Component{
     let blurb;
 
     if (descriptState) {
-      blurb = <h1 onClick={this.toggleDescript}>i</h1>;
+      blurb = <p onClick={this.toggleDescript}>i</p>;
     } else {
       blurb = <p onClick={this.toggleDescript}>
         Description: {this.props.module.description}
@@ -28,12 +28,12 @@ export class ModuleTile extends Component{
       </p>;
     }
     return (
-      <div>
+      <li>
         {blurb}
         <p style={divStyle}>
         {this.props.module.title}
         </p>
-      </div>
+      </li>
     );
   }
 }

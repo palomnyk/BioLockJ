@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moduleTile from './moduleTile.js'
+import ModuleTile from './moduleTile.js'
 import log from '../../images/BioLockJ_Logo_NoText_green.svg';
 
 export class ModulesSelected extends Component{
@@ -7,7 +7,7 @@ export class ModulesSelected extends Component{
     return (
       <div style={divStyle}>
         <header >
-          Modules
+          Selected moodules will go here.
         </header>
         Tiles
       </div>

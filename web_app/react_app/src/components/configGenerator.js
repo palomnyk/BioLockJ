@@ -45,20 +45,43 @@ class ConfigGenerator extends React.Component{
 
   render(){
     return (
-      <div>
-          <ModulesUnselected modules = {this.state.modules} />
-          <ModulesSelected/>
+      <div style = {gridContainer} >
+        <ul style = {modulesUnselectedStyle}>
+        <ModulesUnselected  modules = {this.state.modules} />
+        </ul>
+        <ul style = {modulesSelectedStyle}>
+          <ModulesSelected />
+        </ul>
+          
+        <div style = {preview}>Preview will go here.</div>
       </div>
     );
   }
 }
 
-const divStyle = {
-  display: "flex",
-  flex: 1, 
-  flexDirection: 'row'
+const gridContainer = {
+  display: 'grid',
+  gridTemplateAreas:`
+  'header header header header '
+  'buttons unselect select preview'
+  `,
+  gridGap: '10px',
+  backgroundColor: '#2196F3',
+  padding: '10px',
 };
 
+const modulesUnselectedStyle = {
+  gridArea: 'unselect',
+  width: '20em',
+};
 
+const modulesSelectedStyle = {
+  gridArea: 'select',
+  backgroundColor: 'white'
+}
+
+const preview = {
+  gridArea: 'preview',
+}
 
 export default ConfigGenerator;

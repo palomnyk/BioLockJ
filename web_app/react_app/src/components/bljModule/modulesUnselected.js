@@ -11,7 +11,7 @@ export class ModulesUnselected extends Component{
 }
 
 const divStyle = {
-  backgroundColor: "blue"
+  backgroundColor: "white"
 };
 
 export default ModulesUnselected;
