@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 export class ModuleTile extends Component{
   constructor(props) {
     super(props);
-    this.mod = this.props.mod;
     this.toggleDescript = this.toggleDescript.bind(this);
     this.state = {showDescript: true};
   }
@@ -22,21 +21,49 @@ export class ModuleTile extends Component{
       blurb = <p onClick={this.toggleDescript}>i</p>;
     } else {
       blurb = <p onClick={this.toggleDescript}>
-        Description: {this.props.module.description}
+        Description: {this.props.description.toString()}
         <br/>
-        Details: {this.props.module.description}
+        
+        Details: {this.props.details.toString()}
       </p>;
     }
+
+    function dragStarted(evt) {
+      //start drag
+      let data = {
+        details: evt.target.getAttribute("details"),
+        description: evt.target.getAttribute("description"),
+        title: evt.target.getAttribute("title"),
+      };
+      // console.log(`drag data: ${JSON.stringify(data)}`);
+      evt.dataTransfer.setData("module", JSON.stringify(data));
+      //specify allowed transfer
+      evt.dataTransfer.effectAllowed = "move";
+    };
+
     return (
-      <li>
+      <React.Fragment>
+      <li draggable="true" 
+      onDragStart={dragStarted} 
+      style={tileStyle}
+      description = {this.props.description}
+      title = {this.props.title}
+      details = {this.props.details}
+      data-tag={this.props.title}
+      >
         {blurb}
         <p style={divStyle}>
-        {this.props.module.title}
+        {this.props.title}
         </p>
       </li>
+      </React.Fragment>
     );
   }
 }
+
+const tileStyle = {
+  listStyleType: "none"
+};
 
 const divStyle = {
   backgroundColor: "green"

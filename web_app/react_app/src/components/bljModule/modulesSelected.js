@@ -1,22 +1,39 @@
 import React, { Component } from 'react';
 import ModuleTile from './moduleTile.js'
-import log from '../../images/BioLockJ_Logo_NoText_green.svg';
+// import log from '../../images/BioLockJ_Logo_NoText_green.svg';
 
 export class ModulesSelected extends Component{
-  render(){
-    return (
-      <div style={divStyle}>
-        <header >
-          Selected moodules will go here.
-        </header>
-        Tiles
-      </div>
-    );
+
+  // constructor(props){
+  //   super(props)
+  //   this.state = {
+  //     selectedModules: [],
+  //     //moduleSelectHandler: this.moduleSelectHandler.bind(this),
+  //   };
+  // }
+
+  render() {
+    if (this.props.modules) {
+      return (
+        this.props.modules.map( module => (
+          <ModuleTile 
+          description = {module.description}
+          details = {module.details}
+          title = {module.title}
+          key={module.title}/>
+        ))
+      );
+    } else {
+      return (
+        <li style = {liStyle}>Place selected modules here.</li>
+      )
+    }
+    
   }
 }
 
-const divStyle = {
-  backgroundColor: "red"
+const liStyle = {
+  listStyleType: "none"
 };
 
 export default ModulesSelected;
