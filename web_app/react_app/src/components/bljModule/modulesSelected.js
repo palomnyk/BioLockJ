@@ -4,13 +4,9 @@ import ModuleTile from './moduleTile.js'
 
 export class ModulesSelected extends Component{
 
-  // constructor(props){
-  //   super(props)
-  //   this.state = {
-  //     selectedModules: [],
-  //     //moduleSelectHandler: this.moduleSelectHandler.bind(this),
-  //   };
-  // }
+  constructor(props){
+    super(props);
+  }
 
   render() {
     if (this.props.modules) {
