@@ -4,6 +4,7 @@ export class ModuleTile extends Component{
   constructor(props) {
     super(props);
     this.toggleDescript = this.toggleDescript.bind(this);
+    this.module = this.props.module;
     this.state = {showDescript: true};
   }
 
@@ -21,22 +22,23 @@ export class ModuleTile extends Component{
       blurb = <p onClick={this.toggleDescript}>i</p>;
     } else {
       blurb = <p onClick={this.toggleDescript}>
-        Description: {this.props.description.toString()}
+        Description: {this.props.module.description.toString()}
         <br/>
         
-        Details: {this.props.details.toString()}
+        Details: {this.props.module.details.toString()}
       </p>;
     }
 
-    function dragStarted(evt) {
+    let dragStarted = (evt) =>{
       //start drag
       let child = evt.target;
       for (var i=0; (child=child.previousSibling); i++);
+      if (evt.target.parentNode.id === "modulesUnselected"){
+        
+      }
       console.log(`source index in dragStarted: ${i}`);
       let data = {
-        details: evt.target.getAttribute("details"),
-        description: evt.target.getAttribute("description"),
-        title: evt.target.getAttribute("title"),
+        module: this.props.module,
         source: evt.target.parentNode.id,
         listIndex: i,
       };
@@ -51,14 +53,13 @@ export class ModuleTile extends Component{
       <li draggable="true" 
       onDragStart={dragStarted} 
       style={tileStyle}
-      description = {this.props.description}
-      title = {this.props.title}
-      details = {this.props.details}
-      data-tag={this.props.title}
+      description = {this.props.module.description}
+      title = {this.props.module.title}
+      details = {this.props.module.details}
       >
         {blurb}
         <p style={divStyle}>
-        {this.props.title}
+        {this.props.module.title}
         </p>
       </li>
       </React.Fragment>
