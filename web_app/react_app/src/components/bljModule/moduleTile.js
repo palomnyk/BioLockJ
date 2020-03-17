@@ -30,10 +30,15 @@ export class ModuleTile extends Component{
 
     function dragStarted(evt) {
       //start drag
+      let child = evt.target;
+      for (var i=0; (child=child.previousSibling); i++);
+      console.log(`source index in dragStarted: ${i}`);
       let data = {
         details: evt.target.getAttribute("details"),
         description: evt.target.getAttribute("description"),
         title: evt.target.getAttribute("title"),
+        source: evt.target.parentNode.id,
+        listIndex: i,
       };
       // console.log(`drag data: ${JSON.stringify(data)}`);
       evt.dataTransfer.setData("module", JSON.stringify(data));
