@@ -26,4 +26,5 @@ web_app/react_app/coverage
 web_app/react_app/node_modules/
 web_app/react_app/public/
 
- 
+#prevent vs code profile from uploading
+.vscode
