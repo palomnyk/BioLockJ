@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ModuleTile from './moduleTile.js'
 // import log from '../../images/BioLockJ_Logo_NoText_green.svg';
 
-export class ModulesSelected extends Component{
+export class ModuleListLayout extends Component{
 
   constructor(props){
     super(props);
@@ -13,10 +13,9 @@ export class ModulesSelected extends Component{
       return (
         this.props.modules.map( module => (
           <ModuleTile 
-          description = {module.description}
-          details = {module.details}
-          title = {module.title}
-          key={module.title}/>
+          module = {module}
+          key={module.title}
+          />
         ))
       );
     } else {
@@ -32,4 +31,4 @@ const liStyle = {
   listStyleType: "none"
 };
 
-export default ModulesSelected;
+export default ModuleListLayout;
