@@ -1,7 +1,7 @@
 import React from 'react';
 import ModulesUnselected from './bljModule/modulesUnselected.js'
 import ModulesSelected from './bljModule/modulesSelected';
-import ModuleTile from './bljModule/moduleTile.js'
+// import ModuleTile from './bljModule/moduleTile.js'
 
 class ConfigGenerator extends React.Component{
   constructor(props){
@@ -50,49 +50,61 @@ class ConfigGenerator extends React.Component{
       ev.preventDefault();
       // ev.stopPropagation();
     }
-  
     let drop = (ev) => {
       ev.preventDefault();
+      ev.persist();
+      console.log("this.state.selectedModules begining of drop");
+      console.info(this.state.selectedModules);
       let data = JSON.parse(ev.dataTransfer.getData("module"));
       // console.log(`drop data: ${data}`)
-      let newMod = {
+      let dropMod = {
         description: data.description,
         details: data.details,
         title: data.title,
         key: data.title,
       };
+      console.info(dropMod);
+      let source = data.source;
+      let child = ev.target;
+      console.log("child");
+      console.info(child)
+      for (var i=0; (child=child.previousSibling); i++);
+      console.log(`index of child ${i}`);
+      let newModArray = [...this.state.selectedModules];
       let sm = document.getElementById("modulesSelected");
       let lastLi = document.getElementById("selectModulesLast");
-      let smc = Array.from(sm.children);
-      console.log(`sm.child1: ${smc}`);
-      console.log(`sm: ${sm}`);
-      console.log(`smc.length: ${smc.length}`);
-      // console.log(newMod);
-      if (this.state.selectedModules.length === 0 | ev.target === sm | ev.target === lastLi) {
-        this.setState({ selectedModules: [...this.state.selectedModules, newMod] });
-      } else {
-        let child = ev.target;
-        //try to get li index in child arrayf\
-        for (var i=0; (child=child.previousSibling); i++);
-        // var i = Array.prototype.indexOf.call(document.getElementById("modulesSelected").childNodes, child);
-        console.log(`child: ${ev.target.innerHTML}`);
-        console.log(`i : ${i}`);
-        console.log(`ev.targ taaggg: ${ev.target.getAttribute("data-tag")}`);
-        let newModArray = this.state.selectedModules;
-        // console.log(`newModArray: ${newModArray}`);
-        
-        // let targTitle = newModArray.find( (mod) => {
-        //   mod.title === ev.target.title});
-        // let targIndex = this.state.selectedModules.indexOf(targTitle);
-        newModArray.splice(i-1,0, newMod);
+      if (source === "modulesUnselected") {
+        if (this.state.selectedModules.length === 0 || ev.target === sm || ev.target === lastLi) {
+          console.log("this.state.selectedModules; after modulesUnselected if");
+          this.setState({ selectedModules: [...this.state.selectedModules, dropMod] },
+            console.info(this.state.selectedModules));
+        } else {
+          //try to get li index in child array
+          newModArray.splice(i,0, dropMod);
+          console.log("this.state.selectedModules after modulesUnselected else");
+          this.setState({ selectedModules: newModArray }, console.info(this.state.selectedModules));
+        }
+      }
+      if (source === "modulesSelected") {
+        if (data.listIndex === i){
+          console.log("dropped module on itself");
+          
+        }else{
+        // console.log(`in if (source === "modulesSelected"`);
+        newModArray.splice(data.listIndex,1);
+        newModArray.splice(i,0,dropMod);
+        console.log("newModArray");
+        console.info(newModArray);
         this.setState({ selectedModules: newModArray });
+        }
+
       }
       // this.setState({selectedModules: this.state.selectedModules.push(newMod)});
       // ev.target.appendChild(document.getElementById(data));
     }
     return (
       <div style = {gridContainer} >
-        <ul style = {modulesUnselectedStyle}>
+        <ul id = "modulesUnselected" style = {modulesUnselectedStyle}>
           <ModulesUnselected  modules = {this.state.modules} />
         </ul>
         <ul 
