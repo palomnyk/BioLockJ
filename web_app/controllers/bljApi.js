@@ -88,21 +88,25 @@ exports.listProps = function (req, res, next) {
   try {
     let param = req.body.jsonParam != undefined ? ` --module ${req.body.jsonParam}` : "";
     let bljApi = spawn(`biolockj-api listProps ${param}`, {shell: '/bin/bash'});
+    let resp = [];
     bljApi.stdout.on('data', function (data) {
-      return(res.end(JSON.stringify({output: String(data)})));
+      resp.push(data);
+      // return(res.end(JSON.stringify({output: String(data)})));
     });
     bljApi.stderr.on('data', function (data) {
       console.log('stderr: ' + data.toString());
     });
     bljApi.on('exit', function (code) {
-      console.log('child process exited with code ' + code.toString());
+      console.log('bljApi listProps exited with code ' + code.toString());
+      const respJoin = String(resp.join('')).split(/[\n,]/g);
+      console.log(`Joined data: ${respJoin}`);
+      return(res.end(JSON.stringify({output: respJoin})));
     });
   } catch (e) {
     console.error(e);
     errorLogger.writeError(e.stack);
   }
 }
-
 exports.listAllProps = function (req, res, next) {
   /*listAllProps [ --external-modules <dir> ]
         Returns a list of all properties, include all backbone properties and all module properties.
@@ -125,7 +129,6 @@ exports.listAllProps = function (req, res, next) {
     errorLogger.writeError(e.stack);
   }
 }
-
 exports.propType = function (req, res, next) {
   /*propType --property <property> [ --module <module_path> [ --external-modules <dir> ] ]
         Returns the type expected for the property: String, list, integer, positive number, etc.
@@ -248,10 +251,8 @@ exports.propInfo = function (req, res, next) {
     errorLogger.writeError(e.stack);
   }
 }
-
 exports.moduleInfo = function (req, res, next) {
-  /* 
-    moduleInfo [--external-modules <dir>]
+  /* moduleInfo [--external-modules <dir>]
         Returns a json formatted list of all modules and for each module that 
         implements the ApiModule interface, it lists the props used by the module,
         and for each prop the type, descrption and default.*/
@@ -266,9 +267,9 @@ exports.moduleInfo = function (req, res, next) {
       console.log('stderr: ' + data.toString());
     });
     bljApi.on('exit', function (code) {
-      console.log('child process exited with code ' + code.toString());
+      console.log('blj-api moduleInfo exited with code ' + code.toString());
       const respJoin = resp.join('')
-      console.log(`Joined data: ${respJoin}`);
+      // console.log(`Joined data: ${respJoin}`);
       return(res.end(JSON.stringify({output: String(respJoin)})));
     });
   } catch (e) {
