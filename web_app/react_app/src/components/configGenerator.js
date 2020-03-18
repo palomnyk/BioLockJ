@@ -1,5 +1,5 @@
 import React from 'react';
-import ModuleSelectionLayout from './bljModule/moduleListLayout';
+import ModuleSelectionLayout from './bljModule/moduleSelectionLayout';
 import ModuleBar from './bljModule/moduleBar';
 
 class ConfigGenerator extends React.Component{
