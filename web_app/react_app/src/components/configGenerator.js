@@ -1,5 +1,6 @@
 import React from 'react';
-import ModuleListLayout from './bljModule/moduleListLayout';
+import ModuleSelectionLayout from './bljModule/moduleListLayout';
+import ModuleBar from './bljModule/moduleBar';
 
 class ConfigGenerator extends React.Component{
   constructor(props){
@@ -111,20 +112,20 @@ class ConfigGenerator extends React.Component{
       <div>
         <div style = {gridContainer} >
           <ul id = "modulesUnselected" style = {modulesUnselectedStyle}>
-            <ModuleListLayout  modules = {this.state.modules} />
+            <ModuleSelectionLayout  modules = {this.state.modules} />
           </ul>
           <ul 
           id = "modulesSelected"
           style = {modulesSelectedStyle} 
           onDrop={drop} 
           onDragOver={allowDrop}>
-            <ModuleListLayout modules = {this.state.selectedModules} />
+            <ModuleSelectionLayout modules = {this.state.selectedModules} />
             <li style = {lastLiStyle} id="selectedModsLast" draggable="false"></li>
           </ul>
           <div style = {preview}></div>
         </div>
         <div>
-
+          <moduleBarLayout modules = {this.state.selectedModules}
         </div>
       </div>
     );

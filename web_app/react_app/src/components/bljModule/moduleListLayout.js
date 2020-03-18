@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import ModuleTile from './moduleTile.js'
-// import log from '../../images/BioLockJ_Logo_NoText_green.svg';
 
-export class ModuleListLayout extends Component{
+export class ModuleSelectionLayout extends Component{
 
-  constructor(props){
-    super(props);
-  }
+  // constructor(props){
+  //   super(props);
+  // }
 
   render() {
     if (this.props.modules) {
@@ -31,4 +30,4 @@ const liStyle = {
   listStyleType: "none"
 };
 
-export default ModuleListLayout;
+export default ModuleSelectionLayout;
