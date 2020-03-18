@@ -1,9 +1,5 @@
 import React from 'react';
-import ModulesUnselected from './bljModule/modulesUnselected.js'
-import ModulesSelected from './bljModule/modulesSelected';
 import ModuleListLayout from './bljModule/moduleListLayout';
-import ModuleTile from './bljModule/moduleTile.js';
-// import ModuleTile from './bljModule/moduleTile.js'
 
 class ConfigGenerator extends React.Component{
   constructor(props){
@@ -12,6 +8,7 @@ class ConfigGenerator extends React.Component{
       selectedModules: [],
       //moduleSelectHandler: this.moduleSelectHandler.bind(this),
       selectedProperties: new Map(),
+      genProps: new Map(),
       modules: [],
       properties: new Map(),
     };
@@ -36,6 +33,25 @@ class ConfigGenerator extends React.Component{
       console.error(error);
     }
   }
+  async fetchGenProps() {
+    try {
+      console.log("in fetchGenProps");
+      const fetchParams = {
+        method: 'post',
+        headers: {
+          "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+        //TODO: add external module in body
+       // body: JSON.stringify({jsonParam: "/dev/null"}),
+      }
+      const fetchModules = await fetch('/bljApiListProps', fetchParams);
+      let ml = await fetchModules.json();
+      console.log(ml.output);
+      return ml.output;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   componentDidMount(){
     //add module JSON to state
@@ -44,6 +60,11 @@ class ConfigGenerator extends React.Component{
       this.setState({modules: op});
       console.log(this.state.modules);
     });
+    this.fetchGenProps().then(
+      (op) => {
+        this.setState({genProps: op});
+        console.log(this.state.genProps);
+      });
     // this.setState({modules: this.fetchModJson()});
   }
 
@@ -57,17 +78,14 @@ class ConfigGenerator extends React.Component{
       ev.persist();
       let data = JSON.parse(ev.dataTransfer.getData("module"));
       let dropMod =  data.module;
-      console.info(dropMod);
       let source = data.source;
       let child = ev.target;
       for (var i=0; (child=child.previousSibling); i++);
-      console.log(`index of child ${i}`);
       let newModArray = [...this.state.selectedModules];
       let sm = document.getElementById("modulesSelected");
       let lastLi = document.getElementById("selectModulesLast");
       if (source === "modulesUnselected") {
         if (this.state.selectedModules.length === 0 || ev.target === sm || ev.target === lastLi) {
-          console.log("this.state.selectedModules; after modulesUnselected if");
           this.setState({ selectedModules: [...this.state.selectedModules, dropMod] },
             console.info(this.state.selectedModules));
         } else {
@@ -85,26 +103,29 @@ class ConfigGenerator extends React.Component{
         // console.log(`in if (source === "modulesSelected"`);
         newModArray.splice(data.listIndex,1);
         newModArray.splice(i,0,dropMod);
-        console.log("newModArray");
-        console.info(newModArray);
         this.setState({ selectedModules: newModArray });
         }
       }
     }
     return (
-      <div style = {gridContainer} >
-        <ul id = "modulesUnselected" style = {modulesUnselectedStyle}>
-          <ModuleListLayout  modules = {this.state.modules} />
-        </ul>
-        <ul 
-        id = "modulesSelected"
-        style = {modulesSelectedStyle} 
-        onDrop={drop} 
-        onDragOver={allowDrop}>
-          <ModuleListLayout modules = {this.state.selectedModules} />
-          <li style = {lastLiStyle} id="selectedModsLast" draggable="false"></li>
-        </ul>
-        <div style = {preview}></div>
+      <div>
+        <div style = {gridContainer} >
+          <ul id = "modulesUnselected" style = {modulesUnselectedStyle}>
+            <ModuleListLayout  modules = {this.state.modules} />
+          </ul>
+          <ul 
+          id = "modulesSelected"
+          style = {modulesSelectedStyle} 
+          onDrop={drop} 
+          onDragOver={allowDrop}>
+            <ModuleListLayout modules = {this.state.selectedModules} />
+            <li style = {lastLiStyle} id="selectedModsLast" draggable="false"></li>
+          </ul>
+          <div style = {preview}></div>
+        </div>
+        <div>
+
+        </div>
       </div>
     );
   }
