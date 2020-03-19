@@ -1,34 +1,12 @@
 import React, { Component } from 'react';
+import InfoModuleDisplay, { InfoModalDisplay } from '../infoModalDisplay.js';
 
 export class ModuleTile extends Component{
   constructor(props) {
     super(props);
-    this.toggleDescript = this.toggleDescript.bind(this);
-    this.module = this.props.module;
-    this.state = {showDescript: true};
-  }
-
-  toggleDescript () {
-    this.setState({ 
-      showDescript: !this.state.showDescript
-    });
   }
 
   render(){
-    const descriptState = this.state.showDescript;
-    let blurb;
-
-    if (descriptState) {
-      blurb = <p onClick={this.toggleDescript}>i</p>;
-    } else {
-      blurb = <p onClick={this.toggleDescript}>
-        Description: {this.props.module.description.toString()}
-        <br/>
-        
-        Details: {this.props.module.details.toString()}
-      </p>;
-    }
-
     let dragStarted = (evt) =>{
       //start drag
       let child = evt.target;
@@ -49,30 +27,36 @@ export class ModuleTile extends Component{
     };
 
     return (
-      <React.Fragment>
       <li draggable="true" 
       onDragStart={dragStarted} 
       style={tileStyle}
-      description = {this.props.module.description}
-      title = {this.props.module.title}
-      details = {this.props.module.details}
       >
-        {blurb}
-        <p style={divStyle}>
+        <InfoModalDisplay
+          description = {this.props.module.description}
+          title = {this.props.module.title}
+          details = {this.props.module.details}
+          style = {{float: "left"}}
+          />
+        <span style={divStyle}>
         {this.props.module.title}
-        </p>
+        </span>
       </li>
-      </React.Fragment>
     );
   }
 }
 
 const tileStyle = {
-  listStyleType: "none"
+  listStyleType: "none",
+  // display: "inline",
+  display: "block",
+  // display: "-moz-inline-box",
+  padding: "1px",
+  margin: "0px",
 };
 
 const divStyle = {
-  backgroundColor: "green"
+  backgroundColor: "green",
+  // position: "center",
 };
 
 export default ModuleTile;
