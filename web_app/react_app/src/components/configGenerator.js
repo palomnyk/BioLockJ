@@ -1,6 +1,6 @@
 import React from 'react';
 import ModuleSelectionLayout from './bljModule/moduleSelectionLayout';
-import ModuleBar from './bljModule/moduleBar';
+import ModuleBarLayout from './bljModule/moduleBarLayout.js';
 
 class ConfigGenerator extends React.Component{
   constructor(props){
@@ -84,9 +84,8 @@ class ConfigGenerator extends React.Component{
       for (var i=0; (child=child.previousSibling); i++);
       let newModArray = [...this.state.selectedModules];
       let sm = document.getElementById("modulesSelected");
-      let lastLi = document.getElementById("selectModulesLast");
       if (source === "modulesUnselected") {
-        if (this.state.selectedModules.length === 0 || ev.target === sm || ev.target === lastLi) {
+        if (this.state.selectedModules.length === 0 || ev.target === sm ) {
           this.setState({ selectedModules: [...this.state.selectedModules, dropMod] },
             console.info(this.state.selectedModules));
         } else {
@@ -120,12 +119,11 @@ class ConfigGenerator extends React.Component{
           onDrop={drop} 
           onDragOver={allowDrop}>
             <ModuleSelectionLayout modules = {this.state.selectedModules} />
-            <li style = {lastLiStyle} id="selectedModsLast" draggable="false"></li>
           </ul>
-          <div style = {preview}></div>
+          {/* <div style = {preview}></div> */}
         </div>
         <div>
-          <moduleBarLayout modules = {this.state.selectedModules}
+          <ModuleBarLayout modules = {this.state.selectedModules}/>
         </div>
       </div>
     );
