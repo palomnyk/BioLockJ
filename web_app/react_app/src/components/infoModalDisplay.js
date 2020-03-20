@@ -51,5 +51,7 @@ const modalStyle = {
 
 InfoModalDisplay.propTypes = {
   description: PropTypes.string.isRequired,
-  details: PropTypes.string.isRequired
+  details: PropTypes.string
 };
+
+export default InfoModalDisplay;
