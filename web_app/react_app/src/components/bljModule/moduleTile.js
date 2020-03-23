@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import InfoModuleDisplay, { InfoModalDisplay } from '../infoModalDisplay.js';
+import InfoModalDisplay from '../infoModalDisplay.js';
 
 export class ModuleTile extends Component{
   constructor(props) {

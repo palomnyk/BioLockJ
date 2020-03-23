@@ -3,10 +3,6 @@ import ModuleTile from './moduleTile.js'
 
 export class ModuleSelectionLayout extends Component{
 
-  // constructor(props){
-  //   super(props);
-  // }
-
   render() {
     if (this.props.modules) {
       return (
@@ -22,7 +18,6 @@ export class ModuleSelectionLayout extends Component{
         <li style = {liStyle}>Place selected modules here.</li>
       )
     }
-    
   }
 }
 
